@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>Copyright (C) 2020 by original authors @ fontello.com</metadata>
+<defs>
+<font id="fontello" horiz-adv-x="1000" >
+<font-face font-family="fontello" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
+<missing-glyph horiz-adv-x="1000" />
+<glyph glyph-name="inpatient" unicode="&#xe800;" d="M170 290c0 36 29 65 66 65 36 0 65-29 65-65 0-37-29-66-65-66-37 0-66 29-66 66l0 0z m633 40c29 0 52-23 53-51l0-139h-526v190l473 0z m-534-190c18 0 32 15 32 33 0 17-14 32-32 32h-93c-18 0-33-15-33-32 0-18 15-33 33-33h93z m618-136v-144h85v457c0 24-19 43-42 43-24 0-43-19-43-43v-209h-767v296c0 23-20 42-44 42v0c-24 0-42-19-42-42v-544h86v144l767 0 0 0z m-271 836c28 0 73-11 97-39l-33-64c-15 19-38 31-64 31-25 0-48-12-62-31l-35 63c29 29 69 40 97 40l0 0z m-9-65h19v19h19v19h-19v20h-19v-20h-19v-19h19v-19z m71-91c0-34-28-62-62-62-34 0-61 28-61 62 0 34 27 61 61 61s62-27 62-61z m-121-79c-43-1-68-36-74-55l-52-173h53l39 133h27l-38-133h209l-39 133h28l39-133h53l-53 173c-6 19-30 53-72 54l-120 1 0 0z m-392-40c-76 0-137 61-137 137 0 76 61 137 137 137 75 0 137-61 137-137s-62-137-137-137l0 0 0 0z m0 34c56 0 103 46 103 103 0 57-47 103-103 103-57 0-104-46-104-103 0-57 47-103 104-103l0 0z m0 85c-3-1-6-1-10 1-2 1-4 4-4 7l0 79c0 6 4 11 10 11 6 0 10-5 10-11l0 0v-61l53 25c5 2 11 0 14-5l0 0c2-6 0-12-5-14l0 0-68-32 0 0z" horiz-adv-x="1000" />
+</font>
+</defs>
+</svg>

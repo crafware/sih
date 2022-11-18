@@ -1,0 +1,12 @@
+{
+    "UnidadMedica": "Dr. Bernardo Sep\u00FAlveda Guti\u00E9rrez",
+    "UnidadMedicaTipo": "Hospital de Especialidades CMN Siglo XXI",
+    "UnidadMedicaClasificacion": "UMAE",
+    "UnidadMedicaDireccion": "Av. Cuauht\u00E9moc 330 Col. Doctores, Delg Cuauht\u00E9moc. C.P. 06720.",
+    "UnidadMedicaAdministrador": "admin",
+    "UnidadMedicaLogo": "UM_LOGO.png",
+    "BDUser": "sih_um5293",
+    "BDPass": "sihUM-5293-#$",
+    "BDName": "sih_umae",
+    "BDIp": "localhost"
+}

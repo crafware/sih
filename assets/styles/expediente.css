@@ -1,0 +1,131 @@
+.submenu{
+    background: #7C7B7B!important;
+    color: white!important;
+    text-transform: none!important;
+}
+.submenu li {
+    border-right: 1px solid #FFFFFF;
+    float: left;
+    list-style: none outside none;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: auto;
+}
+
+.submenu li:last-child {
+    border-right:none;
+}
+.submenu li a {
+    color: #000000;
+    text-decoration: none;
+}
+.submenu li a:hover {
+    color: #9B9A9A;
+    text-decoration: none;
+}
+.submenu .current a {
+    color: #9B9A9A;
+    text-decoration: none;
+}
+.submenu .current a:hover {
+    color: #000000;
+    text-decoration: none;
+}
+
+hr.style-eight{
+  border: 0;
+  border-top: 4px double #8c8c8c;
+  text-align: center;
+}
+
+.glyphicon.glyphicon-menu-up, .glyphicon.glyphicon-menu-down{
+    font-size: 8px;
+}
+
+hr.style-eight:after{
+  content: attr(data-titulo);
+  display: inline-block;
+  position: relative;
+  top: -0.7em;
+  font-size: 1.2em;
+  padding: 0 0.20em;
+  background: white;
+}
+/*#acordeon_prescripciones_activas, #acordeon_prescripciones_canceladas, #acordeon_prescripciones_pendientes:hover,
+#acordeon_alergia_medicamentos,#acordeon_reacciones, #acordeon_notificaciones{
+  color: rgb(0,0,0);
+  font-size: 16px;
+  padding-top: -4px;
+  padding-button: -4px;
+}*/
+
+a.submenu_prescripciones{
+  color: rgb(0,0,0);
+  font-weight: bold;
+  font-size: 12px;
+  padding-top: -4px;
+  padding-button: -4px;
+}
+#acordeon_prescripciones_activas:hover, #acordeon_prescripciones_canceladas:hover,#acordeon_prescripciones_pendientes:hover,
+#acordeon_alergia_medicamentos:hover, #acordeon_reacciones:hover,#acordeon_notificaciones:hover{
+  background-color: rgba(0, 0, 0, 0.12);
+}
+/*
+a:hover .submenu_prescripciones{
+  background-color: rgba(0, 0, 0, 0.12);
+}*/
+
+/*legend.scheduler-border {
+  width: auto !important;
+  border: none;
+  font-size: 14px;
+}*/
+/*.text-on-pannel {
+  background: #fff none repeat scroll 0 0;
+  height: auto;
+  margin-left: 20px;
+  padding: 3px 5px;
+  position: absolute;
+  margin-top: -47px;
+  border: 1px solid #337ab7;
+  border-radius: 8px;
+}
+*/
+
+/*
+td,th{
+  text-align: center;
+  border-top:  1px solid #ddd;
+  color: black;
+}*/
+
+/*.label-input{
+  text-align: center;
+  border:none;
+  background:none;
+  margin:0;
+  outline:0;
+  width: 100%;
+}*/
+
+/*.panel-heading .accordion-toggle:after {
+  font-family: 'Glyphicons Halflings';
+  content: "\e114";
+  float: right;
+  color: #256659;
+}*/
+  
+#label_total_activas, #label_total_pendientes,#label_total_canceladas, #label_total_alergia_medicamentos, 
+#label_total_reacciones, #label_total_notificaciones{
+    display: inline-block;
+}
+
+
+span.label-text {
+  font-size: 16px !important;
+}
+
+i .icon-space {
+  font-size: 22px!important;
+  padding-right: 10px!important;
+}

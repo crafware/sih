@@ -1,0 +1,29 @@
+.camaBorderIzq {
+    border-bottom-color: Black;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-left-color: Black;
+    border-left-style: solid;
+    border-left-width: 2px;
+   }
+ .camaBordeMedio {
+ 	border-bottom-color: Black;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+ }
+ .camaBordeDer {
+ 	border-bottom-color: Black;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-right-color: Black;
+    border-right-style: solid;
+    border-right-width: 2px;
+   }
+
+   .cama + .tooltip > .tooltip-inner {
+    background-color: #73AD21; 
+    color: #FFFFFF; 
+    border: 1px solid green; 
+    padding: 15px;
+    font-size: 20px;
+  }
