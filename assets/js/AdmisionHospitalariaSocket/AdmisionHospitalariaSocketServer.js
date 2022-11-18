@@ -66,7 +66,7 @@ io.on("connection", (socket) => {
     getDataFechaSuciaTooltip(data["id"], socket);
   }))
   socket.on("getDataNotesTooltip", (data => {
-    getDataNotesTooltip(data["id"],data["cama_nombre"], socket);
+    getDataNotesTooltip(data["id"], data["cama_nombre"], socket);
   }))
   socket.on("getDataPacientesAreasCriticas", (data => {
     console.log(data);
@@ -94,11 +94,11 @@ function setDataNotesEstado(data) {
       connection.release(); // return the connection to pool
       if (!err) {
         try {
-            io.sockets.emit("setDataNotesEstado", { "cama_id": cama_id,"cama_nombre": cama_nombre,"error": false});
+          io.sockets.emit("setDataNotesEstado", { "cama_id": cama_id, "cama_nombre": cama_nombre, "error": false });
         } catch (e) {
           // statements to handle any exceptions
           console.log(e); // pass exception object to error handler
-          io.sockets.emit("setDataNotesEstado", { "cama_id": cama_id,"cama_nombre": cama_nombre,"error": true});
+          io.sockets.emit("setDataNotesEstado", { "cama_id": cama_id, "cama_nombre": cama_nombre, "error": true });
         }
       } else {
         console.log(err);
@@ -173,7 +173,7 @@ function getDataPacientesAreasCriticas(area, socket) {
   pool.getConnection((err, connection,) => {
     if (err)
       throw err;
-      connection.query('SELECT * FROM ' + areasCriticasDB[area]["db"] + ", os_triage, doc_43051,paciente_info WHERE " +
+    connection.query('SELECT * FROM ' + areasCriticasDB[area]["db"] + ", os_triage, doc_43051,paciente_info WHERE " +
       "os_triage.triage_id = " + areasCriticasDB[area]["db"] + ".triage_id AND " +
       "os_triage.triage_id = paciente_info.triage_id AND " +
       "os_triage.triage_id = doc_43051.triage_id AND " +
@@ -243,7 +243,7 @@ function getDataFechaSuciaTooltip(cama_id_piso, socket) {
       throw err;
     //connection.query('SELECT MAX(fecha_hora) as fecha FROM os_camas_estados WHERE cama_id = ' + cama_id, (err, rows,) => {
     connection.query('SELECT cama_fh_estatus as fecha FROM os_camas WHERE cama_id =' + cama_id, (err, rows,) => {
-    connection.release(); // return the connection to pool
+      connection.release(); // return the connection to pool
       if (!err) {
         try {
           io.sockets.to(socket.id).emit("getDataFechaSuciaTooltip", { "dataTooltip": rows, "id": cama_id_piso });
@@ -258,17 +258,17 @@ function getDataFechaSuciaTooltip(cama_id_piso, socket) {
   return end;
 }
 
-function getDataNotesTooltip(cama_id,cama_nombre, socket) {
+function getDataNotesTooltip(cama_id, cama_nombre, socket) {
   var end = true;
   pool.getConnection((err, connection,) => {
     if (err)
       throw err;
     //connection.query('SELECT MAX(fecha_hora) as fecha FROM os_camas_estados WHERE cama_id = ' + cama_id, (err, rows,) => {
     connection.query('SELECT * FROM os_camas_notas WHERE estado = 0 and cama_id =' + cama_id, (err, rows,) => {
-    connection.release(); // return the connection to pool
+      connection.release(); // return the connection to pool
       if (!err) {
         try {
-          io.sockets.to(socket.id).emit("getDataNotesTooltip", { "dataTooltip": rows, "id": cama_id, "cama_nombre":cama_nombre });
+          io.sockets.to(socket.id).emit("getDataNotesTooltip", { "dataTooltip": rows, "id": cama_id, "cama_nombre": cama_nombre });
         } catch (e) {
           console.log(e); // pass exception object to error handler
         }
@@ -280,17 +280,17 @@ function getDataNotesTooltip(cama_id,cama_nombre, socket) {
   return end;
 }
 
-function getDataCamasNotas(data){
+function getDataCamasNotas(data) {
   cama_id = data[0]["after"]["cama_id"]
   pool.getConnection((err, connection,) => {
     if (err)
       throw err;
     //connection.query('SELECT MAX(fecha_hora) as fecha FROM os_camas_estados WHERE cama_id = ' + cama_id, (err, rows,) => {
     connection.query('SELECT * FROM os_camas_notas WHERE estado = 0 and cama_id =' + cama_id, (err, rows,) => {
-    connection.release(); // return the connection to pool
+      connection.release(); // return the connection to pool
       if (!err) {
         try {
-          io.sockets.emit("getDataCamasNotas", {"cama_id":cama_id, "note_len": rows});
+          io.sockets.emit("getDataCamasNotas", { "cama_id": cama_id, "note_len": rows });
         } catch (e) {
           console.log(e); // pass exception object to error handler
         }
@@ -308,10 +308,10 @@ const getDataPacientesAreasCriticasTablas = ["um_pacientes_uci", "os_camas", "os
 
 const program = async () => {
   const connection = mysql.createPool({
-    connectionLimit : 200,
-    host            : 'localhost',
-    user            : 'sih_um5293',
-    password        : 'sihUM-5293-#$',
+    connectionLimit: 200,
+    host: 'localhost',
+    user: 'sih_um5293',
+    password: 'sihUM-5293-#$',
     //debug           : true
   });
   const instance = new MySQLEvents(connection, {
@@ -330,7 +330,7 @@ const program = async () => {
         getData(event.affectedRows)
       } if (getDataPacientesAreasCriticasTablas.find(element => element.trim() === event.table)) {
         getDataPacientesAreasCriticas("UCI", "")
-      }if (event.table == "os_camas_notas"){
+      } if (event.table == "os_camas_notas") {
         getDataCamasNotas(event.affectedRows)
       }
     },
@@ -338,7 +338,6 @@ const program = async () => {
   instance.on(MySQLEvents.EVENTS.CONNECTION_ERROR, console.error);
   instance.on(MySQLEvents.EVENTS.ZONGJI_ERROR, console.error);
 };
-
 program()
   .then(() => console.log('Waiting for database events...'))
   .catch(console.error);

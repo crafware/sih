@@ -1,4 +1,4 @@
-console.log("socket client");
+xconsole.log("socket client");
 var showTooltipActive = false
 const socket = io(":3001", {
   cors: {
@@ -40,20 +40,18 @@ socket.on("getDataNotesTooltip", function (data) {
 });
 
 socket.on("setDataNotesEstado", function (data) {
-    //if("Limpieza e Higiene" == $('input[name=area]').val()){
-      //updateNotesNotification("nota_"+data["cama_id"],0)
-      msj_success_noti("Se han leído las notas de la cama " + data['cama_nombre'])
-    //}
-    //setDataNotesEstado(data);
+  if ("Limpieza e Higiene" == $('input[name=area]').val() || $('input[name=area]').val() == 'Dirección Enfermería ' || $('input[name=area]').val() == "Enfermería Hospitalización") {
+    msj_success_noti("Se han leído las notas de la cama " + data['cama_nombre'])
+  }
 });
 
 socket.on("getDataCamasNotas", function (data) {
   //if("Limpieza e Higiene" == $('input[name=area]').val()){
-    //console.log("getDataCamasNotas")
-    //console.log(data)
-    var id = "nota_"+data["cama_id"]
-    var n = data["note_len"].length
-    updateNotesNotification(id,n)
+  //console.log("getDataCamasNotas")
+  //console.log(data)
+  var id = "nota_" + data["cama_id"]
+  var n = data["note_len"].length
+  updateNotesNotification(id, n)
   //}
 });
 
@@ -250,19 +248,19 @@ function refreshGraphics(data) {
                 return 0;
               }
             }
-            if (dropdownToggle.find(element => element.trim() === $('input[name=area]').val()) ) {
+            if (dropdownToggle.find(element => element.trim() === $('input[name=area]').val())) {
               if (data["triage"].length == 0) {
                 delecteOctions(cama_no);
               } else if ($('input[name=area]').val() == "División de Calidad") {
                 createOctionsDivisionDeCalidad(cama_no, data);
-              }else {
+              } else {
                 createOctionsUCI(cama_no, data);
               }
               return 0;
             }
-            if (AreasSemaforo.find(element => element.trim() === $('input[name=area]').val()) || $('input[name=area]').val() == 'Dirección Enfermería ') { 
+            if (AreasSemaforo.find(element => element.trim() === $('input[name=area]').val()) || $('input[name=area]').val() == 'Dirección Enfermería ') {
               var cama_no = bed.getElementsByClassName("cama-no")[0];
-              if (AreasSemaforo.find(element => element.trim() === $('input[name=area]').val())){
+              if (AreasSemaforo.find(element => element.trim() === $('input[name=area]').val())) {
                 delecteOctions(cama_no);
                 createOctionsLimpiezaEHigiene(cama_no, data);
               }
@@ -273,14 +271,14 @@ function refreshGraphics(data) {
                 document.getElementById(id_semaforo_0).classList.add("yellow");
                 document.getElementById(id_semaforo_1).classList.add("yellow");
                 document.getElementById(id_semaforo_2).classList.add("yellow");
-                if (data["bed"][0]["after"]["cama_display"] == "0"){
+                if (data["bed"][0]["after"]["cama_display"] == "0") {
                   document.getElementById(id_semaforo_0).classList.remove("yellow");
                   document.getElementById(id_semaforo_1).classList.remove("yellow");
                   document.getElementById(id_semaforo_2).classList.remove("yellow");
-                }else if (data["bed"][0]["after"]["cama_display"] == "1"){
+                } else if (data["bed"][0]["after"]["cama_display"] == "1") {
                   document.getElementById(id_semaforo_1).classList.remove("yellow");
                   document.getElementById(id_semaforo_2).classList.remove("yellow");
-                }else if (data["bed"][0]["after"]["cama_display"] == "2"){
+                } else if (data["bed"][0]["after"]["cama_display"] == "2") {
                   document.getElementById(id_semaforo_2).classList.remove("yellow");
                 }
               }
@@ -391,14 +389,14 @@ function refreshGraphicsEnf(data) {
         document.getElementById(id_semaforo_0).classList.add("yellow");
         document.getElementById(id_semaforo_1).classList.add("yellow");
         document.getElementById(id_semaforo_2).classList.add("yellow");
-        if (data["bed"][0]["after"]["cama_display"] == "0"){
+        if (data["bed"][0]["after"]["cama_display"] == "0") {
           document.getElementById(id_semaforo_0).classList.remove("yellow");
           document.getElementById(id_semaforo_1).classList.remove("yellow");
           document.getElementById(id_semaforo_2).classList.remove("yellow");
-        }else if (data["bed"][0]["after"]["cama_display"] == "1"){
+        } else if (data["bed"][0]["after"]["cama_display"] == "1") {
           document.getElementById(id_semaforo_1).classList.remove("yellow");
           document.getElementById(id_semaforo_2).classList.remove("yellow");
-        }else if (data["bed"][0]["after"]["cama_display"] == "2"){
+        } else if (data["bed"][0]["after"]["cama_display"] == "2") {
           document.getElementById(id_semaforo_2).classList.remove("yellow");
         }
       }
@@ -430,7 +428,7 @@ function refreshGraphicsEnf(data) {
 function createOctionsDireccionEnfermeria(cama_no, data) {
   var cama_estado1 = data["bed"][0]["before"]["cama_estado"]
   var cama_estado2 = data["bed"][0]["after"]["cama_estado"]
-  if ((cama_estado1 != 'Limpia')&&(cama_estado2 == 'Limpia')) {
+  if ((cama_estado1 != 'Limpia') && (cama_estado2 == 'Limpia')) {
     var sqlPaciente = data["triage"]
     var valor = data["bed"][0]["after"];
     var nombreCama = '<li><h5 class="text-center link-acciones bold">Cama ' + valor['cama_nombre'] + '</h5></li>';
@@ -562,23 +560,23 @@ function createOctionsDivisionDeCalidad(cama_no, data) {
 function createOctionsLimpiezaEHigiene(cama_no, data) {
   var cama_estado = data["bed"][0]["after"]["cama_estado"]
   if (cama_estado == 'Sucia' || cama_estado == 'Contaminada') {
-    var valor                 = data["bed"][0]["after"];
-    var nombreCama            = '<li><h5 class="text-center link-acciones bold">Cama ' + valor['cama_nombre'] + '</h5></li>';
-    var confirmarLimpieza     = '<li><a href="#" class="confirmar-Limpieza" ' + '" data-cama="' + valor['cama_id'] + '" data-cama-id="' + valor['cama_id'] + '" data-estado="' + valor['cama_estado'] + '" data-cama_nombre="' + valor['cama_nombre'] + '" data-folio="' + valor['triage_id'] + '"><i class="fa fa-paint-brush icono-accion"></i> Confirmar limpieza</a></li>';
-    var camaCeldaSemaforo     = valor["cama_display"]
+    var valor = data["bed"][0]["after"];
+    var nombreCama = '<li><h5 class="text-center link-acciones bold">Cama ' + valor['cama_nombre'] + '</h5></li>';
+    var confirmarLimpieza = '<li><a href="#" class="confirmar-Limpieza" ' + '" data-cama="' + valor['cama_id'] + '" data-cama-id="' + valor['cama_id'] + '" data-estado="' + valor['cama_estado'] + '" data-cama_nombre="' + valor['cama_nombre'] + '" data-folio="' + valor['triage_id'] + '"><i class="fa fa-paint-brush icono-accion"></i> Confirmar limpieza</a></li>';
+    var camaCeldaSemaforo = valor["cama_display"]
     var camaCeldaSemaforo_int = 4 - parseInt(valor["cama_display"]);
-    var agregarNota           = '<li><a href="#" class="nota-cama" ' + '" data-cama="' + valor['cama_id'] + '" data-cama-id="' + valor['cama_id'] + '" data-estado="' + valor['cama_estado'] + '" data-cama_nombre="' + valor['cama_nombre'] + '" data-folio="' + valor['triage_id'] + '"><i class="fa fa-file-text-o icono-accion"></i> Agregar nota</a></li>';
+    var agregarNota = '<li><a href="#" class="nota-cama" ' + '" data-cama="' + valor['cama_id'] + '" data-cama-id="' + valor['cama_id'] + '" data-estado="' + valor['cama_estado'] + '" data-cama_nombre="' + valor['cama_nombre'] + '" data-folio="' + valor['triage_id'] + '"><i class="fa fa-file-text-o icono-accion"></i> Agregar nota</a></li>';
     if (camaCeldaSemaforo_int <= 3) {
-        cambiarEstadoSemaforo = '<li><a href="#" class="cambiar-estado-semaforo" " data-cama="' + valor['cama_id'] + '" data-cama-id="' + valor['cama_id'] + '" data-estado="' + valor['cama_estado'] + '" data-cama_nombre="' + valor['cama_nombre'] + '" data-semaforo="' + camaCeldaSemaforo + '" data-folio="' + valor['triage_id'] + '"><i class="fa fa-paint-brush icono-accion"></i> Confirmar limpieza No.' + camaCeldaSemaforo_int + '</a></li>';
-    }else{
-        cambiarEstadoSemaforo = "";
+      cambiarEstadoSemaforo = '<li><a href="#" class="cambiar-estado-semaforo" " data-cama="' + valor['cama_id'] + '" data-cama-id="' + valor['cama_id'] + '" data-estado="' + valor['cama_estado'] + '" data-cama_nombre="' + valor['cama_nombre'] + '" data-semaforo="' + camaCeldaSemaforo + '" data-folio="' + valor['triage_id'] + '"><i class="fa fa-paint-brush icono-accion"></i> Confirmar limpieza No.' + camaCeldaSemaforo_int + '</a></li>';
+    } else {
+      cambiarEstadoSemaforo = "";
     }
     var str = '<ul class="list-inline list-menu">' +
       '<li class="dropdown">' +
       '<a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">' +
       '<i class="fa fa-bed"></i>' +
       '</a>' +
-      '<ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">'+nombreCama+' '+confirmarLimpieza+' '+agregarNota+' '+cambiarEstadoSemaforo+' '+'</ul>' +
+      '<ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' + nombreCama + ' ' + confirmarLimpieza + ' ' + agregarNota + ' ' + cambiarEstadoSemaforo + ' ' + '</ul>' +
       '</li>' +
       '</ul>';
   } else {
@@ -604,7 +602,6 @@ function delecteOctions(cama_no) {
 }
 
 async function test() {
-
   var end = true
   var n = 0
   var cd1 = "", cd2 = "", cd1aux = "", cd2aux = "", aux = ""
@@ -648,8 +645,8 @@ function activateTooltip() {
     $(".tooltip").css("transform", "translate(-100px,-35px)");
     $(".tooltip").css("width", "17em");
   }
-  if ("Enfermería Hospitalización" == $('input[name=area]').val()  || $('input[name=area]').val() == 'Dirección Enfermería ') {
-    $('body').on('click', '.notificacion-nota', function (){
+  if ("Enfermería Hospitalización" == $('input[name=area]').val() || $('input[name=area]').val() == 'Dirección Enfermería ') {
+    $('body').on('click', '.notificacion-nota', function () {
       if ((!($(this).attr("data-Notas-Len") != "0" && ($(this).attr("data-cama-status") == "Contaminada" || $(this).attr("data-cama-status") == "Sucia")))) {
         //console.log("data-cama-id")
         //console.log($(this).attr("data-cama-id"))
@@ -686,7 +683,7 @@ async function getDataNotesTooltip(cama_id, cama_nombre) {
       return 0;
     }
   }
-  socket.emit("getDataNotesTooltip", { "id": cama_id, "cama_nombre":cama_nombre })
+  socket.emit("getDataNotesTooltip", { "id": cama_id, "cama_nombre": cama_nombre })
 }
 
 
@@ -730,7 +727,7 @@ async function showTooltip(data) {
     "<div class='signosv'>" +
     "<div class='div-sv divnamesv'>" +
     "<h3 class='sv-title svname'>Folio Ingreso:</h3>" +
-    "<p class='value-sv valuesv text-uppercase font-weight-bold'>"+ folio + "</p>" +
+    "<p class='value-sv valuesv text-uppercase font-weight-bold'>" + folio + "</p>" +
     "</div>" +
     "</div>" +
     "<div class='signosv'>" +
@@ -768,7 +765,7 @@ function showFechaSuciaTooltip(data) {
   var fechaIngreso = data["dataTooltip"][0]["fecha"];
   $('.tooltip').css("opacity", 0);
   $('.tooltip').css("display", 'none');
-  if(fechaIngreso != ""){
+  if (fechaIngreso != "") {
     var tooltipC = document.getElementById(data["id"]);
     let coords = tooltipC.getBoundingClientRect();
     var notas_fecha_hora = fechaIngreso.split(" ");
@@ -804,30 +801,31 @@ function showFechaSuciaTooltip(data) {
   }
 }
 
-function showDataNotesTooltip(data){
+function showDataNotesTooltip(data) {
   var notas = "";
-  for(var i=0;i<data["dataTooltip"].length;i++){
-    notas += '<h4>'+data["dataTooltip"][i]["nota"]+'</h4>'
+  for (var i = 0; i < data["dataTooltip"].length; i++) {
+    notas += '<h4>' + data["dataTooltip"][i]["nota"] + '</h4>'
   }
   bootbox.confirm({
-    message: '<center><h4>Notas de la cama No.'+data["cama_nombre"]+'?</h4></center>' + notas,
+    message: '<center><h4>Notas de la cama No.' + data["cama_nombre"] + '?</h4></center>' + notas,
     buttons: {
-        confirm: {
-            label: 'Marcar notas como leídas',
-            className: 'btn-success'
-        },
-        cancel: {
-            label: 'Cerrar',
-            className: 'btn-danger'
-        }
+      confirm: {
+        label: 'Marcar notas como leídas',
+        className: 'btn-success'
+      },
+      cancel: {
+        label: 'Cerrar',
+        className: 'btn-danger'
+      }
     },
     callback: function (result) {
-        if(result){
-            socket.emit("setDataNotesEstado", { "id": data["id"],"cama_nombre":data["cama_nombre"],"estado":1 })
-        }else{
-            //msj_error_noti("No se confirmo la limpieza" );
-        }
-    }});
+      if (result) {
+        socket.emit("setDataNotesEstado", { "id": data["id"], "cama_nombre": data["cama_nombre"], "estado": 1 })
+      } else {
+        //msj_error_noti("No se confirmo la limpieza" );
+      }
+    }
+  });
 }
 
 function hideTooltip(id) {
@@ -839,15 +837,15 @@ function hideTooltip(id) {
   document.getElementById(id).innerHTML = "";
 }
 
-function updateNotesNotification(nota_id,n){
+function updateNotesNotification(nota_id, n) {
   var nota = document.getElementById(nota_id);
-  if(n==0){
+  if (n == 0) {
     nota.style.opacity = 0;
     nota.innerHTML = "<p>0</p>";
     nota.setAttribute("data-Notas-Len", 0);
-  }else{
+  } else {
     nota.style.opacity = 1;
-    nota.innerHTML = "<p>"+n+"</p>";
+    nota.innerHTML = "<p>" + n + "</p>";
     nota.setAttribute("data-Notas-Len", n);
   }
 }
@@ -883,7 +881,7 @@ function showPacientesAreasCriticas(data, camas) {
       '<td>' + String(i + 1).padStart(2, 0) + '</td>' +
       '<td>' + data[i]['triage_id'] + '</td>' +
       '<td>' + data[i]['triage_nombre_ap'] + " " + data[i]['triage_nombre_am'] + " " + data[i]['triage_nombre'] + '</td>' +
-      '<td style="text-align:center;">' + data[i]['pum_nss'] +' '+data[i]['pum_nss_agregado']+ '</td>' +
+      '<td style="text-align:center;">' + data[i]['pum_nss'] + ' ' + data[i]['pum_nss_agregado'] + '</td>' +
       '<td>' + d + '</td>' +
       '<td>' + String(dAC.getDate()).padStart(2, 0) + "-" + String(dAC.getMonth() + 1).padStart(2, 0) + "-" + String(dAC.getFullYear()).padStart(2, 0) + " " + String(dAC.getHours()).padStart(2, 0) + ":" + String(dAC.getMinutes()).padStart(2, 0) + '</td>' +
       "<td>"
