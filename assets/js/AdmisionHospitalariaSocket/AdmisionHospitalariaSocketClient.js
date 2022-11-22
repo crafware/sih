@@ -1,4 +1,4 @@
-xconsole.log("socket client");
+console.log("socket client");
 var showTooltipActive = false
 const socket = io(":3001", {
   cors: {

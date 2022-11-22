@@ -1234,8 +1234,6 @@ class Admisionhospitalaria extends Config{
         ));
     } //cierre de funcion AjaxvisorCamasLimpiesaEHigiene
 
-
-
     public function AjaxGuardarNotaCama()
     {
         $cama_id = $this->input->post('cama_id');
@@ -1524,7 +1522,7 @@ class Admisionhospitalaria extends Config{
             'area_id'=> $this->input->post('area_id'),
             'cama_estado'=>'Disponible'
         ));
-        $option_camas = '';
+        $optio_camas = '';
         $option_camas .= '<option value="" disabled selected>Selecciona</option>';
         foreach ($sql as $value) {
             $option_camas.='<option value="'.$value['cama_id'].'">'.$value['cama_nombre'].'</option>';
