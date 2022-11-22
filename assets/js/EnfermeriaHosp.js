@@ -170,7 +170,7 @@ $(document).ready(function (e) {
             },
             success: function(data, textStatus, jqXHR){
                 bootbox.hideAll();
-                if(data.accion=='1'){
+                /*if(data.accion=='1'){
                     //console.log(data);
                     $('.buttons-estados').html(data.estadosbtns);
                     if($('.cama'+cama_id).hasClass('HOMBRE')){
@@ -199,7 +199,7 @@ $(document).ready(function (e) {
                         $('.cama'+cama_id).removeClass('cyan-400').addClass('green');
 
                     }
-                }
+                }*/
             },error: function (e) {
                 msj_error_noti('problemas');
                 //msj_error_serve();
