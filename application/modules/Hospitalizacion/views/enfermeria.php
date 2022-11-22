@@ -1,7 +1,6 @@
 <?= modules::run('Sections/Menu/index'); ?>
 <link href="<?=  base_url()?>assets/fonts/custom/fontello/fontello.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<link href="<?=  base_url()?>assets/styles/tooltip.css" rel="stylesheet" type="text/css" />
 <?php
 function getServerIp(){
     if($_SERVER['SERVER_ADDR'] === "::1"){
@@ -174,7 +173,8 @@ function getServerIp(){
       </div>
     </div>
   </div>
+  <input type="hidden" name="area" value="<?= $this->UMAE_AREA ?>">
 </div>
-
 <?= modules::run('Sections/Menu/footer'); ?>
-<script src="<?= base_url('assets/js/EnfermeriaHosp.js?'). md5(microtime())?>" type="text/javascript"></script>
+<script src="<?= base_url('assets/js/EnfermeriaHosp.js?') . md5(microtime()) ?>" type="text/javascript"></script>
+<link href="<?=  base_url()?>assets/styles/tooltip.css" rel="stylesheet" type="text/css" />

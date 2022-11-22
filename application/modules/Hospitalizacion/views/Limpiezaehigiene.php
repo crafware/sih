@@ -51,9 +51,10 @@ function getServerIp(){
 			</div>
 		</div>
 	</div>
+	<input type="hidden" name="infoEmpleado" value="<?= $this->UMAE_USER?>">
+	<input type="hidden" name="area" value="<?= $this->UMAE_AREA?>">
 </div>
-<input type="hidden" name="area" value="<?= $this->UMAE_AREA?>">
 <?= modules::run('Sections/Menu/footer'); ?>
-<script src="<?= base_url('assets/js/Conservacionlimpieza.js?'). md5(microtime())?>" type="text/javascript"></script>
 <script src="<?= "http://".getServerIp().':3001/socket.io/socket.io.js'?>" type="text/javascript"></script>
-<script src="<?= base_url('assets/js/AdmisionHospitalariaSocket/AdmisionHospitalariaSocketClient.js?'). md5(microtime())?>" type="text/javascript"></script>
+<script src="<?= base_url('assets/js/Conservacionlimpieza.js?'). md5(microtime())?>" type="text/javascript"></script>
+<link href="<?=  base_url()?>assets/styles/tooltip.css" rel="stylesheet" type="text/css" />
