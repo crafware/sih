@@ -3114,7 +3114,8 @@ class Documentos extends Config{
         /** Comprueba si no hay Hoaja inicial y guarda los campos dl formulario Nota Inicial
          *  Regresa en formato Json respuesta 
         */       
-        if(empty($sqlCheckNotaIngreso)){ 
+        //if(empty($sqlCheckNotaIngreso)){
+        if($this->input->post('accion')=='add'){ 
             if(!empty($sqlCheckDiagnosticos)){       
                 $last_idnota =$this->config_mdl->_insert('um_notas_ingresos_hospitalario',$dataNota);
                 if($last_idnota ) $last_idnota = $this->db->insert_id();

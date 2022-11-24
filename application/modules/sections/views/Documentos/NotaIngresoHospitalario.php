@@ -876,7 +876,8 @@
                             <div class="form-group">
                                 <div class="col-sm-8 col-ms-8">
                                   <label>Nombre de supervisor Médico de Base:</label>
-                                  <input class="form-control" name="medicosBase" id="medicosBase" placeholder="Tecleé el nombre del medico y seleccione" value="<?=$medicoTratante[0]['empleado_nombre']?> <?=$medicoTratante[0]['empleado_apellidos']?>" autocomplete="off" required>     
+                                  <?php $medicoTratante = $notaIngreso[0]['id_medico_tratante'] =='' ? '': $medicoTratante[0]['empleado_apellidos'].' '.$medicoTratante[0]['empleado_nombre']; ?>
+                                  <input class="form-control" name="medicosBase" id="medicosBase" placeholder="Tecleé el nombre del medico y seleccione" value="<?=$medicoTratante?>" autocomplete="off" required>     
                                   <input type="hidden" name="medicoTratante" id="id_medico_tratante" value="<?=$notaIngreso[0]['id_medico_tratante']?>"> 
                                 </div>
                                 <div class="col-sm-3 col-md-3">
