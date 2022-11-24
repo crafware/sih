@@ -657,4 +657,57 @@ class Hospitalizacion extends Config{
             ));
         }
     }
+    public function BuscarPacienteDDC(){
+        $inputSelect = $_POST['inputSelect'];
+        $inputSearch = $_POST['inputSearch'];
+        $IngresosEgr = $_POST['IngresosEgr'];
+        $selectFecha = $_POST['selectFecha'];
+        $tr = "";
+        if ($inputSelect == 'POR_NUMERO') {
+            $sql = $this->config_mdl->_query("SELECT os_triage.triage_id, doc_43051.fecha_ingreso, CONCAT_WS(' ',triage_nombre_ap,triage_nombre_am,triage_nombre) AS nombre_paciente, CONCAT_WS(' ',pum_nss,pum_nss_agregado) AS nss, pum_nss_armado FROM os_triage, paciente_info, doc_43051 WHERE
+                                            paciente_info.triage_id = os_triage.triage_id AND
+                                            doc_43051.triage_id     = os_triage.triage_id AND
+                                            paciente_info.triage_id = '" . $inputSearch . "'");
+        } else if ($inputSelect == 'POR_NOMBRE') {
+            $sql =  $this->config_mdl->_query("SELECT os_triage.triage_id, paciente_info.triage_id, doc_43051.fecha_ingreso,CONCAT_WS(' ',TRIM(os_triage.triage_nombre_ap),TRIM(os_triage.triage_nombre_am),TRIM(os_triage.triage_nombre)) AS nombre_paciente, CONCAT_WS(' ',pum_nss,pum_nss_agregado) AS nss, pum_nss_armado FROM os_triage, paciente_info , doc_43051
+                                            WHERE doc_43051.triage_id  = os_triage.triage_id
+                                            HAVING os_triage.triage_id = paciente_info.triage_id AND nombre_paciente LIKE '%$inputSearch%' LIMIT 200");
+        }else if ($inputSelect == 'POR_NSS') {
+            $sql = $this->config_mdl->_query("SELECT os_triage.triage_id, doc_43051.fecha_ingreso, CONCAT_WS(' ',triage_nombre_ap,triage_nombre_am,triage_nombre) AS nombre_paciente, CONCAT_WS(' ',pum_nss,pum_nss_agregado) AS nss, pum_nss_armado FROM os_triage, paciente_info, doc_43051 WHERE
+                                            paciente_info.triage_id = os_triage.triage_id AND
+                                            doc_43051.triage_id     = os_triage.triage_id AND
+                                            paciente_info.pum_nss   = '" . $inputSearch . "'");
+        }else if ($inputSelect == 'POR_FECHA') {
+            if ($selectFecha != ''){
+                $sql = $this->config_mdl->_query("SELECT os_triage.triage_id, doc_43051.fecha_ingreso, CONCAT_WS(' ',triage_nombre_ap,triage_nombre_am,triage_nombre) AS nombre_paciente, CONCAT_WS(' ',pum_nss,pum_nss_agregado) AS nss, pum_nss_armado FROM os_triage, paciente_info, doc_43051 WHERE
+                                                paciente_info.triage_id = os_triage.triage_id AND
+                                                doc_43051.triage_id     = os_triage.triage_id AND
+                                                doc_43051.".$IngresosEgr."= '" . $selectFecha . "'");
+            }
+        }
+        if (!empty($sql)) {
+            foreach ($sql as $value) {
+                $nss = ($value['nss'] != ' ') ? $value['nss'] : $value['pum_nss_armado'];
+                if ($this->UMAE_AREA == 'División de Calidad') {
+                    $cama = $this->config_mdl->_query("SELECT cama_nombre, piso_nombre_corto from os_camas, os_pisos where os_pisos.area_id = os_camas.area_id and os_camas.triage_id = '".$value['triage_id']."'");
+                    if (empty($cama)){
+                        $cama = "Por asignar";
+                    }else{
+                        $cama = $cama[0]["piso_nombre_corto"]." ".$cama[0]["cama_nombre"];
+                    }
+                    $tr .= '<tr>
+                        <td>' . $value['nombre_paciente'] . '</td>
+                        <td>' . $value['triage_id'] . '</td>
+                        <td>' . $nss . '</td>
+                        <td>' . date("d-m-Y", strtotime($value['fecha_ingreso'])) . '</td>
+                        <td>' . $cama . '</td>
+                    <tr>';
+                }
+            }
+            $this->setOutput(array('accion' => '1', 'tr' => $tr, 'sql' => $sql, "area" => $this->UMAE_AREA, "inputSearch" => $_POST['inputSearch'] ));
+        } else {
+            $tr .= '<tr> <td colspan="5" class="text-center mayus-bold"><i class="fa fa-frown-o fa-3x" style="color:#256659"></i><br>No se encontro ningún registro</td><tr>';
+            $this->setOutput(array('accion' => '1', 'tr' => $tr, 'sql' => $sql, "area" => $this->UMAE_AREA, "inputSearch" => $_POST['inputSearch'] ));
+        }
+    }
 }

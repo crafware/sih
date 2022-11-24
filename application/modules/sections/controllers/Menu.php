@@ -116,7 +116,7 @@ class Menu extends Config{
     }
     public function get_areas_acceso() {
         foreach ($this->config_mdl->_get_data('os_areas_acceso') as $value) {
-            $option.='<option value="'.$value['areas_acceso_id'].'">'.$value['areas_acceso_nombre'].'</option>';
+            $option ='<option value="'.$value['areas_acceso_id'].'">'.$value['areas_acceso_nombre'].'</option>';
         }
         $this->setOutput(array('option'=>$option));
     }

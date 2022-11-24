@@ -54,7 +54,7 @@
                                         </td>
                                         <td><?=$value['triage_id']?></td>         <!-- No de Flolio -->
                                         <td>              <!-- nombre del paciente -->
-                                            <?=$value['triage_nombre']?> <?=$value['triage_nombre_ap']?> <?=$value['triage_nombre_am']?>
+                                            <?=$value['triage_nombre_ap']?> <?=$value['triage_nombre_am']?> <?=$value['triage_nombre']?>
                                             <?php 
                                                   
                                                   if(!empty($check_ordenInternamiento)){

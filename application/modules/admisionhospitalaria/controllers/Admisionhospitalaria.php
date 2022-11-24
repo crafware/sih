@@ -1271,14 +1271,12 @@ class Admisionhospitalaria extends Config{
             $viaIngreso = $sql[0]['triage_via_registro']; 
             $this->setOutput(array('accion' => '1', 'via_ingreso' => $viaIngreso));
         }else $this->setOutput(array('accion' => '2'));
-
     }
 
     public function AjaxBuscarPaciente() {       
         $sql= $this->config_mdl->sqlGetDataCondition('doc_43051',array(
             'triage_id'=> $this->input->post('triage_id')
-        ));  
-       
+        )); 
         if(empty($sql)){
             // No existe el folio
             $this->setOutput(array('accion'=>'1')); 
@@ -1287,7 +1285,6 @@ class Admisionhospitalaria extends Config{
         }else if($sql[0]['estado_cama']=='En espera') {
             $this->setOutput(array('accion'=>'3'));
         }
-       
     }
     public function AjaxReservarCama() {
 
@@ -2252,6 +2249,24 @@ class Admisionhospitalaria extends Config{
         }
          $this->setOutput(array('accion'=>'1'));
 
+    }
+
+    public function updateOrdenInternamiento() {
+        $check_orden = $this->config_mdl->_get_data_condition('um_orden_internamiento', array(
+            'triage_id' => $this->input->post('triage_id')
+        ));
+        if(!empty($check_orden)) {
+            $this->config_mdl->_update_data('um_orden_internamiento',array(
+                'servicio_origen_id'    => Modules::run('Config/ObtenerEspecialidadID',array('Usuario'=>$this->UMAE_USER)),
+                'medico_origen_id'      => $this->UMAE_USER,
+                'servicio_destino_id'   => $this->input->post('servicio_solicitado_id'),
+                'fecha_ingreso'         => date('Y-m-d H:i'),
+                'motivo_internamiento'  => $this->input->post('motivo')
+                ),array(
+                'triage_id' => $this->input->post('triage_id')
+            ));
+        }
+         $this->setOutput(array('accion'=>'1'));
     }
 
     public function TestRegistroPacienteUmae($data) {

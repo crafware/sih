@@ -8,8 +8,8 @@ function getServerIp()
 	}
 }
 ?>
-
-<?= modules::run('Sections/Menu/HeaderCamas'); ?>
+<?= modules::run('Sections/Menu/index'); ?>
+<!--<?= modules::run('Sections/Menu/HeaderCamas'); ?>-->
 <div class="box-row">
 	<div class="box-cell">
 		<div class="box-inner col-md-12" style="padding: 10px">
@@ -21,8 +21,10 @@ function getServerIp()
 			</div>
 			<!-- Buscaar paciente -->
 
-			<div>
-				<p><input type="checkbox" id="ocultarBusquedaRadioButoon" checked="True">Buscar paciente</p>
+			<div class="row">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<p><input type="checkbox" id="ocultarBusquedaRadioButoon" checked="True"><strong> &nbsp Buscar paciente</strong></p>
+				</div>
 				<div class="col-md-12 col-sm-12 col-xs-12" id="ocultarBusqueda">
 					<div class="col-md-12 estados-conservacion-limpieza dashboard_graph">
 						<div class="" style="margin-top: 1px">
@@ -73,7 +75,7 @@ function getServerIp()
 								<div class="col-md-2" style="padding-left: 0px">
 									<div class="form-group">
 										<input type="hidden" name="csrf_token">
-										<button class="btn btn-block back-imss buscarPaciente" name="btnSearch" id=buscarPaciente>BUSCAR</button>
+										<button class="btn btn-block back-imss buscarPacienteDDC" name="btnSearch">BUSCAR</button>
 									</div>
 								</div>
 							</div>
@@ -87,8 +89,7 @@ function getServerIp()
 												<th data-sort-ignore="true">NSS</th>
 												<th data-sort-ignore="true">FOLIO</th>
 												<th data-sort-ignore="true">FECHA INGRESO</th>
-
-
+												<th data-sort-ignore="true">CAMA</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -122,11 +123,11 @@ function getServerIp()
 									<div class="bed-status blue-700 color-white"><i class="fa fa-bed"></i></div>
 								</td>
 								<td>
-									<div class="bed-status pink-A100 color-white"><i class="fa fa-bed"></div>
+									<div class="bed-status pink-A100 color-white"><i class="fa fa-bed"></i></div>
 								</td>
 								<td><strong class="ocupadas" style="padding-right: 20px">Ocupadas</strong></td>
 								<td>
-									<div class="bed-status green color-white"><i class="fa fa-bed"></div>
+									<div class="bed-status green color-white"><i class="fa fa-bed"></i></div>
 								</td>
 								<td><strong class="disponibles" style="padding-right: 20px">Disponibles</strong></td>
 								<td>

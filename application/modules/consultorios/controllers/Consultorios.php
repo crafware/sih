@@ -149,8 +149,6 @@ class Consultorios extends Config{
                                                           WHERE especialidad_id = (SELECT empleado_servicio
                                                                                    FROM os_empleados
                                                                                    WHERE empleado_id = $this->UMAE_USER )) ORDER BY doc_430200.doc_fecha DESC LIMIT 20");
-
-
         }else{
             $sql['Gestion']= $this->config_mdl->_query("SELECT * FROM os_triage, doc_430200 WHERE
                 doc_430200.empleado_envia=$this->UMAE_USER AND
@@ -453,6 +451,7 @@ class Consultorios extends Config{
 
 
     public function ObtenerEspecialidades() {
+        $option = "";
         $sqlEspecialidades= $this->config_mdl->_query("SELECT * FROM um_especialidades");
         foreach ($sqlEspecialidades as $value) {
             $option.='<option value="'.$value['especialidad_nombre'].'">'.$value['especialidad_nombre'].'</option>';
@@ -485,6 +484,7 @@ class Consultorios extends Config{
     }
     /*FUNCIONES DINAMICAS PARA CONSULTORIOS*/
     public function AjaxObtenerConsultoriosV2() {
+        $option = "";
         $sqlFiltro=$this->config_mdl->sqlGetDataCondition('um_especialidades_consultorios',array(
             'consultorio_especialidad'=>'No'
         ));
@@ -510,19 +510,16 @@ class Consultorios extends Config{
 
     public function GetInfoParaOrdenInternamiento() {
         $folio = $this->input->post('folio');
+        $option = '';
         $sql = $this->config_mdl->_get_data_condition('os_triage', array(
              'triage_id' => $folio
          ));
-
         $sqlDx = $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos, um_cie10 WHERE 
                     paciente_diagnosticos.cie10_id=um_cie10.cie10_id AND 
                     paciente_diagnosticos.triage_id =".$folio);
-
         $check_ordenInternamiento = $this->config_mdl->_get_data_condition('um_orden_internamiento', array(
             'triage_id' => $folio
         ))[0];
-        
-        
         /* Si tiene Dx se puede hacer Orden */
         if(!empty($sqlDx)) {
             /* Si si genero la Orden De internamiento ya no se puede generar  otra */
@@ -531,12 +528,10 @@ class Consultorios extends Config{
                 $sqlEspecialidad=$this->config_mdl->sqlGetDataCondition('um_especialidades',array(
                     'especialidad_hospitalizacion' => 1
                 ));
-            
                 $option.='<option value="0" disable>Selecciona</option>';
                 foreach ($sqlEspecialidad as $value) {           
                     $option.='<option value="'.$value['especialidad_id'].'">'.$value['especialidad_nombre'].'</option>';
                 }
-            
                 foreach($sqlDx as $value){
                     switch ($value['tipo_diagnostico']){
                         case 1: 
@@ -553,7 +548,9 @@ class Consultorios extends Config{
                             break;
                     }
                 }
-
+                $sql[0]['triage_horacero_f']            = date("d-m-Y", strtotime($sql[0]['triage_horacero_f']));
+                $sql[0]['triage_fecha']                 = date("d-m-Y", strtotime($sql[0]['triage_fecha']));
+                $sql[0]['triage_fecha_clasifica']       = date("d-m-Y", strtotime($sql[0]['triage_fecha_clasifica']));
                 $this->setOutput(array('accion'         =>'2',
                                        'info'           => $sql[0], 
                                        'option'         => $option, 
@@ -561,10 +558,8 @@ class Consultorios extends Config{
                                        'id_dx_reg'      => $id_dx_registrado,
                                        'dx'             => $dx,
                                        'dx_complemento' => $dx_complemento));
-            
             }else{  
                 /* Ya se realizo orden de internamiento */
-
                 $this->setOutput(array('accion'=>'3'));            
             }
         }else{
@@ -572,5 +567,72 @@ class Consultorios extends Config{
         }
     }
 
-        
+    public function UpdateInfoParaOrdenInternamiento() {
+        $folio = $this->input->post('folio');
+        $option = '';
+        $sql = $this->config_mdl->_get_data_condition('os_triage', array(
+             'triage_id' => $folio
+         ));
+        $sqlDx = $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos, um_cie10 WHERE 
+                    paciente_diagnosticos.cie10_id=um_cie10.cie10_id AND 
+                    paciente_diagnosticos.triage_id =".$folio);
+        $check_ordenInternamiento = $this->config_mdl->_get_data_condition('um_orden_internamiento', array(
+            'triage_id' => $folio
+        ))[0];
+        /* Si tiene Dx se puede hacer Orden */
+        if(!empty($sqlDx)) {
+            /* Si si genero la Orden De internamiento ya no se puede generar  otra */
+            /* No hat orden de Internamiento */
+            if(!empty($check_ordenInternamiento)){
+
+                $inf_doctor = $this->config_mdl->_query('SELECT * from os_empleados where empleado_id = '.$check_ordenInternamiento['medico_origen_id']);
+                $sqlEspecialidad=$this->config_mdl->sqlGetDataCondition('um_especialidades',array(
+                    'especialidad_hospitalizacion' => 1
+                ));
+                $option.='<option value="0" disable>Selecciona</option>';
+                foreach ($sqlEspecialidad as $value) {           
+                    if($value['especialidad_id'] == $check_ordenInternamiento['servicio_destino_id']){
+                        $option.='<option value="'.$value['especialidad_id'].'" selected>'.$value['especialidad_nombre'].'</option>';
+                    }else{
+                        $option.='<option value="'.$value['especialidad_id'].'">'.$value['especialidad_nombre'].'</option>';
+                    }
+                    
+                }
+                foreach($sqlDx as $value){
+                    switch ($value['tipo_diagnostico']){
+                        case 1: 
+                            $id_dx = $value['cie10_id'];
+                            $id_dx_registrado = $value['diagnostico_id']; 
+                            $dx = $value['cie10_nombre'];
+                            $dx_complemento = $value['complemento'];
+                            break;
+                        case 0:
+                            $id_dx = $value['cie10_id'];
+                            $id_dx_registrado = $value['diagnostico_id']; 
+                            $dx = $value['cie10_nombre'];
+                            $dx_complemento = $value['complemento'];
+                            break;
+                    }
+                }
+                $sql[0]['triage_horacero_f']            = date("d-m-Y", strtotime($sql[0]['triage_horacero_f']));
+                $sql[0]['triage_fecha']                 = date("d-m-Y", strtotime($sql[0]['triage_fecha']));
+                $sql[0]['triage_fecha_clasifica']       = date("d-m-Y", strtotime($sql[0]['triage_fecha_clasifica']));
+
+                $this->setOutput(array('accion'         =>'2',
+                                       'info'           => $sql[0],
+                                       "checkOrden"     => $check_ordenInternamiento,
+                                       "infDoctor"      => $inf_doctor[0],
+                                       'option'         => $option, 
+                                       'id_dx'          => $id_dx, 
+                                       'id_dx_reg'      => $id_dx_registrado,
+                                       'dx'             => $dx,
+                                       'dx_complemento' => $dx_complemento));
+            }else{  
+                /* No existe orden de internamiento */
+                $this->setOutput(array('accion'=>'3'));            
+            }
+        }else{
+                $this->setOutput(array('accion'=>'1'));
+        }
+    }
 }

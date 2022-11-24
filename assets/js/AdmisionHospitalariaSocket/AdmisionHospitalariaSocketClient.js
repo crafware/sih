@@ -7,6 +7,7 @@ const socket = io(":3001", {
     "timeout": 10000,
     "transports": ["websocket"]
   }
+
 });
 /*console.log(io.data);
 socket.emit("setDataRequest",{
@@ -17,7 +18,7 @@ socket.on("getDataRequest", function (data) {
   refreshGraphics(data);
   //activateTooltip()
 });
-
+console.log(234234)
 var dropdownToggleForbidden = ["Limpieza e Higiene"]
 var AreasSemaforo = ["Limpieza e Higiene", "Enfermería Hospitalización"]
 

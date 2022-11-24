@@ -6,10 +6,10 @@
             UMAE HOSPITAL DE ESPECIALIDADES DEL CMN SIGLO XXI
         </div>
         <div style="position: absolute;top: 210px;left: 420px;font-size: 12px;width:350px;">
-            <?=$internamiento['fecha_registro']?> hrs.
+            <?=date("d-m-Y H:i", strtotime($internamiento['fecha_ingreso']))?> hrs.
         </div>
         <div style="position: absolute;top: 245px;left: 42px;font-size: 12px;width:338px;">
-            <?=$info['triage_nombre']?> <?=$info['triage_nombre_ap']?> <?=$info['triage_nombre_am']?>
+            <?=$info['triage_nombre_ap']?> <?=$info['triage_nombre_am']?> <?=$info['triage_nombre']?>
         </div>
         <div style="position: absolute;top: 245px;left: 420px;font-size: 12px;width:170px;">
            <?=$PINFO['pum_nss']?> - <?=$PINFO['pum_nss_agregado']?>
@@ -24,7 +24,7 @@
             <?=$diagnostico_ingreso['cie10_nombre']?>
         </div>
         <div class="text-uppercase" style="position: absolute;top: 440px;left: 40px;font-size: 10px">
-            <?=$medico_tratante['empleado_nombre']?>  <?=$medico_tratante['empleado_apellidos']?> (Mat. <?=$medico_tratante['empleado_matricula']?>)
+            <?=$medico_tratante['empleado_apellidos']?> <?=$medico_tratante['empleado_nombre']?> (Mat. <?=$medico_tratante['empleado_matricula']?>)
         </div>
         
         <div style="position: absolute;top: 477px;left: 250px">
@@ -40,7 +40,7 @@
             <?=$internamiento['fecha_registro']?> hrs.
         </div>
         <div style="position: absolute;top: 245px;left: 42px;font-size: 12px;width:338px;">
-            <?=$info['triage_nombre']?> <?=$info['triage_nombre_ap']?> <?=$info['triage_nombre_am']?>
+            <?=$info['triage_nombre_ap']?> <?=$info['triage_nombre_am']?> <?=$info['triage_nombre']?>
         </div>
         <div style="position: absolute;top: 245px;left: 420px;font-size: 12px;width:180px;">
            <?=$PINFO['pum_nss']?> <?=$PINFO['pum_nss_agregado']?>
@@ -55,7 +55,7 @@
             <?=$diagnostico_ingreso['cie10_nombre']?>
         </div>
         <div class="text-uppercase" style="position: absolute;top: 440px;left: 40px;font-size: 10px">
-            <?=$medico_tratante['empleado_nombre']?> <?=$medico_tratante['empleado_apellidos']?> (Mat. <?=$medico_tratante['empleado_matricula']?>)
+            <?=$medico_tratante['empleado_apellidos']?> <?=$medico_tratante['empleado_nombre']?> (Mat. <?=$medico_tratante['empleado_matricula']?>)
         </div>
         
         <div style="position: absolute;top: 477px;left: 250px">
