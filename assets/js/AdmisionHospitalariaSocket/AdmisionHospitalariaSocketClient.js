@@ -7,6 +7,7 @@ const socket = io(":3001", {
     "timeout": 10000,
     "transports": ["websocket"]
   }
+
 });
 /*console.log(io.data);
 socket.emit("setDataRequest",{
@@ -17,8 +18,7 @@ socket.on("getDataRequest", function (data) {
   refreshGraphics(data);
   //activateTooltip()
 });
-
-var dropdownToggleForbidden = ["Limpieza e Higiene"]
+var dropdownToggleForbidden = ["Limpieza e Higiene","Conservación" ]
 var AreasSemaforo = ["Limpieza e Higiene", "Enfermería Hospitalización"]
 
 socket.on("getDataTooltip", function (data) {
@@ -49,9 +49,19 @@ socket.on("getDataCamasNotas", function (data) {
   //if("Limpieza e Higiene" == $('input[name=area]').val()){
     //console.log("getDataCamasNotas")
     //console.log(data)
+    var n = 0
+    var n_des = 0
+    for (const nota of data["note_len"]) {
+      if(nota["tipo_nota"] == 0){
+        n += 1;
+      }else{
+        n_des += 1;
+      }
+    }
     var id = "nota_"+data["cama_id"]
-    var n = data["note_len"].length
+    var id_des = "nota_des_"+data["cama_id"]
     updateNotesNotification(id,n)
+    updateNotesNotification(id_des,n_des)
   //}
 });
 
@@ -650,7 +660,16 @@ function activateTooltip() {
       if ((!($(this).attr("data-Notas-Len") != "0" && ($(this).attr("data-cama-status") == "Contaminada" || $(this).attr("data-cama-status") == "Sucia")))) {
         //console.log("data-cama-id")
         //console.log($(this).attr("data-cama-id"))
-        getDataNotesTooltip($(this).attr("data-cama-id"), $(this).attr("data-cama-nombre"));
+        getDataNotesTooltip($(this).attr("data-cama-id"), $(this).attr("data-cama-nombre"),0);
+      }
+    });
+  }
+  if ("Conservación" == $('input[name=area]').val()) {
+    $('body').on('click', '.notificacion-nota-des', function (){
+      if (!($(this).attr("data-Notas-Len") != "0" && ($(this).attr("data-cama-status") == "'Descompuesta'"))) {
+        //console.log("data-cama-id")
+        //console.log($(this).attr("data-cama-id"))
+        getDataNotesTooltip($(this).attr("data-cama-id"), $(this).attr("data-cama-nombre"),1);
       }
     });
   }
@@ -673,17 +692,8 @@ async function getDataTooltip(cama_id) {
   }
 }
 
-async function getDataNotesTooltip(cama_id, cama_nombre) {
-  showTooltipActive = true
-  var n = 1;
-  var t = 200
-  for (var i = 0; i < n * t; i++) {
-    await delay(1);
-    if (!showTooltipActive) {
-      return 0;
-    }
-  }
-  socket.emit("getDataNotesTooltip", { "id": cama_id, "cama_nombre":cama_nombre })
+function getDataNotesTooltip(cama_id, cama_nombre,tipo_nota) {
+  socket.emit("getDataNotesTooltip", { "id": cama_id, "cama_nombre":cama_nombre,"tipo_nota":tipo_nota})
 }
 
 
@@ -819,11 +829,11 @@ function showDataNotesTooltip(data){
         }
     },
     callback: function (result) {
-        if(result){
-            socket.emit("setDataNotesEstado", { "id": data["id"],"cama_nombre":data["cama_nombre"],"estado":1 })
-        }else{
-            //msj_error_noti("No se confirmo la limpieza" );
-        }
+      if(result){
+        socket.emit("setDataNotesEstado", { "id": data["id"],"cama_nombre":data["cama_nombre"],"estado":1,"tipo_nota":data["dataTooltip"][0]["tipo_nota"]})
+      }else{
+          //msj_error_noti("No se confirmo la limpieza" );
+      }
     }});
 }
 

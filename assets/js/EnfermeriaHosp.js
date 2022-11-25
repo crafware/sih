@@ -200,6 +200,9 @@ $(document).ready(function (e) {
 
                     }
                 }*/
+                /*if(data.accion=='5'){ 
+                    addNotaDescompuesta(cama_id);
+                }*/
             },error: function (e) {
                 msj_error_noti('problemas');
                 //msj_error_serve();
@@ -209,4 +212,56 @@ $(document).ready(function (e) {
          
     }
 
+
+    function addNotaDescompuesta(){
+        let camaId = $(this).attr('data-cama');
+        let camaNombre = $(this).attr('data-cama_nombre');
+        let empleado_id =  $('input[name=infoEmpleado]').val();
+        console.log("addNotaDescompuesta")
+        console.log(camaId)
+        console.log(camaNombre)
+        console.log(empleado_id)
+        bootbox.prompt({
+            title: "Selecciona la naturaleza del problema(s)",
+            inputType: 'checkbox',
+            inputOptions: [
+            {text: 'Mecánico',
+                value: 'Mecánico',},
+            {text: 'Eléctrico',
+                value: 'Eléctrico',},
+            {text: 'Plomería',
+                value: 'Plomería',},
+            {text: 'Otros',
+                value: 'Otros',}
+            ],
+            callback: function (resultCheckbox) {
+                console.log(resultCheckbox);
+                bootbox.prompt({
+                    title: '<center><h4>Realiza una descripción del problema </h4></center>',
+                    inputType: 'textarea',
+                    callback: function (resultTextarea) {
+                        console.log(resultCheckbox);
+                        if (resultTextarea == null){
+                            msj_success_noti("Nota no agregada");
+                        }else if (resultTextarea != ""){
+                            result = "";
+                            if(resultCheckbox.length > 0){
+                                result += "Tipo: \n"
+                                for(var r in resultCheckbox){
+                                    result += resultCheckbox[r] + " \n"
+                                }
+                            }
+                            result += "Descripción: \n" + resultTextarea;
+                            bootbox.alert({
+                                message: result,
+                                size: 'small'
+                            });
+                        }else{
+                            msj_error_noti("No se escribe una descripción");
+                        }
+                    }
+                });
+            }
+        });
+    }
 })

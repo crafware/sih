@@ -139,10 +139,12 @@
                     $paciente_diagnostico_primario = $value_diagnosticos['cie10_nombre'];
                     $paciente_diagnostico_primario_cie10_id = $value_diagnosticos['cie10_clave'];
                 }else if($paciente_diagnosticos_secundarios==''){
-                        $paciente_diagnosticos_secundarios    .= $value_diagnosticos['cie10_nombre'];
-                        $paciente_diagnosticos_secundarios_cie10_id    .= $value_diagnosticos['cie10_clave'];
-                    }
-                      
+                    $paciente_diagnosticos_secundarios    .= $value_diagnosticos['cie10_nombre'];
+                    $paciente_diagnosticos_secundarios_cie10_id    .= $value_diagnosticos['cie10_clave'];
+                }
+                if($value_diagnosticos['cie10_id'] == 69824){
+                    $paciente_diagnostico_primario = $value_diagnosticos['complemento'];
+                }     
             }
             if($value['hf_ce']== 1) {
                 $lugarAtencion = 'Cons';
@@ -302,15 +304,19 @@
 
             foreach ($sql_Diagnosticos as $value_diagnosticos) { 
                 if($value_diagnosticos['tipo_diagnostico']=='1') {
-                    $paciente_diagnostico_primario  = $value_diagnosticos['cie10_nombre'];
-                    $paciente_diagnostico_primario_cie10_id  = $value_diagnosticos['cie10_clave'];
+                    $paciente_diagnostico_primario              = $value_diagnosticos['cie10_nombre'];
+                    $paciente_diagnostico_primario_cie10_id     = $value_diagnosticos['cie10_clave'];
                 }else if($value_diagnosticos['tipo_diagnostico']=='0' ) {
-                    $paciente_diagnostico_primario = $value_diagnosticos['cie10_nombre'];
-                    $paciente_diagnostico_primario_cie10_id = $value_diagnosticos['cie10_clave'];
+                    $paciente_diagnostico_primario              = $value_diagnosticos['cie10_nombre'];
+                    $paciente_diagnostico_primario_cie10_id     = $value_diagnosticos['cie10_clave'];
                 }else if($paciente_diagnosticos_secundarios==''){
-                        $paciente_diagnosticos_secundarios    .= $value_diagnosticos['cie10_nombre'];
-                        $paciente_diagnosticos_secundarios_cie10_id    .= $value_diagnosticos['cie10_clave'];
-                    }
+                    $paciente_diagnosticos_secundarios          .= $value_diagnosticos['cie10_nombre'];
+                    $paciente_diagnosticos_secundarios_cie10_id .= $value_diagnosticos['cie10_clave'];
+                }
+                if($value_diagnosticos['cie10_id'] == 69824){
+                    $paciente_diagnostico_primario = $value_diagnosticos['complemento'];
+                }
+                $paciente_diagnostico_primario = "hola mundo";
                       
             }?>
 
