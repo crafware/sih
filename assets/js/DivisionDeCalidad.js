@@ -23,7 +23,6 @@ $('body').on('click', '.buscarPacienteDDC', function (e) {
     var inputSearch = $('#inputSearch').val();
     var IngresosEgr = $('#inputSelectIngresosEgresosGet').val();
     var selectFecha = $('#selectFechaGet').val();
-    console.log(3243432)
     var data = {
         "inputSelect": inputSelect,
         "inputSearch": inputSearch,

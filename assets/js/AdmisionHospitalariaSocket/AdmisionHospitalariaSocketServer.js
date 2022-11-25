@@ -66,7 +66,7 @@ io.on("connection", (socket) => {
     getDataFechaSuciaTooltip(data["id"], socket);
   }))
   socket.on("getDataNotesTooltip", (data => {
-    getDataNotesTooltip(data["id"],data["cama_nombre"], socket);
+    getDataNotesTooltip(data["id"],data["cama_nombre"],data["tipo_nota"], socket);
   }))
   socket.on("getDataPacientesAreasCriticas", (data => {
     console.log(data);
@@ -82,15 +82,16 @@ io.on("connection", (socket) => {
 
 
 function setDataNotesEstado(data) {
+  console.log("data")
   console.log(data)
-  var end = true
   var cama_id = data["id"]
   var cama_nombre = data["cama_nombre"]
+  var tipo_nota = data["tipo_nota"]
   pool.getConnection((err, connection,) => {
     if (err)
       throw err;
     console.log('connected as id ' + connection.threadId);
-    connection.query('UPDATE os_camas_notas SET estado = 1 where cama_id = ' + cama_id, (err, rows,) => {
+    connection.query('UPDATE os_camas_notas SET estado = 1 where cama_id = ' + cama_id + " and tipo_nota = " + tipo_nota, (err, rows,) => {
       connection.release(); // return the connection to pool
       if (!err) {
         try {
@@ -105,7 +106,6 @@ function setDataNotesEstado(data) {
       }
     });
   });
-  return end;
 }
 
 // Get empleado by ID
@@ -258,13 +258,13 @@ function getDataFechaSuciaTooltip(cama_id_piso, socket) {
   return end;
 }
 
-function getDataNotesTooltip(cama_id,cama_nombre, socket) {
+function getDataNotesTooltip(cama_id,cama_nombre, tipo_nota, socket) {
   var end = true;
   pool.getConnection((err, connection,) => {
     if (err)
       throw err;
     //connection.query('SELECT MAX(fecha_hora) as fecha FROM os_camas_estados WHERE cama_id = ' + cama_id, (err, rows,) => {
-    connection.query('SELECT * FROM os_camas_notas WHERE estado = 0 and cama_id =' + cama_id, (err, rows,) => {
+    connection.query('SELECT * FROM os_camas_notas WHERE estado = 0 and cama_id =' + cama_id + " and tipo_nota = " + tipo_nota, (err, rows,) => {
     connection.release(); // return the connection to pool
       if (!err) {
         try {

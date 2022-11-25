@@ -265,8 +265,8 @@ class Hospitalizacion extends Config{
         $sucias= $this->totalCamasEstado($pisoSelect, 'Sucia');   // Esta sucia
         $descompuestas = $this->totalCamasEstado($pisoSelect, 'Descompuesta');        // Esta descompuesta
         $prealtas= $this->totalCamasEstado($pisoSelect, 'Prealta'); // Esta descompuesta
-        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0");
-        
+        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 0");
+        $NotasDes = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 1");
         $col = '';
         $i='';
         $col.='<div class="tablero-piso">
@@ -318,13 +318,17 @@ class Hospitalizacion extends Config{
                                             $NotasLen += 1;
                                         }
                                     }
-                                    if ($NotasLen > 0) {
-                                        $Op = 1;
-                                    } else {
-                                        $Op = 0;
+                                    if ($NotasLen > 0) { $Op = 1;}else{$Op = 0;}
+                                    $NotasLenDes = 0;
+                                    foreach ($NotasDes as $Nota) {
+                                        if ($Nota["cama_id"] == $value['cama_id']) {
+                                            $NotasLenDes += 1;
+                                        }
                                     }
+                                    if ($NotasLenDes > 0) { $OpDes = 1;}else{$OpDes = 0;}
                                     $col .=     '<div id = "nota_' . $value['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $value['cama_nombre'] . ' data-cama-id=' . $value['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
-                                            </div>';
+                                    <div id = "nota_des_' . $value['cama_id'] . '" class="notificacion-nota-des" ' . 'data-cama-nombre=' . $value['cama_nombre'] . ' data-cama-id=' . $value['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $OpDes . '"><p>' . "$NotasLenDes" . '</p></div>       
+                                    </div>';
                                 }
                       $col.='</div>'; 
                  $col.='</div>'; 
@@ -498,6 +502,11 @@ class Hospitalizacion extends Config{
         $triage_id = $this->input->post('triage_id');
         $estado_paciente = $this->input->post('estadoPaciente');
         $cama_display = "0";
+        /*$this->setOutput(array(
+            'accion'        => "5",
+            'cama_id'       => $cama_id
+        ));
+        return 0;¨*/
         /* acciones de botones en camas */
         /* 1=Reservado,
            2=Ocupado,

@@ -154,7 +154,8 @@ class Admisionhospitalaria extends Config{
         $TotalReparadas     = $this->TotalCamasEstatus('Reparada');
         $Col .= '<div class="tablero">
                 <div id="bead-map" >';
-        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0");
+        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 0");
+        $NotasDes = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 1");
         foreach ($Pisos as $value) {
             $Camas = $this->config_mdl->_query("SELECT * FROM os_camas, os_areas, os_pisos, os_pisos_camas, os_pisos_sc WHERE 
             os_areas.area_id        =os_camas.area_id AND 
@@ -319,12 +320,17 @@ class Admisionhospitalaria extends Config{
                         $NotasLen += 1;
                     }
                 }
-                if ($NotasLen > 0) {
-                    $Op = 1;
-                } else {
-                    $Op = 0;
+                if ($NotasLen > 0) { $Op = 1;}else{$Op = 0;}
+                $NotasLenDes = 0;
+                foreach ($NotasDes as $Nota) {
+                    if ($Nota["cama_id"] == $valor['cama_id']) {
+                        $NotasLenDes += 1;
+                    }
                 }
-                $Col .= '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div></div>';
+                if ($NotasLenDes > 0) { $OpDes = 1;}else{$OpDes = 0;}
+                $Col .=     '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
+                         <div id = "nota_des_' . $valor['cama_id'] . '" class="notificacion-nota-des" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $OpDes . '"><p>' . "$NotasLenDes" . '</p></div>
+                    </div>';
             } //cierre foreach ($Camas as $value)
 
 
@@ -364,7 +370,8 @@ class Admisionhospitalaria extends Config{
         $TotalReparadas     = $this->TotalCamasEstatus('Reparada');
         $Col .= '<div class="tablero">
                     <div id="bead-map" >';
-        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0");
+        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 0");
+        $NotasDes = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 1");
         foreach ($Pisos as $value) {
             $Camas = $this->config_mdl->_query("SELECT * FROM os_camas, os_areas, os_pisos, os_pisos_camas, os_pisos_sc WHERE 
                 os_areas.area_id        =os_camas.area_id AND 
@@ -495,12 +502,17 @@ class Admisionhospitalaria extends Config{
                         $NotasLen += 1;
                     }
                 }
-                if ($NotasLen > 0) {
-                    $Op = 1;
-                } else {
-                    $Op = 0;
+                if ($NotasLen > 0) { $Op = 1;}else{$Op = 0;}
+                $NotasLenDes = 0;
+                foreach ($NotasDes as $Nota) {
+                    if ($Nota["cama_id"] == $valor['cama_id']) {
+                        $NotasLenDes += 1;
+                    }
                 }
-                $Col .= '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div></div>';
+                if ($NotasLenDes > 0) { $OpDes = 1;}else{$OpDes = 0;}
+                $Col .=     '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
+                         <div id = "nota_des_' . $valor['cama_id'] . '" class="notificacion-nota-des" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $OpDes . '"><p>' . "$NotasLenDes" . '</p></div>
+                    </div>';
             } //cierre foreach ($Camas as $value)
 
 
@@ -550,7 +562,8 @@ class Admisionhospitalaria extends Config{
                         <span class="infoPisoDisponibles">Disponibles: ' . $Disponibles . '</span>
                         <span class="infoPisoOcupadas" style="padding-left: 50px">Ocupadas: ' . $Ocupadas . '</span>
                     </div>';
-        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0");
+        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 0");
+        $NotasDes = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 1");
         foreach ($Camas as $valor) {
             $InfectadoColor = '';
             $Accion = '';
@@ -679,12 +692,17 @@ class Admisionhospitalaria extends Config{
                     $NotasLen += 1;
                 }
             }
-            if ($NotasLen > 0) {
-                $Op = 1;
-            } else {
-                $Op = 0;
+            if ($NotasLen > 0) { $Op = 1;}else{$Op = 0;}
+            $NotasLenDes = 0;
+            foreach ($NotasDes as $Nota) {
+                if ($Nota["cama_id"] == $valor['cama_id']) {
+                    $NotasLenDes += 1;
+                }
             }
-            $Col .= '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div></div>';
+            if ($NotasLenDes > 0) { $OpDes = 1;}else{$OpDes = 0;}
+            $Col .=     '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
+                    <div id = "nota_des_' . $valor['cama_id'] . '" class="notificacion-nota-des" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $OpDes . '"><p>' . "$NotasLenDes" . '</p></div>
+                </div>';
         } //cierre foreach ($Camas as $value)
 
         $Col .= '</div>'; // cierre de div class="panel panel-default"
@@ -717,7 +735,8 @@ class Admisionhospitalaria extends Config{
         );
         $Col .= '<div class="tablero">
                     <div id="bead-map" >';
-        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0");
+        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 0");
+        $NotasDes = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 1");
         foreach ($Pisos as $value) {
             $Camas = $this->config_mdl->_query("SELECT * FROM os_camas, os_areas, os_pisos, os_pisos_camas, os_pisos_sc WHERE 
                 os_areas.area_id        =os_camas.area_id AND 
@@ -850,13 +869,17 @@ class Admisionhospitalaria extends Config{
                         $NotasLen += 1;
                     }
                 }
-                if ($NotasLen > 0) {
-                    $Op = 1;
-                } else {
-                    $Op = 0;
+                if ($NotasLen > 0) { $Op = 1;}else{$Op = 0;}
+                $NotasLenDes = 0;
+                foreach ($NotasDes as $Nota) {
+                    if ($Nota["cama_id"] == $valor['cama_id']) {
+                        $NotasLenDes += 1;
+                    }
                 }
+                if ($NotasLenDes > 0) { $OpDes = 1;}else{$OpDes = 0;}
                 $Col .=     '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
-                        </div>';
+                        <div id = "nota_des_' . $valor['cama_id'] . '" class="notificacion-nota-des" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $OpDes . '"><p>' . "$NotasLenDes" . '</p></div>
+                    </div>';
             } //cierre foreach ($Camas as $value)
             $Col .= '</div>'; // cierre de div class="panel panel-default"
             $Col .= '</div>'; // cierre de div class="panel panel-default"
@@ -902,7 +925,8 @@ class Admisionhospitalaria extends Config{
         );
         $Col .= '<div class="tablero">
                     <div id="bead-map" >';
-        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0");
+        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 0");
+        $NotasDes = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 1");
         foreach ($Pisos as $value) {
             $Camas = $this->config_mdl->_query("SELECT * FROM os_camas, os_areas, os_pisos, os_pisos_camas, os_pisos_sc WHERE 
                 os_areas.area_id        =os_camas.area_id AND 
@@ -1035,13 +1059,17 @@ class Admisionhospitalaria extends Config{
                         $NotasLen += 1;
                     }
                 }
-                if ($NotasLen > 0) {
-                    $Op = 1;
-                } else {
-                    $Op = 0;
+                if ($NotasLen > 0) { $Op = 1;}else{$Op = 0;}
+                $NotasLenDes = 0;
+                foreach ($NotasDes as $Nota) {
+                    if ($Nota["cama_id"] == $valor['cama_id']) {
+                        $NotasLenDes += 1;
+                    }
                 }
+                if ($NotasLenDes > 0) { $OpDes = 1;}else{$OpDes = 0;}
                 $Col .=     '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
-                        </div>';
+                        <div id = "nota_des_' . $valor['cama_id'] . '" class="notificacion-nota-des" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $OpDes . '"><p>' . "$NotasLenDes" . '</p></div>
+                    </div>';
             } //cierre foreach ($Camas as $value)
             $Col .= '</div>'; // cierre de div class="panel panel-default"
             $Col .= '</div>'; // cierre de div class="panel panel-default"
@@ -1086,7 +1114,8 @@ class Admisionhospitalaria extends Config{
         );
         $Col .= '<div class="tablero">
                     <div id="bead-map" >';
-        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0");
+        $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 0");
+        $NotasDes = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 1");
         foreach ($Pisos as $value) {
             $Camas = $this->config_mdl->_query("SELECT * FROM os_camas, os_areas, os_pisos, os_pisos_camas, os_pisos_sc WHERE 
                 os_areas.area_id        =os_camas.area_id AND 
@@ -1204,13 +1233,17 @@ class Admisionhospitalaria extends Config{
                         $NotasLen += 1;
                     }
                 }
-                if ($NotasLen > 0) {
-                    $Op = 1;
-                } else {
-                    $Op = 0;
+                if ($NotasLen > 0) { $Op = 1;}else{$Op = 0;}
+                $NotasLenDes = 0;
+                foreach ($NotasDes as $Nota) {
+                    if ($Nota["cama_id"] == $valor['cama_id']) {
+                        $NotasLenDes += 1;
+                    }
                 }
+                if ($NotasLenDes > 0) { $OpDes = 1;}else{$OpDes = 0;}
                 $Col .=     '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
-                        </div>';
+                        <div id = "nota_des_' . $valor['cama_id'] . '" class="notificacion-nota-des" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $OpDes . '"><p>' . "$NotasLenDes" . '</p></div>
+                    </div>';
             } //cierre foreach ($Camas as $value)
             $Col .= '</div>'; // cierre de div class="panel panel-default"
             $Col .= '</div>'; // cierre de div class="panel panel-default"
