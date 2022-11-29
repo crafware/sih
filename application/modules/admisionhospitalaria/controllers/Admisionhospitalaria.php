@@ -1028,14 +1028,18 @@ class Admisionhospitalaria extends Config{
                     } else {
                         $CambiarEstadoSemaforo = "";
                     }
-                    $acciones = '<ul class="list-inline list-menu">
-                                    <li class="dropdown">
-                                        <a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fa fa-bed"></i>
-                                        </a>
-                                        <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' . $nombreCama . ' ' . $ConfirmarLimpieza . ' ' . $AgregarNota . ' ' . $CambiarEstadoSemaforo . ' </ul>
-                                    </li>
-                                </ul>';
+                    if ($this->UMAE_AREA === 'Limpieza e Higiene') {    
+                        $acciones = '<ul class="list-inline list-menu">
+                                        <li class="dropdown">
+                                            <a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-bed"></i>
+                                            </a>
+                                            <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' . $nombreCama . ' ' . $ConfirmarLimpieza . ' ' . $AgregarNota . ' ' . $CambiarEstadoSemaforo . ' </ul>
+                                        </li>
+                                    </ul>';
+                    }else{
+                        $acciones = '<i class="fa fa-bed"></i>';
+                    }
                 }
                 $Col .= '<div class="contenedor fila ' . $borde . '">
                             <div id="proceso" style="color: ' . $color . ';">
@@ -1272,19 +1276,32 @@ class Admisionhospitalaria extends Config{
         $cama_id = $this->input->post('cama_id');
         $empleado_id = $this->input->post('empleado_id');
         $nota = $this->input->post('result');
+        $tipo = $this->input->post('tipo');
 
         $this->config_mdl->_insert('os_camas_notas', array(
             'empleado_id'   => $empleado_id,
             'cama_id'       => $cama_id,
             'nota'          => $nota,
             'estado'        => 0,
+            'tipo_nota'     => $tipo,
             'fecha_nota'    => date('Y-m-d H:i')
         ));
         $this->setOutput(array("cama_id" => $cama_id, 'empleado_id' => $empleado_id,  "nota" => $nota));
     }
 
-    public function AjaxGuardarEstadoSemaforo()
-    {
+    public function AjaxMarcarLeidoNotaCama(){
+        $cama_id = $this->input->post('cama_id');
+        $tipo = $this->input->post('tipo');
+        $this->config_mdl->_update_data('os_camas_notas', array(  
+            'estado'    => 1),array(
+            'cama_id'   => $cama_id,
+            'tipo_nota' => $tipo,
+            'estado'    => 0)
+        );
+        $this->setOutput(array("cama_id" => $cama_id));
+    }
+
+    public function AjaxGuardarEstadoSemaforo(){
         $cama_id = $this->input->post('cama_id');
         $cama_semaforo_estado = $this->input->post('result');
         $this->config_mdl->_update_data("os_camas", array(

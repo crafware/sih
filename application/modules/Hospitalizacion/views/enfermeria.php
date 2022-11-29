@@ -11,8 +11,6 @@ function getServerIp(){
     }
 }
 ?>
-<script               src="<?= "http://".getServerIp().':3001/socket.io/socket.io.js'?>"> type="text/javascript"></script>
-<script type="module" src="<?= base_url('assets/js/AdmisionHospitalariaSocket/AdmisionHospitalariaSocketClient.js?'). md5(microtime())?>" type="text/javascript"></script>
 
 
 <style type="text/css">
@@ -172,9 +170,13 @@ function getServerIp(){
         </div>
       </div>
     </div>
+    <div class="visor-camas" hidden></div>
   </div>
-  <input type="hidden" name="area" value="<?= $this->UMAE_AREA ?>">
+  <input type="hidden" name="infoEmpleado" value="<?= $this->UMAE_USER?>">
+	<input type="hidden" name="area" value="<?= $this->UMAE_AREA?>">
 </div>
 <?= modules::run('Sections/Menu/footer'); ?>
 <script src="<?= base_url('assets/js/EnfermeriaHosp.js?') . md5(microtime()) ?>" type="text/javascript"></script>
 <link href="<?=  base_url()?>assets/styles/tooltip.css" rel="stylesheet" type="text/css" />
+<script               src="<?= "http://".getServerIp().':3001/socket.io/socket.io.js'?>"> type="text/javascript"></script>
+<script type="module" src="<?= base_url('assets/js/AdmisionHospitalariaSocket/AdmisionHospitalariaSocketClient.js?'). md5(microtime())?>" type="text/javascript"></script>

@@ -10,11 +10,11 @@ $(document).ready(function () {
             buttons: {
                 confirm: {
                     label: 'Si',
-                    className: 'btn-success'
+                    className: 'back-imss'
                 },
                 cancel: {
                     label: 'No',
-                    className: 'btn-danger'
+                    className: 'back-imss'
                 }
             },
             callback: function (result) {
@@ -36,9 +36,9 @@ $(document).ready(function () {
                 if (result == null){
                     msj_success_noti("Nota no agregada");
                 }else if (result != ""){
-                    GuardarNotaCama(camaId, empleado_id, result);
+                    GuardarNotaCama(camaId, empleado_id, result, 0);
                 }else{
-                    msj_error_noti("Escribe una nota");
+                    msj_error_noti("No se escribió una nota");
                 }
             }
         });
@@ -55,11 +55,11 @@ $(document).ready(function () {
             buttons: {
                 confirm: {
                     label: 'Si',
-                    className: 'btn-success'
+                    className: 'back-imss'
                 },
                 cancel: {
                     label: 'No',
-                    className: 'btn-danger'
+                    className: 'back-imss'
                 }
             },
             callback: function (result) {
@@ -87,12 +87,12 @@ $(document).ready(function () {
                         buttons: {
                             confirm: {
                                 label: 'Si',
-                                className: 'btn-success'
+                                className: 'back-imss'
                             },
 
                             cancel: {
                                 label: 'No',
-                                className: 'btn-danger'
+                                className: 'back-imss'
                             }
                         },
                         callback: function (result) {
@@ -104,6 +104,7 @@ $(document).ready(function () {
                                 }
                                 //console.log(camaId,camaEstado,folio,accion);
                                 SolicitaCambioEstado(camaId, accion, folio, estadoPaciente);
+                                MarcarLeidoNotaCama(camaId, "1");
                             }
                         }
                     });
@@ -130,7 +131,7 @@ $(document).ready(function () {
         })
     }
 
-    function GuardarNotaCama(cama_Id, empleado_id, result){
+    function GuardarNotaCama(cama_Id, empleado_id, result, tipo){
         $.ajax({
             url: base_url + "AdmisionHospitalaria/AjaxGuardarNotaCama",
             type: "POST",
@@ -139,6 +140,7 @@ $(document).ready(function () {
                 cama_id: cama_Id,
                 empleado_id: empleado_id,
                 result: result,
+                tipo: tipo,
                 csrf_token: csrf_token
             },
             beforeSend: function (xhr){
@@ -147,6 +149,28 @@ $(document).ready(function () {
                 bootbox.hideAll();
                 console.log(data)
                 msj_success_noti("Nota agregada");
+            }, error: function(e){
+                msj_error_noti(e);
+            }
+        })
+    }
+
+    function MarcarLeidoNotaCama(cama_Id, tipo){
+        $.ajax({
+            url: base_url + "AdmisionHospitalaria/AjaxMarcarLeidoNotaCama",
+            type: "POST",
+            dataType: "json",
+            data: {
+                cama_id: cama_Id,
+                tipo: tipo,
+                csrf_token: csrf_token
+            },
+            beforeSend: function (xhr){
+                msj_loading();
+            }, success: function(data){
+                bootbox.hideAll();
+                console.log(data)
+                msj_success_noti("Nota leida");
             }, error: function(e){
                 msj_error_noti(e);
             }
@@ -188,12 +212,12 @@ $(document).ready(function () {
             success: function (data, textStatus, jqXHR) {
                 console.log(data);
                 bootbox.hideAll();
-                if (data.accion == '6') {
+                /*if (data.accion == '6') {
                     $('.cama' + cama_id).removeClass('grey-900').addClass('cyan-400');
 
                 } else if (data.accion == '7') {
                     $('.cama' + cama_id).removeClass('yellow-600').addClass('lime');
-                }
+                }*/
             }, error: function (e) {
                 msj_error_noti('problemas');
                 //msj_error_serve();
@@ -214,11 +238,11 @@ $(document).ready(function () {
             buttons: {
                 confirm: {
                     label: 'Si',
-                    className: 'btn-success'
+                    className: 'back-imss'
                 },
                 cancel: {
                     label: 'No',
-                    className: 'btn-danger'
+                    className: 'back-imss'
                 }
             },
             callback: function (result) {

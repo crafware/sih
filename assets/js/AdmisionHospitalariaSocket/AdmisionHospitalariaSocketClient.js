@@ -19,7 +19,8 @@ socket.on("getDataRequest", function (data) {
   //activateTooltip()
 });
 var dropdownToggleForbidden = ["Limpieza e Higiene","Conservación" ]
-var AreasSemaforo = ["Limpieza e Higiene", "Enfermería Hospitalización"]
+var AreasSemaforo = ["Limpieza e Higiene", "Enfermería Hospitalización","Conservación" ]
+var AreasOctionsLimpiezaEHigiene = ["Limpieza e Higiene", "Enfermería Hospitalización" ]
 
 socket.on("getDataTooltip", function (data) {
   if (data["dataTooltip"].length > 0) {
@@ -270,7 +271,7 @@ function refreshGraphics(data) {
             }
             if (AreasSemaforo.find(element => element.trim() === $('input[name=area]').val()) || $('input[name=area]').val() == 'Dirección Enfermería ') { 
               var cama_no = bed.getElementsByClassName("cama-no")[0];
-              if (AreasSemaforo.find(element => element.trim() === $('input[name=area]').val())){
+              if (AreasOctionsLimpiezaEHigiene.find(element => element.trim() === $('input[name=area]').val())){
                 delecteOctions(cama_no);
                 createOctionsLimpiezaEHigiene(cama_no, data);
               }
@@ -814,18 +815,18 @@ function showFechaSuciaTooltip(data) {
 function showDataNotesTooltip(data){
   var notas = "";
   for(var i=0;i<data["dataTooltip"].length;i++){
-    notas += '<h4>'+data["dataTooltip"][i]["nota"]+'</h4>'
+    notas += '<h4>'+(i+1)+".- "+data["dataTooltip"][i]["nota"]+'</h4>'
   }
   bootbox.confirm({
-    message: '<center><h4>Notas de la cama No.'+data["cama_nombre"]+'?</h4></center>' + notas,
+    message: '<center><h4>Notas de la cama No.'+data["cama_nombre"]+'</h4></center>' + notas,
     buttons: {
         confirm: {
             label: 'Marcar notas como leídas',
-            className: 'btn-success'
+            className: 'back-imss'
         },
         cancel: {
             label: 'Cerrar',
-            className: 'btn-danger'
+            className: 'back-imss'
         }
     },
     callback: function (result) {

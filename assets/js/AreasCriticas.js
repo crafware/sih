@@ -42,12 +42,12 @@ $(document).ready(function () {
             buttons: {
                 confirm: {
                     label: 'Aceptar',
-                    className: 'btn-success'
+                    className: 'back-imss'
                 },
 
                 cancel: {
                     label: 'Cancelar',
-                    className: 'btn-danger'
+                    className: 'back-imss'
                 }
             },
             callback: function (res) {

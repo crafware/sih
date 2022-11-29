@@ -14,9 +14,7 @@ $(document).ready(function (e) {
             //console.log(triage_id, cama_id, camaNombre);
         }
         AjaxInfoPacienteCama(cama_id, triage_id, camaNombre);
-
     });
-
     
     /* acciones de botones para camas */
         /* 1=Reservado,
@@ -27,31 +25,26 @@ $(document).ready(function (e) {
            6=Limpia,
            7=vestida=Disponible */
     $('body').on('click', '.btnAccion',function(){
-        let cama_id= $(this).attr('data-cama');
-        let folio  = $(this).attr('data-folio');
-        let accion = $(this).attr('data-accion');
-      
-
+        let infoEmp = $('input[name=infoEmpleado]').val();
+        let cama_id = $(this).attr('data-cama');
+        let folio   = $(this).attr('data-folio');
+        let accion  = $(this).attr('data-accion');
+        console.log(infoEmp)
         switch (accion) {
           case '1':
             mensaje = '¿Confirmar el ingreso de paciente?';
-            
             break;
           case '2':
             mensaje = '¿Desea cambiar a Ocupado?';
-            
             break;
           case '3':
             mensaje = '¿Desea cambiar a cama Sucia?';
-            
             break;
           case '4':
             mensaje = '¿Desea indicar cama Contaminada?';
-            
             break;
           case '5':
             mensaje = '¿Desea indicar cama Descompuesta?';
-            
             break;
           case '6':
             mensaje = '¿Confirmar cama Limpia?';
@@ -62,30 +55,31 @@ $(document).ready(function (e) {
           default:
             console.log('Lo lamentamos, por el momento no disponemos de ' + accion + '.');
         }
-
         bootbox.confirm({
             message : mensaje,
             buttons : {
                         confirm: {
                             label:     'Si',
-                            className: 'btn-success'
+                            className: 'back-imss'
                             },
-                        
                         cancel: {
                               label:      'No',
-                              className:  'btn-danger'
+                              className: 'back-imss'
                         }
                      },
             callback: function (result) {
-                        if(result) { 
-                            SolicitaCambioEstado(cama_id,accion,folio)  
-                        }
+                if(result) { 
+                    if(accion == "5") { 
+                        addNotaDescompuesta(cama_id,infoEmp, folio,)
+                    }else{
+                        SolicitaCambioEstado(cama_id,accion,folio);
                     }
+                }
+            }
         })
     }); 
 
 	function AjaxCamasPiso(piso) {
-        
         $.ajax({
             url: base_url+"Hospitalizacion/AjaxCamasPiso",
             type: 'POST',
@@ -110,7 +104,6 @@ $(document).ready(function (e) {
                 $('#camasSucias').html(data.Sucias);
                 $('#camasDescompuestas').html(data.Descompuestas);
                 $('#camasPrealta').html(data.Prealtas);
-
             },error: function (e) {
                 msj_error_serve();
                 bootbox.hideAll();
@@ -146,14 +139,13 @@ $(document).ready(function (e) {
                 //$('.info-tabs').addClass('hide');
                  msj_error_noti('No hay paciente en cama solicitada');
                  bootbox.hideAll();
-
                 //msj_error_serve();
-                
             }
         })  
     }
 
     function SolicitaCambioEstado(cama_id,accion,folio){
+        
         //console.log(cama_id,accion,folio);
         $.ajax({
             url:base_url+"Hospitalizacion/SolicitaCambioEstado",
@@ -170,98 +162,86 @@ $(document).ready(function (e) {
             },
             success: function(data, textStatus, jqXHR){
                 bootbox.hideAll();
-                /*if(data.accion=='1'){
-                    //console.log(data);
-                    $('.buttons-estados').html(data.estadosbtns);
-                    if($('.cama'+cama_id).hasClass('HOMBRE')){
-                        $('.cama'+cama_id).removeClass('purple-300').addClass('blue-800');
-                    }else $('.cama'+cama_id).removeClass('purple-300').addClass('pink-A100');                    
-                }else if(data.accion=='2'){
-                    //console.log(data);
-                    $('.buttons-estados').html(data.estadosbtns);
-                    if($('.cama'+cama_id).hasClass('HOMBRE')){
-                        $('.cama'+cama_id).removeClass('cyan-400').addClass('blue-800');
-                    }else $('.cama'+cama_id).removeClass('cyan-400').addClass('pink-A100');  
-                }else if(data.accion=='3'){
-                    $('.cama'+cama_id).removeClass('purple-300').addClass('pink-A100');
-                }else if(data.accion=='4'){
-                    if($('.cama'+cama_id).hasClass('blue-800')){
-                        $('.cama'+cama_id).removeClass('blue-800').addClass('red-900');
-                    }else $('.cama'+cama_id).removeClass('pink-A100').addClass('red-900');
-                }else if(data.accion=='5'){ 
-                    $('.buttons-estados').html(data.estadosbtns);
-                    if($('.cama'+cama_id).hasClass('HOMBRE')){
-                        $('.cama'+cama_id).removeClass('lime').addClass('blue-800');
-                    }else $('.cama'+cama_id).removeClass('lime').addClass('pink-A100'); 
-                }else if(data.accion=='7'){ 
-                    $('.buttons-estados').html(data.estadosbtns);
-                    if($('.cama'+cama_id).hasClass('cyan-400') ){
-                        $('.cama'+cama_id).removeClass('cyan-400').addClass('green');
-
-                    }
-                }*/
-                /*if(data.accion=='5'){ 
-                    addNotaDescompuesta(cama_id);
-                }*/
+                if(data.accion=='5'){ 
+                    msj_success_noti("Se reportó cama descompuesta");
+                }
             },error: function (e) {
                 msj_error_noti('problemas');
-                //msj_error_serve();
-                
             }
         })
-         
     }
 
-
-    function addNotaDescompuesta(){
-        let camaId = $(this).attr('data-cama');
-        let camaNombre = $(this).attr('data-cama_nombre');
-        let empleado_id =  $('input[name=infoEmpleado]').val();
-        console.log("addNotaDescompuesta")
-        console.log(camaId)
-        console.log(camaNombre)
-        console.log(empleado_id)
-        bootbox.prompt({
-            title: "Selecciona la naturaleza del problema(s)",
-            inputType: 'checkbox',
-            inputOptions: [
-            {text: 'Mecánico',
-                value: 'Mecánico',},
-            {text: 'Eléctrico',
-                value: 'Eléctrico',},
-            {text: 'Plomería',
-                value: 'Plomería',},
-            {text: 'Otros',
-                value: 'Otros',}
-            ],
-            callback: function (resultCheckbox) {
-                console.log(resultCheckbox);
-                bootbox.prompt({
-                    title: '<center><h4>Realiza una descripción del problema </h4></center>',
-                    inputType: 'textarea',
-                    callback: function (resultTextarea) {
-                        console.log(resultCheckbox);
-                        if (resultTextarea == null){
-                            msj_success_noti("Nota no agregada");
-                        }else if (resultTextarea != ""){
-                            result = "";
-                            if(resultCheckbox.length > 0){
-                                result += "Tipo: \n"
-                                for(var r in resultCheckbox){
-                                    result += resultCheckbox[r] + " \n"
-                                }
-                            }
-                            result += "Descripción: \n" + resultTextarea;
-                            bootbox.alert({
-                                message: result,
-                                size: 'small'
-                            });
-                        }else{
-                            msj_error_noti("No se escribe una descripción");
-                        }
+    function addNotaDescompuesta(cama_id,infoEmp, folio){
+        let mensaje = ''+
+                    '<div><input type="checkbox" id="Mecanica_id" name="contact" value="Mecánica" />'+
+                    '<label for="contactChoice1">Mecánica</label></div>'+
+                    '<div><input type="checkbox" id="Electrica_id" name="contact" value="Eléctrica" />'+
+                    '<label for="contactChoice2">Eléctrica</label></div>'+
+                    '<div><input type="checkbox" id="Plomeria_id" name="contact" value="Plomería" />'+
+                    '<label for="contactChoice3">Plomería</label></div>'+
+                    '<div><input type="checkbox" id="Otros_id" name="contact" value="Otros" />'+
+                    '<label for="contactChoice3">Otros</label></div>'+
+                    '<textarea type="text" id="detalles" name="detalles" rows="4" cols="50"></textarea>';
+        bootbox.confirm({
+            title : '<h5>Selecciona la naturaleza del problema(s)</h5>',
+            message: mensaje,
+            buttons:{
+                confirm:{
+                    label:'Guardar nota',
+                    className:'back-imss'
+                },cancel:{
+                    label:'Cancelar',
+                    className:'back-imss'
+                }
+            }, callback: function (result) {
+                if(result){
+                    var Tipo = ""
+                    if(document.getElementById('Mecanica_id').classList.contains( 'has-value' )){
+                        Tipo += "Mecanica "
                     }
-                });
+                    if(document.getElementById('Electrica_id').classList.contains( 'has-value' )){
+                        Tipo += "Electrica "
+                    }
+                    if(document.getElementById('Plomeria_id').classList.contains( 'has-value' )){
+                        Tipo += "Plomeria "
+                    }
+                    if(document.getElementById('Otros_id').classList.contains( 'has-value' )){
+                        Tipo += "Otros "
+                    }
+                    var detalles =  document.getElementById('detalles').value
+                    if(Tipo != "" && detalles != ""){
+                        var nota = "Tipo: \n" + Tipo + "\n Nota: \n" + detalles
+                        GuardarNotaCama(cama_id, infoEmp, nota, 1);
+                        SolicitaCambioEstado(cama_id,"5",folio);
+                    }else{
+                        msj_error_noti("No se cambio el estado de la cama, faltan campos por llenas.");
+                    }
+                }
             }
         });
+    }
+
+    function GuardarNotaCama(cama_Id, empleado_id, result, tipo){
+        $.ajax({
+            url: base_url + "AdmisionHospitalaria/AjaxGuardarNotaCama",
+            type: "POST",
+            dataType: "json",
+            data: {
+                cama_id: cama_Id,
+                empleado_id: empleado_id,
+                result: result,
+                tipo: tipo,
+                csrf_token: csrf_token
+            },
+            beforeSend: function (xhr){
+                msj_loading();
+            }, success: function(data){
+                bootbox.hideAll();
+                console.log(data)
+                msj_success_noti("Nota agregada");
+            }, error: function(e){
+                msj_error_noti(e);
+            }
+        })
     }
 })
