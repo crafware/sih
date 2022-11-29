@@ -335,6 +335,7 @@ class Hospitalizacion extends Config{
              $col.='</div>';
         $col .='</div>'; 
         $col .='<link href="'.base_url().'assets/libs/css/tooltip.css" rel="stylesheet" type="text/css" />';
+        
         //$col .='<script src="'.base_url('assets/js/AdmisionHospitalariaSocket/AdmisionHospitalariaSocketClient.js?'). md5(microtime()).'" type="text/javascript"></script>';
         $this->setOutput(array('accion'=>'1',
                 'Col'           => $col,
@@ -502,11 +503,6 @@ class Hospitalizacion extends Config{
         $triage_id = $this->input->post('triage_id');
         $estado_paciente = $this->input->post('estadoPaciente');
         $cama_display = "0";
-        /*$this->setOutput(array(
-            'accion'        => "5",
-            'cama_id'       => $cama_id
-        ));
-        return 0;¨*/
         /* acciones de botones en camas */
         /* 1=Reservado,
            2=Ocupado,
@@ -517,8 +513,6 @@ class Hospitalizacion extends Config{
            7=vestida=Disponible   
            Acciones de la camas de Limpieza e Higiene y Conservacion 
            Clicck en Cama Sucia  => acccion = 6
-        
-
            */
         
         switch ($accion) {
