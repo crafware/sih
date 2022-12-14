@@ -1097,6 +1097,13 @@ class Admisionhospitalaria extends Config{
         ));
     } //cierre de funcion AjaxvisorCamasLimpiesaEHigiene
 
+    public function AjaxGetCamas()
+    {
+        $os_camas = $this->config_mdl->_query("SELECT * FROM os_camas");
+        $this->setOutput(array(
+            'accion' => '1',
+            'os_camas'                =>  $os_camas));
+    } 
 
     public function AjaxVisorDireccionEnfermeria()
     {
