@@ -1059,11 +1059,11 @@ function updateDashboard() {
   nUpdateDashboard += 1
   var dt = new Date();
   var fecha = '' 
-  /*for(var i = 0; i < 30; i++){
+  for(var i = 0; i < 30; i++){
     fecha = dt.toISOString().slice(0, 10);
-    console.log('INSERT um_interconsultas_dashboard (I_D_Fecha, I_D_Interconsultas_Atendidas, I_D_Interconsultas_Solicitadas,I_D_Pacientes_Ingresados_Pro, I_D_Pacientes_Ingresados_Urg,I_D_Prealtas,I_D_Altas_Pacientes,pic_indicio_embarazo,I_D_Servicio) VALUES ("'+fecha+'",'+parseInt(Math.random()*20)+','+parseInt(Math.random()*20)+','+parseInt(Math.random()*20)+','+parseInt(Math.random()*20)+','+parseInt(Math.random()*20)+','+parseInt(Math.random()*20)+','+parseInt(Math.random()*20)+',1);')
+    console.log('INSERT um_consultas_dashboard (I_D_Fecha, I_D_Interconsultas_Atendidas, I_D_Interconsultas_Solicitadas,I_D_Pacientes_Ingresados_Pro, I_D_Pacientes_Ingresados_Urg,I_D_Prealtas,I_D_Altas_Pacientes,pic_indicio_embarazo,I_D_Servicio) VALUES ("'+fecha+'",'+parseInt(Math.random()*20)+','+parseInt(Math.random()*20)+','+parseInt(Math.random()*20)+','+parseInt(Math.random()*20)+','+parseInt(Math.random()*20)+','+parseInt(Math.random()*20)+','+parseInt(Math.random()*20)+',1);')
     dt.setDate(dt.getDate() -1);
-  } */
+  }
 }
 
 function realTimeUpdateDashboard(data) {
@@ -1130,7 +1130,7 @@ function VisualizarDashboard() {
 
 function updateAllDashboard() {
   if (document.getElementsByClassName("Graficas") != null) {
-    socket.emit("refresh_um_interconsultas_dashboard", {})
+    socket.emit("refresh_um_consultas_dashboard", {})
   }
 }
 

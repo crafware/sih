@@ -82,10 +82,10 @@ io.on("connection", (socket) => {
     console.log(data);
     usuarioJefeDashboard(data, socket);
   }))
-  socket.on("refresh_um_interconsultas_dashboard", (data => {
-    console.log("refresh_um_interconsultas_dashboard");
+  socket.on("refresh_um_consultas_dashboard", (data => {
+    console.log("refresh_um_consultas_dashboard");
     pool.getConnection((err, connection) => {
-      connection.query("TRUNCATE um_interconsultas_dashboard", (err,) => {
+      connection.query("TRUNCATE um_consultas_dashboard", (err,) => {
         connection.release()
         registroPacientesIngresados() 
       })
@@ -107,11 +107,11 @@ function usuarioJefeDashboard(data, socket) {
             dt.setDate(dt.getDate() - 30);
             var fecha2 = dt.toISOString().slice(0, 10)
             var empleado_servicio = row[0]["empleado_servicio"];
-            var sql = "SELECT * FROM um_interconsultas_dashboard WHERE I_D_Servicio = " + empleado_servicio + " and I_D_Fecha >= '" + fecha2 + "'";
+            var sql = "SELECT * FROM um_consultas_dashboard WHERE I_D_Servicio = " + empleado_servicio + " and I_D_Fecha >= '" + fecha2 + "'";
             connection.query(sql, (err, row,) => {
               if (err) console.log(err);
               var oneYearData = row;
-              connection.query("SELECT * FROM um_interconsultas_dashboard WHERE I_D_Servicio = " + empleado_servicio + " and I_D_Fecha = '" + fecha1 + "'", (err, row,) => {
+              connection.query("SELECT * FROM um_consultas_dashboard WHERE I_D_Servicio = " + empleado_servicio + " and I_D_Fecha = '" + fecha1 + "'", (err, row,) => {
                 connection.release();
                 /*console.log("oneYearData")
                 console.log(oneYearData)
@@ -363,14 +363,14 @@ function getDataCamasNotas(data) {
 
 /* ------------------------------------------- */
 /* ------------------------------------------- */
-/* Actualisa tabla um_interconsultas_dashboard */
+/* Actualisa tabla um_consultas_dashboard */
 /* ------------------------------------------- */
 /* ------------------------------------------- */
 /* Cama estados, Prealtas, Altas (I_D_Prealtas, I_D_Altas_Pacientes )*/
 
 function getDataRegistroSolicitudesAtendidas(affectedRows) {
   var MySQLEvent = ""
-  var inserts = "INSERT um_interconsultas_dashboard (I_D_Fecha, I_D_Interconsultas_Atendidas, I_D_Interconsultas_Solicitadas, I_D_Servicio) VALUES ";
+  var inserts = "INSERT um_consultas_dashboard (I_D_Fecha, I_D_Interconsultas_Atendidas, I_D_Interconsultas_Solicitadas, I_D_Servicio) VALUES ";
   if (affectedRows[0]["before"] == undefined) {
     pool.getConnection((err, connection,) => {
       if (err) {
@@ -383,13 +383,13 @@ function getDataRegistroSolicitudesAtendidas(affectedRows) {
       else
         fecha = fecha.slice(0, 10)
       var servicio = affectedRows[0]["after"]["doc_servicio_solicitado"];
-      connection.query("SELECT * FROM um_interconsultas_dashboard WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio, (err, row) => {
+      connection.query("SELECT * FROM um_consultas_dashboard WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio, (err, row) => {
         if (!err) {
           if (row[0] != undefined) {
             if (affectedRows[0]["after"]["doc_estatus"] == "Evaluado") {
-              MySQLEvent = "UPDATE um_interconsultas_dashboard SET I_D_Interconsultas_Atendidas = " + (row[0]["I_D_Interconsultas_Atendidas"] + 1) + ", I_D_Interconsultas_Solicitadas = " + (row[0]["I_D_Interconsultas_Solicitadas"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio
+              MySQLEvent = "UPDATE um_consultas_dashboard SET I_D_Interconsultas_Atendidas = " + (row[0]["I_D_Interconsultas_Atendidas"] + 1) + ", I_D_Interconsultas_Solicitadas = " + (row[0]["I_D_Interconsultas_Solicitadas"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio
             } else if (affectedRows[0]["after"]["doc_estatus"] == "En Espera") {
-              MySQLEvent = "UPDATE um_interconsultas_dashboard SET I_D_Interconsultas_Solicitadas = " + (row[0]["I_D_Interconsultas_Solicitadas"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio
+              MySQLEvent = "UPDATE um_consultas_dashboard SET I_D_Interconsultas_Solicitadas = " + (row[0]["I_D_Interconsultas_Solicitadas"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio
             } else {
               connection.release();
               return (-1);
@@ -429,10 +429,10 @@ function getDataRegistroSolicitudesAtendidas(affectedRows) {
       else
         fecha = fecha.slice(0, 10)
       var servicio = affectedRows[0]["after"]["doc_servicio_solicitado"];
-      connection.query("SELECT * FROM um_interconsultas_dashboard WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio, (err, row) => {
+      connection.query("SELECT * FROM um_consultas_dashboard WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio, (err, row) => {
         if (!err) {
           if (row[0] != undefined) {
-            MySQLEvent = "UPDATE um_interconsultas_dashboard SET I_D_Interconsultas_Atendidas = " + (row[0]["I_D_Interconsultas_Atendidas"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio
+            MySQLEvent = "UPDATE um_consultas_dashboard SET I_D_Interconsultas_Atendidas = " + (row[0]["I_D_Interconsultas_Atendidas"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio
             connection.query(MySQLEvent, (err, row) => {
               connection.release();
               if (err) console.log(err);
@@ -467,14 +467,14 @@ function getDataRegistroPacientesIngresados(affectedRows) {
       else
         fecha = fecha.slice(0, 10)
       var servicio = affectedRows[0]["after"]["ingreso_servicio"];
-      var inserts = "INSERT um_interconsultas_dashboard (I_D_Fecha, I_D_Pacientes_Ingresados_Pro,I_D_Pacientes_Ingresados_Urg,I_D_Servicio) VALUES ";
-      connection.query("SELECT * FROM um_interconsultas_dashboard WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio, (err, row) => {
+      var inserts = "INSERT um_consultas_dashboard (I_D_Fecha, I_D_Pacientes_Ingresados_Pro,I_D_Pacientes_Ingresados_Urg,I_D_Servicio) VALUES ";
+      connection.query("SELECT * FROM um_consultas_dashboard WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio, (err, row) => {
         if (!err) {
           if (row[0] != undefined) {
             if (affectedRows[0]["after"]["tipo_ingreso"] == "Programado") {
-              queryAux = "UPDATE um_interconsultas_dashboard SET I_D_Pacientes_Ingresados_Pro = " + (row[0]["I_D_Pacientes_Ingresados_Pro"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio;
+              queryAux = "UPDATE um_consultas_dashboard SET I_D_Pacientes_Ingresados_Pro = " + (row[0]["I_D_Pacientes_Ingresados_Pro"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio;
             } else if (affectedRows[0]["after"]["tipo_ingreso"] == "Urgente") {
-              queryAux = "UPDATE um_interconsultas_dashboard SET I_D_Pacientes_Ingresados_Urg = " + (row[0]["I_D_Pacientes_Ingresados_Urg"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio;
+              queryAux = "UPDATE um_consultas_dashboard SET I_D_Pacientes_Ingresados_Urg = " + (row[0]["I_D_Pacientes_Ingresados_Urg"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio;
             }
             connection.query(queryAux, (err, row) => {
               connection.release();
@@ -539,12 +539,12 @@ function getDataRegistroPicIndicioEmbarazo(affectedRows) {
         var servicio = row[0]["ingreso_servicio"];
         console.log(servicio)
         console.log(fecha)
-        var inserts = "INSERT um_interconsultas_dashboard (I_D_Fecha,pic_indicio_embarazo,I_D_Servicio) VALUES ";
-        connection.query("SELECT * FROM um_interconsultas_dashboard WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio, (err, row) => {
+        var inserts = "INSERT um_consultas_dashboard (I_D_Fecha,pic_indicio_embarazo,I_D_Servicio) VALUES ";
+        connection.query("SELECT * FROM um_consultas_dashboard WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio, (err, row) => {
           console.log(row)
           if (!err) {
             if (row[0] != undefined) {
-              queryAux = "UPDATE um_interconsultas_dashboard SET pic_indicio_embarazo = " + (row[0]["pic_indicio_embarazo"] + emb) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio;
+              queryAux = "UPDATE um_consultas_dashboard SET pic_indicio_embarazo = " + (row[0]["pic_indicio_embarazo"] + emb) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio;
               connection.query(queryAux, (err, row) => {
                 connection.release();
                 if (err) console.log(err);
@@ -588,10 +588,10 @@ function registroAltaPreAlta(estado) {
       if (!err) {
         if (row[0] != null) {
           var id_servicio = row[0]["id_servicio"]
-          connection.query("SELECT * FROM um_interconsultas_dashboard WHERE I_D_Fecha = '" + fecha + "' AND I_D_Servicio = " + id_servicio, async (err, row,) => {
+          connection.query("SELECT * FROM um_consultas_dashboard WHERE I_D_Fecha = '" + fecha + "' AND I_D_Servicio = " + id_servicio, async (err, row,) => {
             if (!err) {
               if (row[0] == undefined) {
-                values = "INSERT um_interconsultas_dashboard (I_D_Fecha,I_D_Prealtas,I_D_Altas_Pacientes,I_D_Servicio) VALUES "
+                values = "INSERT um_consultas_dashboard (I_D_Fecha,I_D_Prealtas,I_D_Altas_Pacientes,I_D_Servicio) VALUES "
                 if (proceso == 1) {
                   values += "('" + fecha + "',1,0," + id_servicio + ")"
                 } else if (proceso == 2) {
@@ -608,7 +608,7 @@ function registroAltaPreAlta(estado) {
                   values = row[0]["I_D_Altas_Pacientes"] + 1;
                   col = "I_D_Altas_Pacientes"
                 }
-                connection.query("UPDATE um_interconsultas_dashboard SET " + col + " = " + values + " WHERE interconsultas_dashboard_id =" + row[0]["interconsultas_dashboard_id"], (err, row) => {
+                connection.query("UPDATE um_consultas_dashboard SET " + col + " = " + values + " WHERE interconsultas_dashboard_id =" + row[0]["interconsultas_dashboard_id"], (err, row) => {
                   if (err) console.log(err);
                 });
               }
@@ -650,12 +650,12 @@ function registroSolicitudesAtendidas() {
             }
           }
         }
-        var queryArg = "SELECT * FROM um_interconsultas_dashboard"
+        var queryArg = "SELECT * FROM um_consultas_dashboard"
         var insertsData = "";
         var update = '';
         var found = true;
         var fs = "";
-        var inserts = "INSERT um_interconsultas_dashboard (I_D_Fecha, I_D_Interconsultas_Atendidas, I_D_Interconsultas_Solicitadas,I_D_Servicio) VALUES ";
+        var inserts = "INSERT um_consultas_dashboard (I_D_Fecha, I_D_Interconsultas_Atendidas, I_D_Interconsultas_Solicitadas,I_D_Servicio) VALUES ";
         connection.query(queryArg, (err, row) => {
           if (!err) {
             for (r in row) {
@@ -666,7 +666,7 @@ function registroSolicitudesAtendidas() {
               for (r in row) {
                 fs = row[r]["I_D_Fecha"] + row[r]["I_D_Servicio"]
                 if (s == fs) {
-                  update += "UPDATE um_interconsultas_dashboard SET I_D_Interconsultas_Atendidas = " + (Solicitudes_Atendidas[fs]["noAtendidas"]) + ", I_D_Interconsultas_Solicitadas = " + (Solicitudes_Atendidas[fs]["noSolicitudes"]) + " WHERE interconsultas_dashboard_id =" + row[r]["interconsultas_dashboard_id"] + ";\n"
+                  update += "UPDATE um_consultas_dashboard SET I_D_Interconsultas_Atendidas = " + (Solicitudes_Atendidas[fs]["noAtendidas"]) + ", I_D_Interconsultas_Solicitadas = " + (Solicitudes_Atendidas[fs]["noSolicitudes"]) + " WHERE interconsultas_dashboard_id =" + row[r]["interconsultas_dashboard_id"] + ";\n"
                   found = false;
                   break
                 }
@@ -750,12 +750,12 @@ function registroPacientesIngresados() {
             }
           }
         }
-        var queryArg = "SELECT * FROM um_interconsultas_dashboard";
+        var queryArg = "SELECT * FROM um_consultas_dashboard";
         var insertsData = "";
         var update = "";
         var found = true;
         var fs = "";
-        var inserts = "INSERT um_interconsultas_dashboard (I_D_Fecha, I_D_Pacientes_Ingresados_Pro,I_D_Pacientes_Ingresados_Urg,I_D_Servicio) VALUES ";
+        var inserts = "INSERT um_consultas_dashboard (I_D_Fecha, I_D_Pacientes_Ingresados_Pro,I_D_Pacientes_Ingresados_Urg,I_D_Servicio) VALUES ";
         connection.query(queryArg, (err, row) => {
           if (!err) {
             for (r in row) {
@@ -766,7 +766,7 @@ function registroPacientesIngresados() {
               for (r in row) {
                 fs = row[r]["I_D_Fecha"] + row[r]["I_D_Servicio"];
                 if (s == fs) {
-                  update += "UPDATE um_interconsultas_dashboard SET I_D_Pacientes_Ingresados_Pro = " + Pacientes_Ingresados[fs]["noPro"] + ", I_D_Pacientes_Ingresados_Urg = " + Pacientes_Ingresados[fs]["noUrg"] + " WHERE interconsultas_dashboard_id = " + row[r]["interconsultas_dashboard_id"] + ";\n"
+                  update += "UPDATE um_consultas_dashboard SET I_D_Pacientes_Ingresados_Pro = " + Pacientes_Ingresados[fs]["noPro"] + ", I_D_Pacientes_Ingresados_Urg = " + Pacientes_Ingresados[fs]["noUrg"] + " WHERE interconsultas_dashboard_id = " + row[r]["interconsultas_dashboard_id"] + ";\n"
                   found = false;
                   break
                 }
@@ -839,12 +839,12 @@ function registroIndicioEmbarazo() {
             }
           }
         }
-        var queryArg = "SELECT * FROM um_interconsultas_dashboard";
+        var queryArg = "SELECT * FROM um_consultas_dashboard";
         var insertsData = "";
         var update = "";
         var found = true;
         var fs = "";
-        var inserts = "INSERT um_interconsultas_dashboard (I_D_Fecha,pic_indicio_embarazo,I_D_Servicio) VALUES ";
+        var inserts = "INSERT um_consultas_dashboard (I_D_Fecha,pic_indicio_embarazo,I_D_Servicio) VALUES ";
         connection.query(queryArg, (err, row) => {
           if (!err) {
             for (r in row) {
@@ -855,7 +855,7 @@ function registroIndicioEmbarazo() {
               for (r in row) {
                 fs = row[r]["I_D_Fecha"] + row[r]["I_D_Servicio"];
                 if (s == fs) {
-                  update += "UPDATE um_interconsultas_dashboard SET pic_indicio_embarazo = " + Pacientes_Ingresados[fs]["no"] + " WHERE interconsultas_dashboard_id = " + row[r]["interconsultas_dashboard_id"] + ";\n"
+                  update += "UPDATE um_consultas_dashboard SET pic_indicio_embarazo = " + Pacientes_Ingresados[fs]["no"] + " WHERE interconsultas_dashboard_id = " + row[r]["interconsultas_dashboard_id"] + ";\n"
                   found = false;
                   break
                 }
@@ -941,7 +941,7 @@ const program = async () => {
         getDataRegistroSolicitudesAtendidas(event.affectedRows)
       } if (event.table == "paciente_info") {
         getDataRegistroPicIndicioEmbarazo(event.affectedRows)
-      } if (event.table == "um_interconsultas_dashboard") {
+      } if (event.table == "um_consultas_dashboard") {
         io.sockets.emit("realTimeUpdateDashboard", event.affectedRows[0]["after"]);
       }
     },

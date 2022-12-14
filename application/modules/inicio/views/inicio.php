@@ -175,24 +175,19 @@ function getServerIp()
                                         <div class="col-md-9 hidden-xs" >
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <center>
-                                                        <h4 id="I_D_Pacientes_Ingresados_Pro">0</h4>
-                                                    </center>
+                                                    <h4 class="text-right" id="I_D_Pacientes_Ingresados_Pro">0</h4>
                                                 </div>
                                                 <div class="v-line"></div>
                                                 <div class="col-md-5">
-                                                    <center>
-                                                        <h4 id="I_D_Pacientes_Ingresados_Urg">0</h4>
-                                                    </center>
+                                                    <h4 class="text-right" id="I_D_Pacientes_Ingresados_Urg">0</h4>
                                                 </div>
                                             </div>
-                                            
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <p style="line-height: 20px; margin: 0 0 -10px">Programados</p>
+                                                    <h4 class="text-right" style="line-height: 0px; margin: 0 0 -10px; font-size :12px">Programados</h4>
                                                 </div>
                                                 <div class="col-md-5">
-                                                    <p style="line-height: 20px; margin: 0 0 -10px">Urgencias</p>
+                                                    <h4 class="text-right" style="line-height: 0px; margin: 0 0 -10px; font-size :12px">Urgencias</h4>
                                                 </div>
                                             </div>
                                         </div>
