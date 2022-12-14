@@ -1,6 +1,7 @@
 $(document).ready(function () {
     AjaxCamas();
     let area = $('input[name=area]').val();
+    console.log(area)
     function AjaxCamas() {
         $.ajax({
             url: base_url + "AdmisionHospitalaria/AjaxvisorCamasDivisionDeCalidad",
@@ -9,6 +10,7 @@ $(document).ready(function () {
                 msj_loading();
             }, success: function (data, textStatus, jqXHR) {
                 bootbox.hideAll();
+                console.log(data)
                 $('.visor-camas').html(data.Col);
             }, error: function (e) {
                 msj_error_serve();
