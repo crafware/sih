@@ -182,7 +182,7 @@ $(document).ready(function () {
             })
         }
     });
- 
+
     /* =========================================================
         Asignacion de Cama
         ========================================================= */
@@ -254,29 +254,33 @@ $(document).ready(function () {
         });
         return returnValue;
     }
-    
 
-    function abrirExpediente(triage_id){
+
+    function abrirExpediente(triage_id) {
         $.ajax({
             url: base_url + "uci/getPacienteUCI/",
             type: "POST",
             dataType: "json",
             data: {
-                triage_id:triage_id,
+                triage_id: triage_id,
                 csrf_token: csrf_token
             },
             async: false,
-            success: function(data){
+            success: function (data) {
                 console.log(data)
                 console.log(data.accion)
-                if(data.accion == "NOT_EXIST"){
+                if (data.accion == "NOT_EXIST") {
                     msj_error_noti("El paciente no ha sido agregado, o ya ha sido egresado.");
-                }else if(data.accion == "EXIST"){
-                    var url = 'http://'+window.location.host+'/sih/Sections/Documentos/Expediente/'+triage_id+'/?tipo=Hospitalizacion'
+                } else if (data.accion == "EXIST") {
+                    var host = window.location.host
+                    if ("11.47.37.14:8080" != host) {
+                        host += '/sih'
+                    }
+                    var url = 'http://' + host + '/Sections/Documentos/Expediente/' + triage_id + '/?tipo=Hospitalizacion'
                     window.open(url);
                 }
             },
-            error: function(e){
+            error: function (e) {
 
             }
         });
@@ -424,7 +428,7 @@ $(document).ready(function () {
                                         } else if (data.accion == 'EXIST') {
                                             msj_error_noti("El paciente ya ha sido asignado")
                                         } else if (data.accion == 'ASIGNADO') {
-                                            $('#tableResultSearch').css("display","none");
+                                            $('#tableResultSearch').css("display", "none");
                                             $('input[name=inputSearch]').val('');
                                             msj_success_noti('Paciente asignado');
                                         }
@@ -464,7 +468,7 @@ $(document).ready(function () {
             type: 'POST',
             dataType: 'json',
             data: data
-            ,beforeSend: function (xhr) {
+            , beforeSend: function (xhr) {
                 msj_loading('Espere por favor esto puede tardar un momento');
             }, success: function (data, textStatus, jqXHR) {
                 bootbox.hideAll();
@@ -493,7 +497,7 @@ $(document).ready(function () {
                     callback: function (result) {
                         var input = $(this);
                         console.log(result)
-                        if(result){
+                        if (result) {
                             $.ajax({
                                 url: base_url + "uci/AjaxDarDeAltaPacienteUCI",
                                 type: 'POST',
@@ -517,8 +521,8 @@ $(document).ready(function () {
                                 }
                             })
                             input.val('');
-                        }else{
-                             msj_error_noti('Opción Cancelada')
+                        } else {
+                            msj_error_noti('Opción Cancelada')
                         }
                     }
                 });

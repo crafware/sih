@@ -1,3 +1,4 @@
+//const { Console } = require("console");
 
 $(document).ready(function () {
     init_InputMask();
@@ -56,6 +57,7 @@ $(document).ready(function () {
     $('select[name=pia_vigencia]').val($('select[name=pia_vigencia]').data('value'));
     $('.solicitud-paciente').submit(function (e) {
         var urlAsistenteMedica;
+        //console.log($('input[name=AsistenteMedicaTipo]').val())
         if ($('input[name=AsistenteMedicaTipo]').val() == 'Asistente Médica Ortopedia') {
             urlAsistenteMedica = base_url + 'Ortopedia/Asistentesmedicas/AjaxGuardar';
         } else {
@@ -80,7 +82,7 @@ $(document).ready(function () {
                             //   AbrirDocumentoMultiple(base_url+'inicio/documentos/ST7/'+$('input[name=triage_id]').val(),'ST7',300);
                         }
                     }
-                    ActionCloseWindowsReload()
+                    ActionCloseWindows()
                 }
             }, error: function (e) {
                 msj_error_serve();
@@ -247,7 +249,6 @@ $(document).ready(function () {
                     csrf_token: csrf_token
                 }, beforeSend: function (xhr) {
                     msj_loading();
-                    console.log('1');
                 }, success: function (data, textStatus, jqXHR) {
                     bootbox.hideAll();
                     if (data.accion == '1' && triage_id != '') {
@@ -398,7 +399,6 @@ $(document).ready(function () {
 
                     if (vigencia_derecho.length > 0) {
                         var someJson = JSON.parse(vigencia_derecho);
-                        console.log(someJson);
                         $('input[name=triage_nombre]').val(someJson[3][1]).css({
                             'background': '#FAFFBD'
                         });
@@ -682,7 +682,7 @@ const socket = io(":3001", {
     }
 });
 socket.on("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", function (data) {
-    console.log(data)
+    //console.log(data)
     crearTablaRegistroPacientesAdmisionContinua(data);
 });
 socket.on("updateRegistroPacientesAtencionMedicaAdmisionContinua", function (data) {
@@ -691,8 +691,6 @@ socket.on("updateRegistroPacientesAtencionMedicaAdmisionContinua", function (dat
 socket.emit("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", {});
 
 function ColorClasificacion(data) {
-    console.log("ColorClasificacion")
-    console.log(data)
     switch (data['triage_color']) {
         case 'Rojo':
             return 'red';
@@ -708,8 +706,6 @@ function ColorClasificacion(data) {
 }
 
 function TiempoTranscurrido(data) {
-    var dt = new Date();
-    console.log(data);
     var Tiempo1_fecha = data['Tiempo1_fecha'].split("-")
     var Tiempo1_hora = data['Tiempo1_hora'].split(":")
     var Tiempo2_fecha = data['Tiempo2_fecha'].split("-")
@@ -718,19 +714,15 @@ function TiempoTranscurrido(data) {
     var UTC2 = Date.UTC(Tiempo2_fecha[0], Tiempo2_fecha[1], Tiempo2_fecha[2], Tiempo2_hora[0], Tiempo2_hora[1]);
     var UTC = UTC2 - UTC1;
     var min = parseInt(UTC / (1000 * 60))
-    console.log(parseInt(UTC / (1000 * 60 * 60 * 24)))
-    console.log(parseInt((UTC % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)))
-    console.log(parseInt((UTC % (1000 * 60 * 60)) / (1000 * 60)))
     return parseInt(UTC / (1000 * 60));
 }
 
 function updateRegistroPacientesAtencionMedicaAdmisionContinua(data) {
+    if (data == null) { return 0 }
     noRow += 1;
-    console.log("noRow")
-    console.log(noRow)
     var host = window.location.host
-    if ("localhost " == window.location.host) {
-        host = window.location.host + '/sih'
+    if ("11.47.37.14:8080" != host) {
+        host += '/sih'
     }
     var tabla = ""
     var footable = ""
@@ -761,11 +753,11 @@ function updateRegistroPacientesAtencionMedicaAdmisionContinua(data) {
     tabla += '</td><td>'
 
     if (data['triage_via_registro'] == 'Hora Cero TR') {
-        tabla += '<a href="http://' + host + '/sih/Asistentesmedicas/Triagerespiratorio/Registro/' + data['triage_id'] + '?a=edit" target="_blank">' +
+        tabla += '<a href="http://' + host + '/Asistentesmedicas/Triagerespiratorio/Registro/' + data['triage_id'] + '?a=edit" target="_blank">' +
             '<i class="fa fa-pencil icono-accion tip" data-original-title="Editar datos"></i>' +
             '</a>&nbsp;'
     } else {
-        tabla += '<a href="http://' + host + '/sih/Asistentesmedicas/Paciente/' + data['triage_id'] + '" target="_blank">' +
+        tabla += '<a href="http://' + host + '/Asistentesmedicas/Paciente/' + data['triage_id'] + '" target="_blank">' +
             '<i class="fa fa-pencil icono-accion tip" data-original-title="Editar datos"></i>' +
             '</a>&nbsp;'
     }
@@ -811,8 +803,8 @@ function updateRegistroPacientesAtencionMedicaAdmisionContinua(data) {
 function crearTablaRegistroPacientesAdmisionContinua(data) {
     um_config = data["um_config"]
     var host = window.location.host
-    if ("localhost " == window.location.host) {
-        host = window.location.host + '/sih'
+    if ("11.47.37.14:8080" != host) {
+        host += '/sih'
     }
     var tabla = ""
     var cont = 0
@@ -847,11 +839,11 @@ function crearTablaRegistroPacientesAdmisionContinua(data) {
         tabla += '</td><td>'
 
         if (data["table_data"][value]['triage_via_registro'] == 'Hora Cero TR') {
-            tabla += '<a href="http://' + host + '/sih/Asistentesmedicas/Triagerespiratorio/Registro/' + data["table_data"][value]['triage_id'] + '?a=edit" target="_blank">' +
+            tabla += '<a href="http://' + host + '/Asistentesmedicas/Triagerespiratorio/Registro/' + data["table_data"][value]['triage_id'] + '?a=edit" target="_blank">' +
                 '<i class="fa fa-pencil icono-accion tip" data-original-title="Editar datos"></i>' +
                 '</a>&nbsp;'
         } else {
-            tabla += '<a href="http://' + host + '/sih/Asistentesmedicas/Paciente/' + data["table_data"][value]['triage_id'] + '" target="_blank">' +
+            tabla += '<a href="http://' + host + '/Asistentesmedicas/Paciente/' + data["table_data"][value]['triage_id'] + '" target="_blank">' +
                 '<i class="fa fa-pencil icono-accion tip" data-original-title="Editar datos"></i>' +
                 '</a>&nbsp;'
         }
@@ -875,6 +867,7 @@ function crearTablaRegistroPacientesAdmisionContinua(data) {
         row.innerHTML = rows[r];
     }
     table.deleteRow(table.rows.length - 2)
+    document.getElementById("noFolio").click();
     document.getElementById("noFolio").click();
     $('.btn-reg-43051').click(function () {
         var triage_id = $(this).attr('data-paciente');

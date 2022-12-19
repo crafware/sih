@@ -47,7 +47,7 @@ console.log(ip_local);
 const socketIO = require("socket.io");
 const io = socketIO(server, {
   cors: {
-    origin: ["http://localhost", "http://" + ip_local, "http://11.47.37.14:8080", "http://localhost:8080"],
+    origin: ["http://localhost", "http://" + ip_local, "http://11.47.37.14:8080", "http://localhost:8080", "http://192.168.100.2"],
     methods: ["GET", "POST"]
   }
 });
@@ -284,6 +284,7 @@ function getAsistentemedicaTablaRegistroPacientesAdmisionContinua(socket){
 function updateRegistroPacientesAtencionMedicaAdmisionContinua(data){
   pool.getConnection((err, connection,)=> {
     if (err) throw err;
+    console.log(data)
     connection.query("SELECT os_triage.triage_id,os_triage.triage_nombre, os_triage.triage_nombre_ap, os_triage.triage_nombre_am, "+
                     "os_triage.triage_color,os_triage.triage_fecha_clasifica, os_triage.triage_hora_clasifica, os_triage.triage_via_registro, "+
                     "os_asistentesmedicas.asistentesmedicas_fecha, os_asistentesmedicas.asistentesmedicas_hora,paciente_info.pic_mt,paciente_info.pia_lugar_accidente "+
@@ -557,7 +558,6 @@ function getDataRegistroPicIndicioEmbarazo(affectedRows) {
   if (affectedRows[0]["before"] != undefined) {
     console.log(affectedRows[0]["before"]["pic_indicio_embarazo"] == affectedRows[0]["after"]["pic_indicio_embarazo"])
     if (affectedRows[0]["before"]["pic_indicio_embarazo"] == affectedRows[0]["after"]["pic_indicio_embarazo"]) {
-      console.log("emb1")
       return 0;
     } else if (affectedRows[0]["after"]["pic_indicio_embarazo"] == "Si") {
       emb = 1;
@@ -993,7 +993,8 @@ const program = async () => {
       } if (event.table == "paciente_info") {
         getDataRegistroPicIndicioEmbarazo(event.affectedRows)
       } if (event.table == "os_asistentesmedicas") {
-        updateRegistroPacientesAtencionMedicaAdmisionContinua(event.affectedRows[0]["after"])
+        if(event.affectedRows[0]["before"] == undefined)
+          updateRegistroPacientesAtencionMedicaAdmisionContinua(event.affectedRows[0]["after"])
       } if (event.table == "um_consultas_dashboard") {
         io.sockets.emit("realTimeUpdateDashboard", event.affectedRows[0]["after"]);
       }

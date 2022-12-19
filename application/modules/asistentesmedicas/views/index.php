@@ -33,8 +33,8 @@ function getServerIp()
                             <table class="table footable table-bordered" data-filter="#filter" id="tabla1">
                                 <thead>
                                     <tr>
-                                        <th>No.</th>
-                                        <th id = "noFolio">N° DE FOLIO</th>
+                                        <th id = "noFolio" data-type="numeric"  data-sort-initial="true" class="footable-first-column footable-sortable footable-sorted">No.</th>
+                                        <th>N° DE FOLIO</th>
                                         <th style="width: 25%">PACIENTE</th>
                                         <th>HORA CLAS.</th>
                                         <th>HORA A.M</th>
