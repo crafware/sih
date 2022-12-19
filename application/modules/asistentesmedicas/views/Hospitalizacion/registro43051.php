@@ -391,7 +391,7 @@
                         <!-- fon del moda -->
                         <div class="row">
                             <div class="col-md-offset-8 col-md-2">
-                                <button type="button" class="btn btn-imms-cancel btn-block" onclick="window.top.close()">Cancelar</button>
+                                <button type="button" class="btn btn-imms-cancel btn-block" onclick="window.history.back()">Cancelar</button>
                             </div>
                             <div class="col-md-2">
                                 <input type="hidden" name="area_nombre" value="<?=$this->UMAE_AREA?>">

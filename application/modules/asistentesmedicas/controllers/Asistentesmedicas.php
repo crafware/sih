@@ -17,8 +17,8 @@ class Asistentesmedicas extends Config{
     }
     public function index() {  
         
-        $hoy = date('Y-m-d');
-        $sql['Gestion']= $this->config_mdl->_query("SELECT os_triage.triage_id,
+        /*$hoy = date('Y-m-d');*/
+        $sql['Gestion']= []; /*$this->config_mdl->_query("SELECT os_triage.triage_id,
             os_triage.triage_nombre, os_triage.triage_nombre_ap, os_triage.triage_nombre_am,os_triage.triage_color,
             os_triage.triage_fecha_clasifica, os_triage.triage_hora_clasifica, os_triage.triage_via_registro,
             os_asistentesmedicas.asistentesmedicas_fecha, os_asistentesmedicas.asistentesmedicas_hora,
@@ -30,7 +30,7 @@ class Asistentesmedicas extends Config{
             os_accesos.areas_id=os_asistentesmedicas.asistentesmedicas_id AND
             os_asistentesmedicas.asistentesmedicas_fecha= '$hoy' AND
             paciente_info.triage_id=os_triage.triage_id
-            ORDER BY os_accesos.acceso_id LIMIT 150");
+            ORDER BY os_accesos.acceso_id    LIMIT 150");*/
         $this->load->view('index',$sql);
     }
     public function BuscarPaciente() {
@@ -462,6 +462,7 @@ class Asistentesmedicas extends Config{
         }
     }
     public function AjaxMedicoTratantes() {
+        $Medico = "";
         $sql= $this->config_mdl->_query("SELECT * FROM os_empleados, os_empleados_roles, os_roles WHERE
                                         os_empleados.empleado_id=os_empleados_roles.empleado_id AND
                                         os_roles.rol_id=os_empleados_roles.rol_id AND

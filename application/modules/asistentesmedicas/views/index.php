@@ -1,4 +1,14 @@
 <?= modules::run('Sections/Menu/index'); ?> 
+<?php
+function getServerIp()
+{
+	if ($_SERVER['SERVER_ADDR'] === "::1") {
+		return "localhost";
+	} else {
+		return $_SERVER['SERVER_ADDR'];
+	}
+}
+?>
 <div class="box-row">
     <div class="box-cell">
         <div class="box-inner col-md-12 col-centered" style="margin-top: 10px">
@@ -20,10 +30,10 @@
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <table class="table footable table-bordered" data-filter="#filter">
+                            <table class="table footable table-bordered" data-filter="#filter" id="tabla1">
                                 <thead>
                                     <tr>
-                                        <th>No.</th>
+                                        <th id = "noFolio" data-type="numeric"  data-sort-initial="true" class="footable-first-column footable-sortable footable-sorted">No.</th>
                                         <th>N° DE FOLIO</th>
                                         <th style="width: 25%">PACIENTE</th>
                                         <th>HORA CLAS.</th>
@@ -36,7 +46,7 @@
                                 <tbody>
                                     <?php $cont=0; foreach ($Gestion as $value) {
                                         ++$cont;
-                                   ?>
+                                    ?>
                                     <tr>
                                         <td><?=$cont?></td>
                                         <td><?=$value['triage_id']?></td>
@@ -83,6 +93,7 @@
                                         </td>
                                     </tr>
                                     <?php }?>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                                 </tbody>
                                 <tfoot class="hide-if-no-paging">
                                 <tr>
@@ -93,6 +104,7 @@
                                 </tfoot>
                             </table>
                         </div>
+                        <div class="col-md-12" id="tabla123"></div>
                     </div>
                 </div>
             </div>
@@ -101,4 +113,5 @@
 </div>
 <input type="hidden" value="Asistente Médica" name="AsistenteMedicaTipo">
 <?= modules::run('Sections/Menu/footer'); ?>
+<script src="<?= "http://" . getServerIp() . ':3001/socket.io/socket.io.js' ?>" type="text/javascript"></script>
 <script src="<?= base_url('assets/js/Asistentemedica.js?'). md5(microtime())?>" type="text/javascript"></script> 
