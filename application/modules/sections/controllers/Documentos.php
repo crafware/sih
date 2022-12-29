@@ -14,7 +14,7 @@ class Documentos extends Config{
         die('ACCESO NO PERMITIDO');
     }
     public function Expediente($paciente) {
-        if($_GET['tipo']=='Choque'){
+        /*if($_GET['tipo']=='Choque'){
             
             $choque= $this->config_mdl->_get_data_condition('os_choque_v2',array(
                 'triage_id'=>$paciente
@@ -96,7 +96,7 @@ class Documentos extends Config{
             'triage_id'=>$paciente
         ))[0];
         /* nuevos querys para medicamentos */
-        $sql['medicamentos'] = $this->config_mdl->_query("SELECT medicamento_id, CONCAT(medicamento,' ',forma_farmaceutica) AS medicamento, interaccion_amarilla,
+       /* $sql['medicamentos'] = $this->config_mdl->_query("SELECT medicamento_id, CONCAT(medicamento,' ',forma_farmaceutica) AS medicamento, interaccion_amarilla,
                                                       interaccion_roja FROM catalogo_medicamentos WHERE existencia = 1 ORDER BY medicamento");
 
         $sql['Prescripciones_activas'] = $this->config_mdl->_query("SELECT COUNT(prescripcion_id)activas FROM prescripcion
@@ -142,7 +142,7 @@ class Documentos extends Config{
         /* checar si hay notas de ingreso hospitalaria del paciente y por servicio*/
 
 
-        $this->load->view('Documentos/Expediente',$sql);
+        //$this->load->view('Documentos/Expediente',$sql);
     }
     public function AjaxRegistrarBitacoraPrescripcion(){
       $datos = array(
