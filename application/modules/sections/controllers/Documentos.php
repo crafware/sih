@@ -14,7 +14,7 @@ class Documentos extends Config{
         die('ACCESO NO PERMITIDO');
     }
     public function Expediente($paciente) {
-        /*if($_GET['tipo']=='Choque'){
+        if($_GET['tipo']=='Choque'){
             
             $choque= $this->config_mdl->_get_data_condition('os_choque_v2',array(
                 'triage_id'=>$paciente
@@ -96,7 +96,7 @@ class Documentos extends Config{
             'triage_id'=>$paciente
         ))[0];
         /* nuevos querys para medicamentos */
-       /* $sql['medicamentos'] = $this->config_mdl->_query("SELECT medicamento_id, CONCAT(medicamento,' ',forma_farmaceutica) AS medicamento, interaccion_amarilla,
+        $sql['medicamentos'] = $this->config_mdl->_query("SELECT medicamento_id, CONCAT(medicamento,' ',forma_farmaceutica) AS medicamento, interaccion_amarilla,
                                                       interaccion_roja FROM catalogo_medicamentos WHERE existencia = 1 ORDER BY medicamento");
 
         $sql['Prescripciones_activas'] = $this->config_mdl->_query("SELECT COUNT(prescripcion_id)activas FROM prescripcion
@@ -142,7 +142,7 @@ class Documentos extends Config{
         /* checar si hay notas de ingreso hospitalaria del paciente y por servicio*/
 
 
-        //$this->load->view('Documentos/Expediente',$sql);
+        $this->load->view('Documentos/Expediente',$sql);
     }
     public function AjaxRegistrarBitacoraPrescripcion(){
       $datos = array(
@@ -993,13 +993,18 @@ class Documentos extends Config{
             //-----------------solicitud_laboratorio------------
             /** Comprueba si no se ha ingresado Un diagnostico entonce manda a mensaje a Jquery que no debe de haber un diagnsotico de ingreso
             */
-      
+        $os_camas = $this->config_mdl->_query("SELECT * FROM os_camas WHERE area_id = 1 AND triage_id =".$this->input->post('triage_id').";");
+        if(!empty($os_camas)){
+            $estado_salud = array("estado_salud" => $this->input->post('hf_estadosalud'));
+            $this->config_mdl->_update_data('os_camas', $estado_salud, array( 'triage_id'=>  $this->input->post('triage_id')));
+        }
         if(empty($sqlCheckDiagnosticos)){
             $this->setOutput(array('accion'=>'0'));
         }else {
             $this->setOutput(array('accion'=>'1','val'=>'f'));
          //$this->setOutput(array('accion'=>'1'));
         }
+
     }
 
     public function AjaxUltimasOrdenes(){
@@ -2110,15 +2115,24 @@ class Documentos extends Config{
                 'doc_id'=> $this->input->post('doc_id')
             ));
         }
-        $sqlCheck= $this->config_mdl->sqlGetDataCondition('os_triage_signosvitales',array(
+        /*$sqlCheck= $this->config_mdl->sqlGetDataCondition('os_triage_signosvitales',array(
             'triage_id'=>$this->input->post('triage_id'),
             'sv_tipo'=> $this->input->post('inputVia')
-        ),'sv_id');
+        ),'sv_id');*/
+
+        //-----------------actualisacion de estado_salud en os_camas-------//
+        
+        $os_camas = $this->config_mdl->_query("SELECT * FROM os_camas WHERE  area_id = 1 AND triage_id =".$this->input->post('triage_id').";");
+        if(!empty($os_camas)){
+            $estado_salud = array("estado_salud" => $this->input->post('nota_estadosalud'));
+            $this->config_mdl->_update_data('os_camas', $estado_salud, array( 'triage_id'=> $this->input->post('triage_id')));
+        }
+
 
         $this->setOutput(array('accion'=>'1','notas_id'=>$id_nota));
 
-
-        //-----------------solicitud_laboratorio_nota_evolución------------
+        
+        //-----------------solicitud_laboratorio_nota_evolución------------//
 
         if($last_id_notas && $this->input->post('accion')=='add'){
             $nota_id = $last_id_notas;

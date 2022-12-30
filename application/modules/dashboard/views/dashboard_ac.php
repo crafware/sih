@@ -159,11 +159,11 @@ function getServerIp()
                 }
                 dashboardDataTable[triage_id]["nombre"] = data["triage_nombre_ap"] + " " + data["triage_nombre_am"] + " " + data["triage_nombre"]
                 dashboardDataTable[triage_id]["cama"] = data["cama_nombre"]
-                dashboardDataTable[triage_id]["estado"] = data["hf_estadosalud"]
+                dashboardDataTable[triage_id]["estado"] = data["estado_salud"]
             } else if (data["tipo"] == "delete") {
                 delete dashboardDataTable[triage_id];
             } else if (data["tipo"] == "updateestadosalud") {
-                dashboardDataTable[triage_id]["estado"] = data["hf_estadosalud"]
+                dashboardDataTable[triage_id]["estado"] = data["estado_salud"]
             }
             actualizarDashboard()
         }
@@ -226,7 +226,7 @@ function getServerIp()
                 dashboardDataTable[triage_id] = {}
                 dashboardDataTable[triage_id]["nombre"] = data[d]["triage_nombre_ap"] + " " + data[d]["triage_nombre_am"] + " " + data[d]["triage_nombre"]
                 dashboardDataTable[triage_id]["cama"] = data[d]["cama_nombre"]
-                dashboardDataTable[triage_id]["estado"] = data[d]["hf_estadosalud"]
+                dashboardDataTable[triage_id]["estado"] = data[d]["estado_salud"]
             }
             actualizarDashboard()
         }
@@ -283,7 +283,7 @@ function getServerIp()
                     for (id in idTables) {
                         if (document.getElementById(idTables[id]) != undefined) {
                             document.getElementById(idTables[id]).style.display = null;
-                            await new Promise(resolve => setTimeout(resolve, 17000));
+                            await new Promise(resolve => setTimeout(resolve, 20000));
                         }
                         if (document.getElementById(idTables[id]) != undefined) {
                             document.getElementById(idTables[id]).style.display = "none";
