@@ -44,7 +44,7 @@ if(count($Residentes) == 3){
           <b>NOMBRE DEL PACIENTE:</b>
         </div>
         <div style="position: absolute;margin-left: 435px;margin-top: 62px;width: 300px;text-transform: uppercase;font-size: 14px;">
-          <?=$info['triage_nombre']?> <?=$info['triage_nombre_ap']?> <?=$info['triage_nombre_am']?>
+          <?=$info['triage_nombre_ap']?> <?=$info['triage_nombre_am']?> <?=$info['triage_nombre']?>
         </div>
         <div style="position: absolute;margin-left: 435px;margin-top: 77px;width: 270px;text-transform: uppercase;font-size: 11px;">
           <b>N.S.S:</b> <?=$PINFO['pum_nss']?> <?=$PINFO['pum_nss_agregado']?>
@@ -129,31 +129,30 @@ if(count($Residentes) == 3){
     
 
     <div style="position:absolute; left: -10px; margin-top: -17px; font-size: 12px;">
-      <h5 style="margin-bottom: -6px">MOTIVO DE EGRESO</h5>
-        <?php  switch ($notaEgreso['motivo_egreso']) {
-                  case '1':
-                            $motivoEgreso = 'Alta médica';                 
-                    break;
-                  case '2':
-                            $motivoEgreso = 'Alta voluntaria';
-                    break;
-                  case '3':
-                            $motivoEgreso = 'Alta por mejoría';
-                    break;
-                  case '4':
-                            $motivoEgreso = 'Alta por máximo beneficio';
-                    break;
-                  case '5':
-                            $motivoEgreso = 'Alta por tranferencia a otro centro hospitalario';
-                    break;
-                  case '6':
-                            $motivoEgreso = 'Alta por defunción';
-                    break;
-                  case '7':
-                            $motivoEgreso = 'Alta por fuga o abandono';
-                    break;
-                }?>                     
-      <p class="contenido"><?= $motivoEgreso?></p>
+      <?php  switch ($notaEgreso['motivo_egreso']) {
+                case '1':
+                          $motivoEgreso = 'Alta médica';                 
+                  break;
+                case '2':
+                          $motivoEgreso = 'Alta voluntaria';
+                  break;
+                case '3':
+                          $motivoEgreso = 'Alta por mejoría';
+                  break;
+                case '4':
+                          $motivoEgreso = 'Alta por máximo beneficio';
+                  break;
+                case '5':
+                          $motivoEgreso = 'Alta por tranferencia a otro centro hospitalario';
+                  break;
+                case '6':
+                          $motivoEgreso = 'Alta por defunción';
+                  break;
+                case '7':
+                          $motivoEgreso = 'Alta por fuga o abandono';
+                  break;
+              }?>
+      <p style="margin-bottom: -10px"><b>Motivo de egreso:</b> <?=$motivoEgreso?></p>                    
       <p class="contenido">
       <h5 style="margin-bottom: -6px">DIAGNÓSTICOS ENCONTRADOS</h5>
         <div class="table table-hover">          
@@ -179,7 +178,7 @@ if(count($Residentes) == 3){
               }?> 
             </tbody>
           </table>
-        </div><br>
+        </div>
         <div class="table table-hover">          
           <table class="table table-condensed">
             <thead>
@@ -203,7 +202,7 @@ if(count($Residentes) == 3){
              }?>           
             </tbody>
           </table>
-        </div><br>
+        </div>
         <div class="table table-hover">          
           <table class="table table-condensed">
             <thead>
@@ -273,41 +272,29 @@ if(count($Residentes) == 3){
            if(count($residentes) == 0){
            $top = 910;
         }else if( count($residentes) > 0){
-           $top = 840;
+           $top = 910;
         }
       ?>
-        <div style="position: absolute;top: <?=$top?>px;left: 215px;width: 240px;font-size: 10px;text-align: center">
-                <?=$medicoTratante['empleado_nombre']?> <?=$medicoTratante['empleado_apellidos']?><br>
-                <span style="margin-top: -6px;margin-bottom: -8px">____________________________________</span><br>
-                <b>NOMBRE DEL MÉDICO DE BASE</b>
+        <div style="position: absolute;top: <?=$top?>px;left: 215px;width: 540px;font-size: 10px;text-align: right">
+          Dr. <?=$medicoTratante['empleado_apellidos'].' '.$medicoTratante['empleado_nombre']?>
+          <b>Matricula:</b> <?=$medicoTratante['empleado_matricula']?>
+          Médico adscrito del servicio <?=$ServicioM[0]['especialidad_nombre']?>
+          <?php
+            if(!empty($residentes)) {
+              foreach ($residentes as $value){?>
+                Dr. <?=$value['apellido_residente'].' '.$value['nombre_residente'].' '.Matricula.' '.$value['cedulap_residente']?>
+                Médico Residente <?=$value['grado']?>   
+                <?php
+              }
+            }?>
         </div>
-        <div style="position: absolute;top: <?=$top?>px;left: 430px;width: 160px;font-size: 10px;text-align: center">
-                <?=$medicoTratante['empleado_cedula']?> - <?=$medicoTratante['empleado_matricula']?> <br>
-                <span style="margin-top: -6px;margin-bottom: -8px">_____________________________</span><br>
-                <b>CÉDULA Y MATRICULA</b>
-        </div>
-        <div style="position: absolute;top: <?=$top?>px;left: 590px;width: 110px;font-size: 10px;text-align: center">
-                <br>
-                <span style="margin-top: -6px;margin-bottom: -8px">_________________</span><br>
-                <b>FIRMA</b>
-        </div>
-    
-    <?php if(!empty($residentes)) {?>    
-                <div style="position: absolute;top: <?=$top+40?>px;left: 260px;width: 300px;font-size: 10px;text-align: left;">
-                    
-                    <?php foreach ($residentes as $value){?>
-                        <?=$value['nombre_residente']?> <?=$value['apellido_residente']?> (<?=$value['cedulap_residente']?>) | <?=$value['grado']?><br>   
-                    <?php }?>
-                    <span style="margin-top: 10px;"><b>MÉDICOS RESIDENTES</b></span>
-                </div>
-    <?php }?>
     </page_footer>
 </page>
 <?php
-    // $html=  ob_get_clean();
-    // $pdf=new HTML2PDF('P','A4','en',true,'UTF-8');
-    // $pdf->writeHTML($html);
-    // // $pdf->pdf->IncludeJS("print(true);");
-    // $pdf->pdf->SetTitle($Nota['notas_tipo']);
-    // $pdf->Output($Nota['notas_tipo'].'.pdf');
+     $html=  ob_get_clean();
+     $pdf=new HTML2PDF('P','A4','en',true,'UTF-8');
+     $pdf->writeHTML($html);
+     $pdf->pdf->IncludeJS("print(true);");
+     $pdf->pdf->SetTitle($Nota['notas_tipo']);
+     $pdf->Output($Nota['notas_tipo'].'.pdf');
 ?>

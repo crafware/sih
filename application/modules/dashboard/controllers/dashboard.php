@@ -22,7 +22,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         $this->load->view('dashboard_ac');
     }
     public function AjaxDashboard_ac() {
-    	$checkCamas=  $this->config_mdl->_query("SELECT * FROM os_camas WHERE  area_id='1' AND cama_status='Ocupado'");
+    	$checkCamas=  $this->config_mdl->_query("SELECT * FROM os_camas WHERE  area_id='1' AND cama_estado='Ocupado'");
         $checkConsultorios =  $this->config_mdl->_query("SELECT * FROM os_consultorios_especialidad WHERE  ce_hf='Observación corta estancia'");
         $fecha_hoy = date("Y-m-d");
         $checkAsignados=  $this->config_mdl->_query("SELECT * FROM os_asistentesmedicas WHERE  asistentesmedicas_fecha='$fecha_hoy'");

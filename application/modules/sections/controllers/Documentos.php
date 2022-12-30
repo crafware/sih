@@ -14,6 +14,21 @@ class Documentos extends Config{
         die('ACCESO NO PERMITIDO');
     }
     public function Expediente($paciente) {
+        $sql['DocumentosHoja']= $this->config_mdl->_get_data('pc_documentos',array(
+            'doc_nombre'=>'Hoja Frontal'
+        ));
+
+        /*$sql['DocumentosNotas']= $this->config_mdl->_query("SELECT * FROM pc_documentos WHERE doc_nombre!='Hoja Frontal'");
+        */
+
+        $sql['info']=  $this->config_mdl->_get_data_condition('os_triage',array(
+            'triage_id'=> $paciente
+        ))[0];
+
+        $sql['PINFO']= $this->config_mdl->_get_data_condition('paciente_info',array(
+            'triage_id'=>$paciente
+        ))[0];
+
         if($_GET['tipo']=='Choque'){
             
             $choque= $this->config_mdl->_get_data_condition('os_choque_v2',array(
@@ -27,8 +42,8 @@ class Documentos extends Config{
                 ));
                 $this->AccesosUsuarios(array('acceso_tipo'=>'Médico Choque','triage_id'=>$paciente,'areas_id'=>$choque[0]['choque_id']));
             }
-        }if($_GET['tipo']=='Hospitalizacion'){
-
+        }
+        if($_GET['tipo']=='Hospitalizacion'){
 
             $sql['IngresosHospitalarios']= $this->config_mdl->_get_data_condition('um_ingresos_hospitalario',array(
                 'triage_id'=>$paciente
@@ -48,14 +63,11 @@ class Documentos extends Config{
             ));
 
         }
+
         $sql['HojasFrontales']= $this->config_mdl->_get_data_condition('os_consultorios_especialidad_hf',array(
             'triage_id'=> $paciente
         ));
-        
-        // $sql['Notas']= $this->config_mdl->_get_data_condition('doc_notas',array(
-        //     'triage_id'=> $paciente
-        // ));
-
+                
         $sql['ce']= $this->config_mdl->_get_data_condition('os_consultorios_especialidad',array(
             'triage_id'=> $paciente
         ))[0];
@@ -69,10 +81,6 @@ class Documentos extends Config{
             os_empleados.empleado_servicio=um_especialidades.especialidad_id AND
             doc_notas.triage_id=".$paciente." ORDER BY notas_fecha DESC");
 
-        $sql['info']=  $this->config_mdl->_get_data_condition('os_triage',array(
-            'triage_id'=> $paciente
-        ))[0];
-
         $sql['cama']=  $this->config_mdl->_get_data_condition('os_camas',array(
             'triage_id'=> $paciente
         ))[0];
@@ -80,16 +88,6 @@ class Documentos extends Config{
         $sql['piso']=$this->config_mdl->_query("SELECT piso_nombre_corto FROM os_pisos,os_pisos_camas WHERE 
             os_pisos.piso_id=os_pisos_camas.piso_id AND os_pisos_camas.cama_id='{$sql['cama']['cama_id']}'");
         
-        $sql['AvisoMp']= $this->config_mdl->_query("SELECT * FROM os_empleados, ts_ministerio_publico WHERE
-            os_empleados.empleado_id=ts_ministerio_publico.medico_familiar AND
-            ts_ministerio_publico.triage_id=".$paciente);
-        $sql['PINFO']= $this->config_mdl->_get_data_condition('paciente_info',array(
-            'triage_id'=>$paciente
-        ))[0];
-        $sql['DocumentosHoja']= $this->config_mdl->_get_data('pc_documentos',array(
-            'doc_nombre'=>'Hoja Frontal'
-        ));
-        $sql['DocumentosNotas']= $this->config_mdl->_query("SELECT * FROM pc_documentos WHERE doc_nombre!='Hoja Frontal'");
         $sql['Prescripcion'] = $this->config_mdl->_query("SELECT count(prescripcion_id)total_prescripcion
                                                           FROM prescripcion WHERE estado = 0 and triage_id = ".$paciente);
         $sql['ordeninternamiento'] = $this->config_mdl->_get_data_condition('um_orden_internamiento', array(
@@ -1390,12 +1388,12 @@ class Documentos extends Config{
         $sql['Usuario'] = $this->config_mdl->_query("SELECT * FROM os_empleados WHERE empleado_id ='$this->UMAE_USER'" );
         
         
-        $sql['MedicosBase']= $this->config_mdl->_query("SELECT empleado_id, empleado_matricula,empleado_nombre, empleado_apellidos FROM os_empleados
+        /*$sql['MedicosBase']= $this->config_mdl->_query("SELECT empleado_id, empleado_matricula,empleado_nombre, empleado_apellidos FROM os_empleados
                                                         WHERE empleado_roles != 77 AND empleado_servicio =
                                                           (SELECT empleado_servicio
                                                            FROM os_empleados
                                                            WHERE empleado_id = '$this->UMAE_USER')"
-                                                         );
+                                                         );*/
 
         $sql['Medicamentos'] = $this->config_mdl->_query("SELECT medicamento_id,
                                                                  CONCAT(medicamento,' ',gramaje, ', ', forma_farmaceutica)medicamento,
@@ -1430,10 +1428,10 @@ class Documentos extends Config{
         'Tópica','Transdérmica','Transmamaria','Transmucosa','Transplacentaria','Transtimpánica','Transtraqueal','Ureteral','Uretral',
         'Uso Intralesional','Uso Intralinfático','Uso oromucosa','Vaginal','Vía a través de Hemodiálisis');
         
-        $sql['MedicosBaseNota'] = $this->config_mdl->_query("SELECT empleado_nombre,empleado_apellidos,empleado_matricula
+        /*$sql['MedicosBaseNota'] = $this->config_mdl->_query("SELECT empleado_nombre,empleado_apellidos,empleado_matricula
                                                              FROM os_empleados
                                                              WHERE empleado_id = (
-                                                               SELECT notas_medicotratante FROM doc_notas WHERE notas_id = $Nota)");
+                                                               SELECT notas_medicotratante FROM doc_notas WHERE notas_id = $Nota)");*/
         $sql['Prescripcion'] = $this->config_mdl->_query("SELECT *
                                                           FROM prescripcion INNER JOIN catalogo_medicamentos ON
                                                           prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
@@ -2110,11 +2108,12 @@ class Documentos extends Config{
                 'doc_id'=> $this->input->post('doc_id')
             ));
         }
+        /*
         $sqlCheck= $this->config_mdl->sqlGetDataCondition('os_triage_signosvitales',array(
             'triage_id'=>$this->input->post('triage_id'),
             'sv_tipo'=> $this->input->post('inputVia')
         ),'sv_id');
-
+         */
         $this->setOutput(array('accion'=>'1','notas_id'=>$id_nota));
 
 
@@ -2401,8 +2400,8 @@ class Documentos extends Config{
                 'triage_id'=>  $this->input->post('triage_id')
             ),'fecha_elabora')[0];
 
-            $fecha = $sqlFechaNotaInicial['fecha_elabora'];
-            $fechas = date("d/m/Y", strtotime($fecha));
+            $fechas = $sqlFechaNotaInicial['fecha_elabora'];
+            //$fechas = date("d/m/Y", strtotime($fecha));
 
         }else {
             $sqlFechaNotaInicial =  $this->config_mdl->sqlGetDataCondition('os_consultorios_especialidad_hf',array(
@@ -2438,7 +2437,7 @@ class Documentos extends Config{
             case "edit" : 
                 if($tipo_nota=="Nota Inicial") {    
                     $sql= $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos, um_cie10 WHERE 
-                    paciente_diagnosticos.cie10_id=um_cie10.cie10_id AND paciente_diagnosticos.fecha_dx <='{$fechas}'  AND
+                    paciente_diagnosticos.cie10_id=um_cie10.cie10_id AND paciente_diagnosticos.fecha_dx <= CURDATE()  AND
                     paciente_diagnosticos.triage_id='{$this->input->post('triage_id')}' ORDER BY tipo_diagnostico='0' DESC");
                 }else {
                     $sql= $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos, um_cie10 WHERE 
@@ -2745,7 +2744,7 @@ class Documentos extends Config{
       print json_encode($sql);
     }
     
-    /* Nota de Egreso */
+    /* Nota de Alta Hospitalario*/
     public function AjaxNotaEgreso() {
       
         $matricula = $this->input->post('medicoMatricula');
@@ -2919,7 +2918,7 @@ class Documentos extends Config{
             ),array(
                 'nota_id'  =>  $nota_id
             ));
-            if ($this->input->post('tipo_nota')=='Nota de Prealta') {
+            if ($this->input->post('tipo_nota')=='Nota de Alta') {
                 $docnota_id = $this->config_mdl->_get_data_condition('doc_nota_egreso',array(
                     'nota_id'=>  $nota_id
                 ))[0];
@@ -2936,16 +2935,6 @@ class Documentos extends Config{
                             'id_nota_egreso' => $docnota_id['docnota_id']
                 ));
             }
-            /*
-            if($proceso == 2){
-                
-                $this->config_mdl->_update_data('doc_43051',array(
-                    'salida_medico'  => $medicoTratante,
-                    'salida_servicio'=> Modules::run('Config/ObtenerEspecialidadID',array('Usuario'=>$this->UMAE_USER)),
-                ),array(
-                    'id'  => $doc_43051['triage_id']
-                ));
-            }*/
 
         }
 
@@ -3079,7 +3068,7 @@ class Documentos extends Config{
         foreach ($this->input->post('procedimientos') as $procedimientos_select) {
           $procedimientos.=$procedimientos_select.',';
         }
-        if($this->input->post('medicoTratante')) {
+        if($this->input->post('medicoTratante')!='') {
             $medicoTratante = $this->input->post('medicoTratante'); 
         }else {
             $medicoTratante = $this->UMAE_USER; 
@@ -3678,7 +3667,9 @@ class Documentos extends Config{
         if(empty($sqlCheckDiagnosticos)){
              $this->setOutput(array('accion'=>'0'));
         }else {
-            $this->setOutput(array('accion'=>'1','val'=>'f'));
+            $this->setOutput(array('accion'        => '1',
+                                   'val'           => 'f', 
+                                   'idNotaIngreso' => $id_nota));
          
         }
     }

@@ -61,20 +61,20 @@
             <div class="panel-body ">
                 <div class="form-group" id = 'area_editor_div2'>
                    <h5><span class = ""><b>Antecedentes Heredofamiliares</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div2');"  class="form-control editor" id="area_editor2" rows="6" name="antecedentes_herfam" placeholder=""><?=$notaIngreso[0]['antecedentes_heredofamiliares']?></textarea>
+                    <textarea onchange="deleteTypeLetter('area_editor_div2');"  class="form-control editor" id="area_editor2" rows="6" name="antecedentes_herfam" placeholder="Escribe algo ..."><?=$notaIngreso[0]['antecedentes_heredofamiliares']?></textarea>
                 </div>
                 <div class="form-group" id = 'area_editor_div3'>
                     <h5><span class = ""><b>Antecedentes Personales no Patológicos</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div3');"  class="form-control editor" id="area_editor3" rows="5" name="antecedentes_no_patologicos" placeholder=""><?=$notaIngreso[0]['antecedentes_personales_nopatologicos']?></textarea>
+                    <textarea onchange="deleteTypeLetter('area_editor_div3');"  class="form-control editor" id="area_editor3" rows="5" name="antecedentes_no_patologicos" placeholder="Escribe algo ..."><?=$notaIngreso[0]['antecedentes_personales_nopatologicos']?></textarea>
                 </div>
                 <div class="form-group" id = 'area_editor_div4'>
                     <h5><span class = ""><b>Antecedentes Personales Patológicos</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div4');" class="form-control editor" id="area_editor4" rows="8" name="antecedentes_patologicos"><?=$notaIngreso[0]['antecedentes_personales_patologicos']?></textarea>
+                    <textarea onchange="deleteTypeLetter('area_editor_div4');" class="form-control editor" id="area_editor4" rows="8" name="antecedentes_patologicos" placeholder="Escribe algo ..."><?=$notaIngreso[0]['antecedentes_personales_patologicos']?></textarea>
                 </div>
                 <?php if($info['triage_paciente_sexo'] == 'MUJER'){?>
                 <div class="form-group" id = 'area_editor_div5'>
                     <h5><span class = ""><b>Antecedentes Gineco Obstetricos</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div5');" class="form-control editor" id="area_editor5" rows="8" name="antecedentes_ginecoobstetricos"><?=$notaIngreso[0]['antecedentes_ginecoobstetricos']?></textarea>
+                    <textarea onchange="deleteTypeLetter('area_editor_div5');" class="form-control editor" id="area_editor5" rows="8" name="antecedentes_ginecoobstetricos" placeholder="Escribe algo ..."><?=$notaIngreso[0]['antecedentes_ginecoobstetricos']?></textarea>
                 </div>
                 <?php }?>
             </div>
@@ -85,11 +85,11 @@
             <div class="panel-body">
                 <div class="form-group" id = 'area_editor_div6'>
                     <h5><span class = ""><b>Padecimiento Actual</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div6');" class="form-control editor" id="area_editor6" rows="8" name="padecimiento_actual"><?=$notaIngreso[0]['padecimiento_actual']?></textarea>
+                    <textarea onchange="deleteTypeLetter('area_editor_div6');" class="form-control editor" id="area_editor6" rows="8" name="padecimiento_actual" placeholder="Escribe algo ..."><?=$notaIngreso[0]['padecimiento_actual']?></textarea>
                 </div>
                 <div class="form-group" id = 'area_editor_div7'>
                     <h5><span class = ""><b>Exploración Fisica</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div7');" class="form-control editor" id="area_editor7" rows="8" name="exploracion_fisica"><?=$notaIngreso[0]['exploracion_fisica']?></textarea>
+                    <textarea onchange="deleteTypeLetter('area_editor_div7');" class="form-control editor" id="area_editor7" rows="8" name="exploracion_fisica" placeholder="Escribe algo ..."><?=$notaIngreso[0]['exploracion_fisica']?></textarea>
                 </div>
                 
             </div>
@@ -174,7 +174,7 @@
             <div class="panel-heading"><h4>IMPRESIÓN DIAGNÓSTICA</h4></div>
             <div class="panel-body">
                 <div class="form-group">
-                    <h4><span class = ""><b>Diagnóstico de Ingreso y Comorbilidades</b></span></h4>
+                    <h5><span class = ""><b>Diagnóstico de Ingreso y Comorbilidades</b></span></h5>
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="">Diagnóstico con código CIE-10</label>
@@ -189,7 +189,7 @@
                 </div>
                 <div class="form-group" id = 'area_editor_div10'>
                      <h5><span class = ""><b>Comentarios</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div10');" class="form-control editor" id="area_editor10" rows="2" name="comentario" placeholder=""><?=$notaIngreso[0]['comentario']?></textarea>
+                    <textarea onchange="deleteTypeLetter('area_editor_div10');" class="form-control editor" id="area_editor10" rows="2" name="comentario" placeholder="Escriba sus comentarios ..."><?=$notaIngreso[0]['comentario']?></textarea>
                 </div>
                 <!-- Estado de salud -->
                 <div class="form-group">
@@ -379,14 +379,14 @@
                 <div class="col-sm-12">
                     <div class="form-group" id = 'area_editor_div11'>
                           <h5><span><b>d) Cuidados especiales de enfermería</b></span></h5>
-                          <textarea onchange="deleteTypeLetter('area_editor_div11');" class="form-control hf_cuidadosenfermeria editor" id="area_editor11" name="cuidadosEspecialesEnfermeria" placeholder="Cuidados especiales de enfermeria"><?=$plan[0]['cuidados_eenfermeria']?></textarea>
+                          <textarea onchange="deleteTypeLetter('area_editor_div11');" class="form-control hf_cuidadosenfermeria editor" id="area_editor11" name="cuidadosEspecialesEnfermeria" placeholder="Anote los cuidados especiales de enfermeria"><?=$plan[0]['cuidados_eenfermeria']?></textarea>
                     </div>
                 </div>
                 <!-- Soliciones parenterales -->
                 <div class="col-sm-12" id="divCuidadosGenerales">
                     <div class="form-group" id = 'area_editor_div12'>
                         <h5><span><b>e) Soluciones parenterales</b></span></h5>
-                        <textarea onchange="deleteTypeLetter('area_editor_div12');" class="form-control hf_solucionesp editor" id="area_editor12" name="solucionesParenterales" rows="5" placeholder="Soluciones Parenterales"><?=$plan[0]['soluciones_parenterales']?></textarea>
+                        <textarea onchange="deleteTypeLetter('area_editor_div12');" class="form-control hf_solucionesp editor" id="area_editor12" name="solucionesParenterales" placeholder="Anote las soluciones parenterales"><?=$plan[0]['soluciones_parenterales']?></textarea>
                     </div>
                 </div>
                 <!-- Prescripcion de medicamentos -->
@@ -480,7 +480,7 @@
                             <div class="col-sm-12" style="padding:0">
                                 <div class="col-sm-12" style="padding: 0;">
                                     <div class="form-group">
-                                        <label><b>Medicamento / Forma farmaceutica</b></label>
+                                        <label><b>Medicamento / Forma farmacéutica</b></label>
                                         <div class="input-group">
                                             <div id="borderMedicamento" >
                                                 <select id="select_medicamento" onchange="indicarInteraccion()" class="form control select2 selectpicker" style="width: 100%" hidden>
@@ -876,13 +876,13 @@
                             <div class="form-group">
                                 <div class="col-sm-8 col-ms-8">
                                   <label>Nombre de supervisor Médico de Base:</label>
-                                  <?php $medicoTratante = $notaIngreso[0]['id_medico_tratante'] =='' ? '': $medicoTratante[0]['empleado_apellidos'].' '.$medicoTratante[0]['empleado_nombre']; ?>
-                                  <input class="form-control" name="medicosBase" id="medicosBase" placeholder="Tecleé el nombre del medico y seleccione" value="<?=$medicoTratante?>" autocomplete="off" required>     
+                                  <?php $medicoTratanteBase = $notaIngreso[0]['id_medico_tratante'] =='' ? '': $medicoTratante[0]['empleado_apellidos'].' '.$medicoTratante[0]['empleado_nombre'];?>
+                                  <input class="form-control" name="medicosBase" id="medicosBase" placeholder="Tecleé el nombre del medico y seleccione" value="<?=$medicoTratanteBase?>" autocomplete="off" required>     
                                   <input type="hidden" name="medicoTratante" id="id_medico_tratante" value="<?=$notaIngreso[0]['id_medico_tratante']?>"> 
                                 </div>
                                 <div class="col-sm-3 col-md-3">
                                   <label>Matriucula </label>           
-                                    <input class="form-control" id="medicoMatricula" type="text" name="medicoMatricula" placeholder="Matrícula Medico" value="<?=$medicoTratante[0]['empleado_matricula']?>"  readonly>  
+                                    <input class="form-control" name="medicoMatricula" id="medicoMatricula" value="<?=$medicoTratante[0]['empleado_matricula']?>"  readonly>  
                                 </div>
                             </div>
                         </div>
@@ -898,7 +898,7 @@
                                    <input type="text" class="form-control" id="medico<?=$i ?>" name="apellido_residente[]" placeholder="Apellidos" value="<?=$Residentes[0]['apellido_residente']?>" required>
                                  </div>                             
                               <div class="col-sm-3 col-md-3">
-                                <label>Cédula Profesional</label>
+                                <label>Matricula</label>
                                 <input class="form-control" id="residenteCedula" type="text" name="cedula_residente[]" placeholder="Cédula Profesional" value="<?=$Residentes[0]['cedulap_residente']?>" required>
                               </div>
                               <div class="col-sm-2 col-md-2">

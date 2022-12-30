@@ -770,7 +770,7 @@ $(document).ready(function () {
       }
     });
     /*Guardar Documento Nota de Ingreso*/
-    $('.guardarNotaIngreso').submit(function (e){    
+    $('.guardarNotaIngreso').submit(function (e){ 
         e.preventDefault();
         $.ajax({
             url: base_url+"Sections/Documentos/AjaxGuardaNotaIngresoHosp",
@@ -789,8 +789,9 @@ $(document).ready(function () {
                 
                   if($('input[name=tipo]').val()=='Hospitalizacion'){
                     if($('input[name=estado]').val()!='Salida'){
-                       // AbrirDocumentoMultiple(base_url+'Inicio/Documentos/HojaInicialAbierto/'+$('input[name=triage_id]').val(),'Hola Inicial',100);
                         ActionCloseWindowsReload();
+                        AbrirDocumentoMultiple(base_url+'Inicio/Documentos/NotaIngresoHosp/'+data.idNotaIngreso,'Nota de ingreso',100);
+                        
                     }else{
                         AbrirDocumentoMultiple(base_url+'Inicio/Documentos/HojaInicialAbierto/'+$('input[name=triage_id]').val(),'Hola Inicial',100);
                         if($('input[name=pia_lugar_accidente]').val()=='TRABAJO'){

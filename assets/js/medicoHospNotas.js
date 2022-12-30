@@ -15,15 +15,15 @@ $(document).ready(function () {
                     msj_loading();
                 },success: function (data, textStatus, jqXHR) {
                     bootbox.hideAll();
-                    console.log(data)
+                    //console.log(data)
                     if(data.accion=='NO_AM'){
-                        MsjNotificacion('<h5>ERROR, DATOS INCOMPLETOS </h5>','<center><i class="fa fa-exclamation-triangle fa-5x" style="color:#E62117"></i><br>DATOS DEL PACIENTE NO CAPTURADOS POR ASISTENTE MÉDICA</center>')
+                        MsjNotificacion('<h5>ERROR, FOLIO </h5>','<center><i class="fa fa-exclamation-triangle fa-5x" style="color:#E62117"></i><br>DATOS DEL PACIENTE NO CAPTURADOS POR ASISTENTE MÉDICA</center>')
                     }if(data.accion=='NO_EXISTE_EN_HOSP'){
                         AjaxAgregarIngresoHosp(data.paciente)
                     }if(data.accion=='NO_ASIGNADO'){
                         AjaxIngresoServicio(data.paciente)
                     }if(data.accion=='ASIGNADO'){
-                        PacienteAgregado(data.paciente,data.ce,data.medico,data.TieneInterconsulta)
+                        PacienteAgregado(data.paciente,data.hosp,data.servicio,data.medico)
                     }
                 },error: function (jqXHR, textStatus, errorThrown) {
                     bootbox.hideAll();
@@ -46,7 +46,7 @@ $(document).ready(function () {
                     msj_loading();
                 },success: function (data, textStatus, jqXHR) {
                     bootbox.hideAll();
-                    console.log(data);
+                    
                     if(data.accion=='NO_AM'){
                         MsjNotificacion('<h5>ERROR, DATOS INCOMPLETOS </h5>','<center><i class="fa fa-exclamation-triangle fa-5x" style="color:#E62117"></i><br>DATOS DEL PACIENTE NO CAPTURADOS POR ASISTENTE MÉDICA</center>')
                     }if(data.accion=='NO_EXISTE_EN_HOSP'){
@@ -54,7 +54,9 @@ $(document).ready(function () {
                     }if(data.accion=='NO_ASIGNADO'){
                         AjaxIngresoServicio(data.paciente)
                     }if(data.accion=='ASIGNADO'){
-                        PacienteAgregado(data.paciente,data.ce,data.medico,data.TieneInterconsulta)
+                        console.log(data.servicio);
+                        console.log(data.medico);
+                        PacienteAgregado(data)
                     }
                 },error: function (jqXHR, textStatus, errorThrown) {
                     bootbox.hideAll();
@@ -62,36 +64,33 @@ $(document).ready(function () {
                 }
             });
     });
-    function PacienteAgregado(info,ce, medico,TieneInterconsulta) {
+    function PacienteAgregado(info,hosp,servicio,medico) {
+        let fecha_ingreso = new Date(`${hosp.fecha_ingreso} ${hosp.hora_atencion}`);
+        let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         bootbox.confirm({
             title: "<h5>PACIENTE ASIGNADO</h5>",
             message: '<div class="row" style="margin-top:-10px">'+
-                        '<div class="col-md-12 ">'+
-                            '<div style="height:10px;width:100%;margin-top:10px" class="'+ColorClasificacion(info.triage_color)+'"></div>'+
-                        '</div>'+
                         '<div class="col-md-12">'+
-                            '<h3><b>FOLIO:</b> '+info.triage_id+'</h3>'+
-                            '<h3 style="margin-top:-5px"><b>PACIENTE:</b> '+info.triage_nombre+' '+info.triage_nombre_ap+' '+info.triage_nombre_am+'</h3>'+
-                            '<h3 style="margin-top:-5px"><b>C. ASIGNADO:</b> '+ce.ce_asignado_consultorio+'</h3>'+
-                            '<h3 style="margin-top:-5px"><b>M. ASIGNADO:</b> '+medico.empleado_nombre+' '+medico.empleado_apellidos+'</h3>'+
-                            '<h3 style="margin-top:-5px"><b>INGRESO:</b> '+ce.ce_fe+' '+ce.ce_he+'</h3>'+
-                            (ce.ce_status=='Salida' ? '<h3 style="margin-top:-5px"><b>SALIDA:</b> '+ce.ce_fs+' '+ce.ce_hs+'</h3>' : '')+
-                            (TieneInterconsulta.length>0 ? '<hr><h3 style="margin-top:-5px"><b>ESTE PACIENTE CUENTA CON INTERCONSULTA':'')+
+                            '<h5><b>Folio:</b> '+info.triage_id+'</h5>'+
+                            '<h5 style="margin-top:-5px"><b>Paciente:</b> '+info.triage_nombre_ap+' '+info.triage_nombre_am+' '+info.triage_nombre+' </h5>'+
+                            '<h5 style="margin-top:-5px"><b>Servicio:</b> '+servicio+'</h5>'+
+                            '<h5 style="margin-top:-5px"><b>Médico tratante:</b> '+medico.empleado_apellidos+' '+medico.empleado_nombre+'</h5>'+
+                            '<h5 style="margin-top:-5px"><b>Fecha de ingreso:</b> '+fecha_ingreso.toLocaleDateString("es-ES",options)+'</h5>'+
                         '</div>'+
                     '</div>'
             ,
             buttons: {
                 cancel: {
                     label: 'Cancelar',
-                    className: 'back-imss'
+                    className: 'btn-danger'
                 },confirm: {
                     label: 'Ver Expediente',
-                    className: 'back-imss'
+                    className: 'btn-success'
                 }
             },
             callback: function (result) {
                 if(result==true){
-                    window.open(base_url+'Sections/Documentos/Expediente/'+info.triage_id+'/?tipo=Especialidad','_blank')
+                    window.open(base_url+'Sections/Documentos/Expediente/'+info.triage_id+'/?tipo=Hospitalizacion','_blank')
                 }
             }
         });
@@ -146,24 +145,24 @@ $(document).ready(function () {
     }
     function AjaxAgregarIngresoHosp(info) {
         bootbox.confirm({
-            title: "<h5>Ingreso de Paciente</h5>",
+            title: "<h5>INGRESO DE PACIENTE AL SERVICIO</h5>",
             message: '<div class="row" style="margin-top:-10px">'+
                         '<div class="col-md-12 ">'+
                             '<div style="height:10px;width:100%;margin-top:10px" class="'+ColorClasificacion(info.triage_color)+'"></div>'+
                         '</div>'+
                         '<div class="col-md-12">'+
-                            '<h3><b>Folio:</b> '+info.triage_id+'</h3>'+
-                            '<h3 style="margin-top:-5px"><b>Nombre:</b> '+info.triage_nombre_ap+' '+info.triage_nombre_am+' '+info.triage_nombre+'</h3><br>'+
-                            '<h5 style="margin-top:-5px"><b>¿Desea agregar a este paciente al Servicio?</b></h5>'+
+                            '<h4><b>Folio:</b> '+info.triage_id+'</h4>'+
+                            '<h4 style="margin-top:-5px"><b>Nombre:</b> '+info.triage_nombre_ap+' '+info.triage_nombre_am+' '+info.triage_nombre+'</h4><br>'+
+                            '<h5 style="margin-top:-5px"><b>¿Desea agregar a este paciente al servicio?</b></h5>'+
                         '</div>'+
                     '</div>',
             buttons: {
                 cancel: {
                     label: 'Cancelar',
-                    className: 'back-imss'
+                    className: 'btn-danger'
                 },confirm: {
                     label: 'Agregar',
-                    className: 'back-imss'
+                    className: 'btn-success'
                 }
             },callback: function (result) {
                 if(result==true){
@@ -178,6 +177,7 @@ $(document).ready(function () {
                             msj_loading();
                         },success: function (data, textStatus, jqXHR) { 
                             bootbox.hideAll();
+                            console.log(data);
                             updateTables(data);
                             /*if(data.accion == 1){
                                 updateTables(data);
