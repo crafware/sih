@@ -101,9 +101,8 @@ io.on("connection", (socket) => {
 function getDataDashboard_ac(socket) {
   pool.getConnection((err, connection,) => {
     if (err) throw err;
-    connection.query("SELECT os_camas.cama_nombre, os_consultorios_especialidad_hf.hf_estadosalud, os_triage.triage_id,os_triage.triage_nombre, os_triage.triage_nombre_ap, os_triage.triage_nombre_am " +
-      "FROM  os_consultorios_especialidad_hf, os_triage, os_camas WHERE " +
-      "os_triage.triage_id = os_consultorios_especialidad_hf.triage_id AND " +
+    connection.query("SELECT os_camas.estado_salud, os_camas.cama_nombre, os_triage.triage_id,os_triage.triage_nombre, os_triage.triage_nombre_ap, os_triage.triage_nombre_am " +
+      "FROM os_triage, os_camas WHERE " +
       "os_camas.triage_id = os_triage.triage_id AND " +
       "os_camas.area_id = 1", (err, row) => {
         if (err) throw err;
@@ -969,58 +968,42 @@ function registroIndicioEmbarazo() {
 }
 
 function actualizarDashboard_ac(event) {
-  if (event.table == "os_camas") {
-    if (event.affectedRows[0]["after"]["area_id"] == 1) {
-      if (event.affectedRows[0]["after"]["triage_id"] != event.affectedRows[0]["before"]["triage_id"]) {
-        if (event.affectedRows[0]["after"]["triage_id"] != 0 || event.affectedRows[0]["after"]["triage_id"] != null) {
-          pool.getConnection((err, connection,) => {
-            if (err) throw err;
-            connection.query("SELECT os_consultorios_especialidad_hf.hf_estadosalud, os_triage.triage_id,os_triage.triage_nombre, os_triage.triage_nombre_ap, os_triage.triage_nombre_am " +
-              "FROM  os_consultorios_especialidad_hf, os_triage WHERE " +
-              "os_triage.triage_id = os_consultorios_especialidad_hf.triage_id AND " +
-              "os_triage.triage_id = " + event.affectedRows[0]["after"]["triage_id"], (err, row) => {
-                connection.release();
-                if (!err) {
-                  if (row[0] != undefined) {
-                    var inf = row[0]
-                    inf["cama_nombre"] = event.affectedRows[0]["after"]["cama_nombre"]
-                    inf["tipo"] = "updateNew"
-                    io.sockets.emit("actualizarDashboard_ac", inf);
-                  }
-                }
-              });
-          })
-        }
-        if (event.affectedRows[0]["before"]["triage_id"] != 0 && event.affectedRows[0]["before"]["triage_id"] != null) {
-          pool.getConnection((err, connection,) => {
-            if (err) throw err;
-            connection.query("SELECT * FROM os_camas WHERE area_id = 1 AND triage_id =" + event.affectedRows[0]["before"]["triage_id"], (err, row,) => {
+  if (event.affectedRows[0]["after"]["area_id"] == 1) {
+    if (event.affectedRows[0]["after"]["triage_id"] != event.affectedRows[0]["before"]["triage_id"]) {
+      if (event.affectedRows[0]["after"]["triage_id"] != 0 && event.affectedRows[0]["after"]["triage_id"] != null) {
+        pool.getConnection((err, connection,) => {
+          if (err) throw err;
+          connection.query("SELECT triage_id, triage_nombre, triage_nombre_ap, triage_nombre_am " +
+            "FROM os_triage WHERE triage_id = " + event.affectedRows[0]["after"]["triage_id"], (err, row) => {
               connection.release();
-              if (row[0] == undefined) {
-                console.log("delete 2")
-                var inf = { "tipo": "delete", "triage_id": event.affectedRows[0]["before"]["triage_id"] }
-                io.sockets.emit("actualizarDashboard_ac", inf);
+              if (!err) {
+                if (row[0] != undefined) {
+                  var inf = row[0]
+                  inf["estado_salud"] = event.affectedRows[0]["after"]["estado_salud"]
+                  inf["cama_nombre"] = event.affectedRows[0]["after"]["cama_nombre"]
+                  inf["tipo"] = "updateNew"
+                  console.log(inf)
+                  io.sockets.emit("actualizarDashboard_ac", inf);
+                }
               }
-            })
-          })
-        }
+            });
+        })
       }
-    }
-  } else {
-    if (event.affectedRows[0]["after"]["hf_estadosalud"] != event.affectedRows[0]["before"]["hf_estadosalud"]) {
-      pool.getConnection((err, connection,) => {
-        if (err) throw err;
-        connection.query("SELECT * FROM os_camas WHERE area_id = 1 AND " +
-          "triage_id = " + event.affectedRows[0]["after"]["triage_id"], (err, row) => {
-            if (err) { throw err; }
-            console.log("row")
-            console.log(row)
-            if (row[0] != undefined) {
-              var inf = { "tipo": "updateestadosalud", "triage_id": event.affectedRows[0]["after"]["triage_id"], "hf_estadosalud": event.affectedRows[0]["after"]["hf_estadosalud"] }
+      if (event.affectedRows[0]["before"]["triage_id"] != 0 && event.affectedRows[0]["before"]["triage_id"] != null) {
+        pool.getConnection((err, connection,) => {
+          if (err) throw err;
+          connection.query("SELECT * FROM os_camas WHERE area_id = 1 AND triage_id =" + event.affectedRows[0]["before"]["triage_id"], (err, row,) => {
+            connection.release();
+            if (row[0] == undefined) {
+              var inf = { "tipo": "delete", "triage_id": event.affectedRows[0]["before"]["triage_id"] }
               io.sockets.emit("actualizarDashboard_ac", inf);
             }
-          });
-      })
+          })
+        })
+      }
+    } else if (event.affectedRows[0]["after"]["estado_salud"] != event.affectedRows[0]["before"]["estado_salud"]) {
+      var inf = { "tipo": "updateestadosalud", "triage_id": event.affectedRows[0]["after"]["triage_id"], "estado_salud": event.affectedRows[0]["after"]["estado_salud"] }
+      io.sockets.emit("actualizarDashboard_ac", inf);
     }
   }
 }
@@ -1052,6 +1035,7 @@ const program = async () => {
     statement: MySQLEvents.STATEMENTS.ALL,
     onEvent: async (event) => { // You will receive the events here
       if (event.table == "os_camas") {
+        actualizarDashboard_ac(event)
         getData(event.affectedRows)
         if (event.affectedRows[0]["after"]["proceso"] != event.affectedRows[0]["before"]["proceso"]) {
           if (event.affectedRows[0]["after"]["proceso"] == 1 || event.affectedRows[0]["after"]["proceso"] == 2) {
@@ -1073,8 +1057,6 @@ const program = async () => {
           updateRegistroPacientesAtencionMedicaAdmisionContinua(event.affectedRows[0]["after"])
       } if (event.table == "um_consultas_dashboard") {
         io.sockets.emit("realTimeUpdateDashboard", event.affectedRows[0]["after"]);
-      } if (event.table == "os_camas" || event.table == "os_consultorios_especialidad_hf") {
-        actualizarDashboard_ac(event)
       }
     },
   });
