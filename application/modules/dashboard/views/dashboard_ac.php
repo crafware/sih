@@ -283,7 +283,7 @@ function getServerIp()
                     for (id in idTables) {
                         if (document.getElementById(idTables[id]) != undefined) {
                             document.getElementById(idTables[id]).style.display = null;
-                            await new Promise(resolve => setTimeout(resolve, 17000));
+                            await new Promise(resolve => setTimeout(resolve, 20000));
                         }
                         if (document.getElementById(idTables[id]) != undefined) {
                             document.getElementById(idTables[id]).style.display = "none";
