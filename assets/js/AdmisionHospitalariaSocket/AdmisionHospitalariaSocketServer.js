@@ -982,7 +982,6 @@ function actualizarDashboard_ac(event) {
                   inf["estado_salud"] = event.affectedRows[0]["after"]["estado_salud"]
                   inf["cama_nombre"] = event.affectedRows[0]["after"]["cama_nombre"]
                   inf["tipo"] = "updateNew"
-                  console.log(inf)
                   io.sockets.emit("actualizarDashboard_ac", inf);
                 }
               }

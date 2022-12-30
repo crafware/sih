@@ -69,13 +69,14 @@ function getServerIp()
         table tr.odd {
             background-color: #182132;
         }
+
         table tr.even {
             background-color: #2A3A5A;
         }
 
         div.panel {
             margin-bottom: 20px;
-            background-color: black; 
+            background-color: black;
             border: 1px solid transparent;
             border-radius: 4px;
         }
@@ -136,36 +137,27 @@ function getServerIp()
                 alert('El video ha finalizado!!!');
             });
         });
-
-        function carga03(e) {
-            if (a != e) {
-                if (a != "") a.style.opacity = 1;
-                a = e;
-                e.style.opacity = 0.4;
-                document.getElementById("subTVideo").innerHTML = 'POOMSAE TAEBAEK';
-                document.getElementById("mp4_src").src = "<?= base_url() ?>assets/multimedia/triage.mp4";
-                document.getElementById("myVideo").load();
-            }
-        }
         var dashboardDataTable = {};
 
         function actualizarDashboard_ac(data) {
-            var triage_id = data["triage_id"].toString().replaceAll("0", "")
-            console.log(data["tipo"])
-            console.log(triage_id)
-            if (data["tipo"] == "updateNew") {
-                if (dashboardDataTable[triage_id] == undefined) {
-                    dashboardDataTable[triage_id] = {};
+            if (data["triage_id"] != null) {
+                var triage_id = parseInt(data["triage_id"]).toString();
+                if (data["tipo"] == "updateNew") {
+                    if (dashboardDataTable[triage_id] == undefined) {
+                        dashboardDataTable[triage_id] = {};
+                    }
+                    dashboardDataTable[triage_id]["nombre"] = data["triage_nombre_ap"] + " " + data["triage_nombre_am"] + " " + data["triage_nombre"]
+                    dashboardDataTable[triage_id]["cama"] = data["cama_nombre"]
+                    dashboardDataTable[triage_id]["estado"] = data["estado_salud"]
+                } else if (data["tipo"] == "delete") {
+                    console.log(data)
+                    delete dashboardDataTable[triage_id];
+                } else if (data["tipo"] == "updateestadosalud") {
+                    dashboardDataTable[triage_id]["estado"] = data["estado_salud"]
                 }
-                dashboardDataTable[triage_id]["nombre"] = data["triage_nombre_ap"] + " " + data["triage_nombre_am"] + " " + data["triage_nombre"]
-                dashboardDataTable[triage_id]["cama"] = data["cama_nombre"]
-                dashboardDataTable[triage_id]["estado"] = data["estado_salud"]
-            } else if (data["tipo"] == "delete") {
-                delete dashboardDataTable[triage_id];
-            } else if (data["tipo"] == "updateestadosalud") {
-                dashboardDataTable[triage_id]["estado"] = data["estado_salud"]
+                actualizarDashboard()
             }
-            actualizarDashboard()
+
         }
         var idTables = []
 
@@ -222,11 +214,13 @@ function getServerIp()
 
         function getDataDashboard_ac(data) {
             for (d in data) {
-                var triage_id = data[d]["triage_id"].toString().replaceAll("0", "")
-                dashboardDataTable[triage_id] = {}
-                dashboardDataTable[triage_id]["nombre"] = data[d]["triage_nombre_ap"] + " " + data[d]["triage_nombre_am"] + " " + data[d]["triage_nombre"]
-                dashboardDataTable[triage_id]["cama"] = data[d]["cama_nombre"]
-                dashboardDataTable[triage_id]["estado"] = data[d]["estado_salud"]
+                if (data[d]["triage_id"] != null) {
+                    var triage_id = parseInt(data[d]["triage_id"]).toString();
+                    dashboardDataTable[triage_id] = {}
+                    dashboardDataTable[triage_id]["nombre"] = data[d]["triage_nombre_ap"] + " " + data[d]["triage_nombre_am"] + " " + data[d]["triage_nombre"]
+                    dashboardDataTable[triage_id]["cama"] = data[d]["cama_nombre"]
+                    dashboardDataTable[triage_id]["estado"] = data[d]["estado_salud"]
+                }
             }
             actualizarDashboard()
         }
@@ -243,58 +237,31 @@ function getServerIp()
         })
         socket.on("getDataDashboard_ac", function(data) {
             getDataDashboard_ac(data)
+            stateChange2()
         })
         socket.emit("getDataDashboard_ac", {
             "text": "hola mundo"
         })
 
-        function stateChange2() {
-            var vnrl = videosNameRandom.length
-            if (vnrl == 0)
-                for (var i = 0; i < videosName.length; i++)
-                    videosNameRandom.push(i)
-            var na = Math.floor(Math.random() * vnrl);
-            var n = videosNameRandom[na];
-            videosNameRandom.splice(na, 1);
-            videoEnReproduccion = "video" + n
-            document.getElementById("titulo").style.display = "none";
-            document.getElementById("tableroAeropuerto").style.display = "none";
-            document.getElementById("tableroVideo").style.display = null;
-            document.getElementById(videoEnReproduccion).style.display = null;
-            document.getElementById(videoEnReproduccion).play();
-        }
-
-        function iniciarVideos() {
-            var videoDiv1 = '<video style="display:none;" muted="muted" id="'
-            var videoDiv2 = '" src="<?= base_url() ?>assets/multimedia/dashboard_ac/'
-            var videoDiv3 = '" width="640" height="480" autoplay controls></video>'
-            var divVideos = document.getElementById("divVideos");
-            for (v in videosName) {
-                divVideos.innerHTML += videoDiv1 + "video" + v + videoDiv2 + videosName[v] + videoDiv3
-            }
-            var divVideos = document.getElementById("divVideos");
-            for (var i = 0; i < videosName.length; i++) {
-                console.log("video" + i)
-                document.getElementById("video" + i).addEventListener("ended", async function() {
-                    document.getElementById("tableroVideo").style.display = "none";
-                    document.getElementById(videoEnReproduccion).style.display = "none";
-                    document.getElementById("titulo").style.display = null;
-                    document.getElementById("tableroAeropuerto").style.display = null;
-                    for (id in idTables) {
-                        if (document.getElementById(idTables[id]) != undefined) {
-                            document.getElementById(idTables[id]).style.display = null;
-                            await new Promise(resolve => setTimeout(resolve, 20000));
-                        }
-                        if (document.getElementById(idTables[id]) != undefined) {
-                            document.getElementById(idTables[id]).style.display = "none";
-                        }
+        async function stateChange2() {
+            document.getElementById("titulo").style.display = null;
+            document.getElementById("tableroAeropuerto").style.display = null;
+            console.log(2)
+            while (true) {
+                console.log(1)
+                for (id in idTables) {
+                    console.log(id)
+                    if (document.getElementById(idTables[id]) != undefined) {
+                        document.getElementById(idTables[id]).style.display = null;
+                        await new Promise(resolve => setTimeout(resolve, 22000));
                     }
-                    stateChange2()
-                })
+                    if (document.getElementById(idTables[id]) != undefined) {
+                        document.getElementById(idTables[id]).style.display = "none";
+                    }
+                }
             }
         }
-        iniciarVideos()
-        stateChange2()
+        //stateChange2()
     </script>
 </body>
 
