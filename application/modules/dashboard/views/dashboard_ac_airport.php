@@ -129,7 +129,8 @@ function getServerIp()
     <script src="<?= base_url('assets/js/Dashboard.js?') . md5(microtime()) ?>" type="text/javascript"></script>
     <script src="<?= "http://" . getServerIp() . ':3001/socket.io/socket.io.js' ?>" type="text/javascript"></script>
     <script type="text/javascript">
-        var videosName = ['triage.mp4'];
+        var videosName = ['triage.mp4', 'codigoCerebro.mp4'];
+        var ImagenName = ["13267775.jpg", "FjgUyTUUYAALsUs.jpeg", "Fk2ldPHWQAEgLe2.jpeg", "Fk7XIYpWYAY7NP8.jpeg", "FlGHHUyWYAIMEj3.jpeg"];
         var videosNameRandom = [];
         var videoEnReproduccion = "";
         $(document).ready(function() {
@@ -209,7 +210,6 @@ function getServerIp()
                 n++;
             }
             tableroAeropuerto.innerHTML = tr + '</tbody></table>'
-
         }
 
         function getDataDashboard_ac(data) {
@@ -241,30 +241,69 @@ function getServerIp()
         socket.emit("getDataDashboard_ac", {
             "text": "hola mundo"
         })
-
         function stateChange2() {
             var vnrl = videosNameRandom.length
-            if (vnrl == 0)
+            if (vnrl == 0) {
                 for (var i = 0; i < videosName.length; i++)
-                    videosNameRandom.push(i)
+                    videosNameRandom.push("video" + i)
+                for (var i = 0; i < ImagenName.length; i++)
+                    videosNameRandom.push("imagen" + i)
+            }
             var na = Math.floor(Math.random() * vnrl);
-            var n = videosNameRandom[na];
+            videoEnReproduccion = videosNameRandom[na]
             videosNameRandom.splice(na, 1);
-            videoEnReproduccion = "video" + n
             document.getElementById("titulo").style.display = "none";
             document.getElementById("tableroAeropuerto").style.display = "none";
             document.getElementById("tableroVideo").style.display = null;
             document.getElementById(videoEnReproduccion).style.display = null;
-            document.getElementById(videoEnReproduccion).play();
+            console.log(videoEnReproduccion)
+            if (videoEnReproduccion.includes("video")){
+                console.log("mortrarImagen")
+                document.getElementById(videoEnReproduccion).play();
+            }
+            else if (videoEnReproduccion.includes("imagen")){
+                console.log("mortrarImagen")
+                mortrarImagen(videoEnReproduccion)
+            }
+                
+        }
+        async function mortrarImagen(videoEnReproduccion) {
+            document.getElementById("tableroVideo").style.display = null;
+            document.getElementById(videoEnReproduccion).style.display = null;
+            document.getElementById("titulo").style.display = "none";
+            document.getElementById("tableroAeropuerto").style.display = "none";
+            await new Promise(resolve => setTimeout(resolve, 22000));
+            document.getElementById("tableroVideo").style.display = "none";
+            document.getElementById(videoEnReproduccion).style.display = "none";
+            document.getElementById("titulo").style.display = null;
+            document.getElementById("tableroAeropuerto").style.display = null;
+            for (id in idTables) {
+                if (document.getElementById(idTables[id]) != undefined) {
+                    document.getElementById(idTables[id]).style.display = null;
+                    await new Promise(resolve => setTimeout(resolve, 22000));
+                }
+                if (document.getElementById(idTables[id]) != undefined) {
+                    document.getElementById(idTables[id]).style.display = "none";
+                }
+            }
+            stateChange2()
         }
 
-        function iniciarVideos() {
-            var videoDiv1 = '<video style="display:none;" muted="muted" id="'
+        function iniciarVideosImagenes() {
+            var videoDiv1 = '<video style="display:none;" muted="muted" id="'//width: 50%;
             var videoDiv2 = '" src="<?= base_url() ?>assets/multimedia/dashboard_ac/'
             var videoDiv3 = '" width="640" height="480" autoplay controls></video>'
             var divVideos = document.getElementById("divVideos");
+
+            var imagenDiv1 = '<img style="display:none;width: 100%;margin-top: 5px;height: 100%;" id="'
+            var imagenDiv2 = '" src="<?= base_url() ?>assets/multimedia/dashboard_ac/'
+            var imagenDiv3 = '">'
+
             for (v in videosName) {
                 divVideos.innerHTML += videoDiv1 + "video" + v + videoDiv2 + videosName[v] + videoDiv3
+            }
+            for (i in ImagenName) {
+                divVideos.innerHTML += imagenDiv1 + "imagen" + i + imagenDiv2 + ImagenName[i] + imagenDiv3
             }
             var divVideos = document.getElementById("divVideos");
             for (var i = 0; i < videosName.length; i++) {
@@ -287,7 +326,8 @@ function getServerIp()
                 })
             }
         }
-        iniciarVideos()
+
+        iniciarVideosImagenes()
         stateChange2()
     </script>
 </body>
