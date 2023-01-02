@@ -28,8 +28,8 @@ app.set('port', process.env.PORT || 3001);
 app.use(express.static(path.join(__dirname, 'public')));
 const server = app.listen(app.get('port'), () => {
   console.log('server on port', app.get("port"));
-
 });
+
 //get local ip
 const { networkInterfaces } = require('os');
 const nets = networkInterfaces();
@@ -97,8 +97,25 @@ io.on("connection", (socket) => {
     getDataDashboard_ac(socket);
   }))
 })
-
+const fs = require("fs")
 function getDataDashboard_ac(socket) {
+  var pathList = __dirname.split("\\").slice(1, -2)
+  var directoryPath = ""
+  for(var i = 0; i<pathList.length; i++){
+    directoryPath += "/" + pathList[i]
+  }
+  directoryPath += "/multimedia/dashboard_ac"
+  var videosName = []
+  var ImagenName = []
+  var ls = fs.readdirSync(directoryPath)
+  for(var i = 0;i<ls.length;i++){
+    const file = path.join(directoryPath, ls[i])
+    var name = file.split("\\").at(-1)
+    if (name.indexOf("mp4") != -1)
+      videosName.push(name)
+    else
+      ImagenName.push(name)
+  }
   pool.getConnection((err, connection,) => {
     if (err) throw err;
     connection.query("SELECT os_camas.estado_salud, os_camas.cama_nombre, os_triage.triage_id,os_triage.triage_nombre, os_triage.triage_nombre_ap, os_triage.triage_nombre_am " +
@@ -107,7 +124,11 @@ function getDataDashboard_ac(socket) {
       "os_camas.area_id = 1", (err, row) => {
         if (err) throw err;
         connection.release();
-        io.sockets.to(socket.id).emit("getDataDashboard_ac", row)
+        var data ={}
+        data["row"] = row;
+        data["videosName"] = videosName
+        data["ImagenName"] = ImagenName
+        io.sockets.to(socket.id).emit("getDataDashboard_ac", data)
       })
   })
 }
