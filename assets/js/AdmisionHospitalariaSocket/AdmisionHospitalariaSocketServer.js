@@ -68,7 +68,6 @@ io.on("connection", (socket) => {
     getDataNotesTooltip(data["id"], data["cama_nombre"], data["tipo_nota"], socket);
   }))
   socket.on("getDataPacientesAreasCriticas", (data => {
-    console.log(data);
     getDataPacientesAreasCriticas(data["area"], socket);
   }))
   socket.on("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", (data => {
@@ -76,11 +75,9 @@ io.on("connection", (socket) => {
   }))
   //Update dates
   socket.on("setDataNotesEstado", (data => {
-    console.log(data);
     setDataNotesEstado(data, socket);
   }))
   socket.on("usuarioJefeDashboard", (data => {
-    console.log(data);
     usuarioJefeDashboard(data, socket);
   }))
   socket.on("refresh_um_consultas_dashboard", (data => {
