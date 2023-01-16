@@ -431,7 +431,7 @@ class Uci extends Config
                         <td>' . $value['nombre_paciente'] . '</td>
                         <td>' . $nss . '</td>
                         <td>
-                            <div class="form-group">
+                             <div class="form-group">                             
                                 <button class = "agregar-paciente" data-folio = ' . $value['triage_id'] . '>Agregar paciente</button>
                             </div>
                         </td>
