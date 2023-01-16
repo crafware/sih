@@ -1164,9 +1164,9 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label><b>NOMBRE</b></label>
-                                    <input type="text" name="medicoTratante" value="<?=$value['empleado_nombre'].' '.$value['empleado_apellidos']?>" readonly="" class="form-control">
-                                </div>
+                                  <label><b>NOMBRE</b></label>
+                                  <input type="text" name="medicoTratante" value="<?=$value['empleado_nombre'].' '.$value['empleado_apellidos']?>" readonly="" class="form-control">
+                                </div>doc_notas
                                 <div class="col-md-3">
                                     <label><b>MATRICULA</b></label>
                                     <input type="text" name="MedicoTratante" value="<?=$value['empleado_matricula']?>" readonly="" class="form-control">
@@ -1187,12 +1187,13 @@
                           <div class="form-group">
                               <div class="col-sm-8 col-ms-8">
                                 <label>Nombre de supervisor Médico de Base:</label>
-                                <input class="form-control" name="medicosBase" id="medicosBase" placeholder="Tecleé apellidos del médico y seleccione" value="<?=$medicoTratante['empleado_apellidos'].' '.$medicoTratante['empleado_nombre'];?>" autocomplete="off" required>     
-                                <input type="hidden" name="medicoTratante" id="id_medico_tratante" value="<?=$notaIngreso[0]['id_medico_tratante']?>"> 
+                                <?php $medicoTratante = $Nota['notas_medicotratante'] =='' ? '': $medicoTratante['empleado_apellidos'].' '.$medicoTratante['empleado_nombre']; ?>
+                                <input class="form-control" name="medicosBase" id="medicosBase" placeholder="Tecleé apellidos del médico y seleccione" value="<?=$medicoTratante?>" autocomplete="off" required>     
+                                <input type="hidden" name="medicoTratante" id="id_medico_tratante" value="<?=$Nota['notas_medicotratante']?>"> 
                               </div>
                               <div class="col-sm-3 col-md-3">
                                 <label>Matricula </label>           
-                                  <input class="form-control" id="medicoMatricula" type="text" name="medicoMatricula" placeholder="Matrícula Medico" value="<?=$medicoTratante[0]['empleado_matricula']?>"  readonly>  
+                                  <input class="form-control" id="medicoMatricula" type="text" name="medicoMatricula" value="<?=$medicoTratante['empleado_matricula']?>"  readonly>  
                               </div>
                           </div>
                       </div>

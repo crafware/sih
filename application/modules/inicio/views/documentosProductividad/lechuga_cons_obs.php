@@ -141,9 +141,9 @@
                 }else if($paciente_diagnosticos_secundarios==''){
                     $paciente_diagnosticos_secundarios    .= $value_diagnosticos['cie10_nombre'];
                     $paciente_diagnosticos_secundarios_cie10_id    .= $value_diagnosticos['cie10_clave'];
-                }
-                if($value_diagnosticos['cie10_id'] == 69824){
+                }else if ($value_diagnosticos['cie10_id'] == 69824){
                     $paciente_diagnostico_primario = $value_diagnosticos['complemento'];
+                    $paciente_diagnostico_primario_cie10_id = $value_diagnosticos['cie10_clave'];
                 }     
             }
             if($value['hf_ce']== 1) {
@@ -244,7 +244,7 @@
 
             $l=$n;
             $j=0;
-             for (;$n<count($datos) ; $n++ ) { 
+            for (;$n<count($datos) ; $n++ ) { 
                 if($n==10+$l) break;
 
                $value = current($datos);
@@ -252,7 +252,7 @@
 
                 $paciente_diagnostico_primario  ='';
                 $paciente_diagnosticos_secundarios  ='';
-                $paciente_diagnostico_primario_cie10_id  ='';
+                //$paciente_diagnostico_primario_cie10_id  ='';
                 $paciente_diagnosticos_secundarios_cie10_id  ='';
                 $margin_topNum              = (85 -85+ $j*75);
                 $margin_topPacient          = (50 -85+ $j*73);
@@ -294,6 +294,7 @@
                 SELECT  paciente_diagnosticos.tipo_diagnostico,
                         paciente_diagnosticos.complemento,
                         um_cie10.cie10_id,
+                        um_cie10.cie10_clave,
                         um_cie10.cie10_nombre
                 FROM paciente_diagnosticos
                 INNER JOIN um_cie10 
@@ -310,13 +311,13 @@
                     $paciente_diagnostico_primario              = $value_diagnosticos['cie10_nombre'];
                     $paciente_diagnostico_primario_cie10_id     = $value_diagnosticos['cie10_clave'];
                 }else if($paciente_diagnosticos_secundarios==''){
-                    $paciente_diagnosticos_secundarios          .= $value_diagnosticos['cie10_nombre'];
-                    $paciente_diagnosticos_secundarios_cie10_id .= $value_diagnosticos['cie10_clave'];
-                }
-                if($value_diagnosticos['cie10_id'] == 69824){
+                    $paciente_diagnosticos_secundarios          = $value_diagnosticos['cie10_nombre'];
+                    $paciente_diagnosticos_secundarios_cie10_id = $value_diagnosticos['cie10_clave'];
+                }else if($value_diagnosticos['cie10_id'] == 69824){
                     $paciente_diagnostico_primario = $value_diagnosticos['complemento'];
+                    $paciente_diagnostico_primario_cie10_id = $value_diagnosticos['cie10_clave'];
                 }
-                $paciente_diagnostico_primario = "hola mundo";
+               
                       
             }?>
 
@@ -350,7 +351,7 @@
                 </div>    
                 <div style="position: absolute;margin-left: 110px;margin-top: <?php echo $margin_topPacient + 32; ?>px;font-size: 9px; width: 582px;text-transform: uppercase"><?=$paciente_diagnostico_primario?>
                 </div>
-                <div style="position: absolute;margin-left: 696px;margin-top: <?php echo $margin_topPacient + 32; ?>px;font-size: 9px; width: 57px; text-align: center;"><?=$paciente_diagnostico_primario_cie10_id?>
+                <div style="position: absolute;margin-left: 696px;margin-top: <?php echo $margin_topPacient + 32; ?>px;font-size: 9px; width: 57px; text-align: center;"><?= $paciente_diagnostico_primario_cie10_id ?>
                 </div>
                 <div style="position: absolute;margin-left: 110px;margin-top: <?php echo $margin_topPacient + 57; ?>px;font-size: 9px; width: 582px;text-transform: uppercase"><?= $paciente_diagnosticos_secundarios ?>
                 </div>

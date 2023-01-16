@@ -1628,6 +1628,7 @@ class Documentos extends Config
         }
     }
 
+<<<<<<< HEAD
     public function valueNotaEgresoHosp(&$sql)
     {
         $limFila = 100;
@@ -1678,6 +1679,22 @@ class Documentos extends Config
         ))[0];
         $sql['plan'] =  $this->config_mdl->_get_data_condition('um_notas_plan_ordenes', array(
             'id_nota'   => $sql['nota']['id_nota'],
+=======
+    public function NotaIngresoHosp($idNota){
+        
+        $sql['nota']=  $this->config_mdl->_get_data_condition('um_notas_ingresos_hospitalario',array(
+            'id_nota'=>  $idNota
+        ))[0];
+
+        $Paciente = $sql['nota']['triage_id'];
+
+        $sql['escalaSalud']=  $this->config_mdl->_get_data_condition('um_notas_escalas_salud',array(
+            'id_nota'   => $idNota,
+            'triage_id' => $Paciente
+        ))[0];
+        $sql['plan']=  $this->config_mdl->_get_data_condition('um_notas_plan_ordenes',array(
+            'id_nota'   => $idNota,
+>>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
             'triage_id' =>  $Paciente
         ))[0];
 
@@ -1685,6 +1702,7 @@ class Documentos extends Config
             'triage_id' =>  $Paciente
         ))[0];
 
+<<<<<<< HEAD
 
         $sql['DirPaciente'] = $this->config_mdl->_get_data_condition('os_triage_directorio', array(
             'directorio_tipo' => 'Paciente',
@@ -1693,6 +1711,29 @@ class Documentos extends Config
 
         $sql['PINFO'] = $this->config_mdl->_get_data_condition('paciente_info', array(
             'triage_id' => $Paciente
+=======
+        $sql['DirPaciente']= $this->config_mdl->_get_data_condition('os_triage_directorio',array(
+            'directorio_tipo' => 'Paciente',
+            'triage_id'       => $Paciente
+        ))[0];
+        
+        $sql['PINFO']= $this->config_mdl->_get_data_condition('paciente_info',array(
+            'triage_id' => $Paciente
+        ))[0];
+
+        $sql['medicoTratante']= $this->config_mdl->_get_data_condition('os_empleados',array(
+            'empleado_id'   =>  $sql['nota']['id_medico_tratante']
+        ),'empleado_nombre,empleado_apellidos,empleado_matricula,empleado_cedula')[0];
+
+        $sql['Servicio']= $this->config_mdl->sqlGetDataCondition('um_especialidades',array(
+            'especialidad_id'   =>  $sql['nota']['id_servicio']
+        ),'especialidad_nombre')[0];
+
+
+        $sql['SignosVitales']= $this->config_mdl->_get_data_condition('os_triage_signosvitales',array(
+            'sv_tipo'   =>  'Triage',
+            'triage_id' =>  $Paciente
+>>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
         ))[0];
 
         $sql['medicoTratante'] = $this->config_mdl->_get_data_condition('os_empleados', array(
@@ -1750,9 +1791,14 @@ class Documentos extends Config
                                         ON um_cie10.cie10_id = paciente_diagnosticos.cie10_id
                                     INNER JOIN diagnostico_hoja_frontal
                                         ON paciente_diagnosticos.diagnostico_id = diagnostico_hoja_frontal.diagnostico_id
+<<<<<<< HEAD
                                     WHERE  id_nota = (SELECT id_nota FROM um_notas_ingresos_hospitalario
                                     WHERE triage_id = $Paciente)");
         $sql['Interconsultas'] = $this->config_mdl->_query("SELECT motivo_interconsulta, especialidad_id, especialidad_nombre FROM um_interconsultas_historial
+=======
+                                    WHERE  id_nota =".$idNota);
+        $sql['Interconsultas'] = $this->config_mdl-> _query("SELECT motivo_interconsulta, especialidad_id, especialidad_nombre FROM um_interconsultas_historial
+>>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
             INNER JOIN doc_430200 ON um_interconsultas_historial.doc_id = doc_430200.doc_id
             INNER JOIN um_especialidades  ON doc_430200.doc_servicio_solicitado = um_especialidades.especialidad_id WHERE triage_id = $Paciente");
 
@@ -1764,8 +1810,13 @@ class Documentos extends Config
             'triage_id' => $Paciente
         ))[0];
 
+<<<<<<< HEAD
         $sql['residentes'] = $this->config_mdl->_get_data_condition('um_notas_residentes', array(
             'idnota_ingresohosp' => $sql['nota']['id_nota']
+=======
+        $sql['residentes']= $this->config_mdl->_get_data_condition('um_notas_residentes',array(
+            'idnota_ingresohosp' => $idNota
+>>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
         ));
         $this->valueNotaIngresoHosp($sql);
         $this->load->view('documentos/NotaIngresoHosp', $sql);

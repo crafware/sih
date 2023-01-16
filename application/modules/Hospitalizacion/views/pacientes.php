@@ -17,6 +17,16 @@
                 <div class="tab-content p m-b-md b-t b-t-2x">
                     <div role="tabpanel" class="tab-pane animated fadeIn active" id="tab_1">
                         <div class="row">
+                            <div class="col-md-4 col-md-offset-8">
+                                <div class="input-group m-b ">
+                                    <span class="input-group-addon back-imss border-back-imss" >
+                                        <i class="fa fa-search"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="filter" placeholder="Buscar paciente">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-12">
                                <table class="table table-bordered table-hover footable" data-filter="#TriageIdFilter" data-limit-navigation="7"data-page-size="10">
                                     <thead>
@@ -51,11 +61,12 @@
                                                 <?php $medicoTratante = $this->config_mdl->_query("SELECT empleado_apellidos, empleado_nombre FROM os_empleados WHERE empleado_id=".$value['ingreso_medico']); ?>
                                                 <?=$medicoTratante[0]['empleado_apellidos']?> <?=$medicoTratante[0]['empleado_nombre']?>
                                             </td> 
-                                            <td style="width: 8%"><?php 
-                                                     $cama = $this->config_mdl->_query("SELECT cama_nombre,piso_nombre_corto from os_camas, os_pisos WHERE os_camas.area_id=os_pisos.area_id AND triage_id =".$value['triage_id']);
+                                            <td style="width: 8%">
+                                                <?php 
+                                                    $cama = $this->config_mdl->_query("SELECT cama_nombre,piso_nombre_corto from os_camas, os_pisos WHERE os_camas.area_id=os_pisos.area_id AND triage_id =".$value['triage_id']);
                                                      if (empty($cama)){
                                                         $infoCama = 'Por asignar'; 
-                                                     }else   $infoCama = $cama[0]['cama_nombre'].' '.$cama[0]['piso_nombre_corto'];    
+                                                    }else   $infoCama = $cama[0]['cama_nombre'].' '.$cama[0]['piso_nombre_corto'];    
                                                 ?>
                                                 <?=$infoCama?>
                                             </td>
@@ -135,7 +146,15 @@
                                             <?php $piso=$this->config_mdl->_query("SELECT * FROM os_pisos,os_pisos_camas WHERE 
                                                 os_pisos.piso_id=os_pisos_camas.piso_id AND os_pisos_camas.cama_id='{$value['cama_id']}'");
                                             ?>
-                                            <td><?=$value['cama_nombre']?> <?= $piso[0]['piso_nombre_corto']?></td>
+                                            <td>
+                                                <?php 
+                                                    $cama = $this->config_mdl->_query("SELECT cama_nombre,piso_nombre_corto from os_camas, os_pisos WHERE os_camas.area_id=os_pisos.area_id AND triage_id =".$value['triage_id']);
+                                                     if (empty($cama)){
+                                                        $infoCama = 'Por asignar'; 
+                                                    }else   $infoCama = $cama[0]['cama_nombre'].' '.$cama[0]['piso_nombre_corto'];    
+                                                ?>
+                                                <?=$infoCama?>                                            
+                                            </td>
                                             <td ><?=$tiempo_estancia->d?> d <?=$tiempo_estancia->h?> hrs <?=$tiempo_estancia->i?> min</td> <!-- tiempo trascurrido -->
                                             <td>
                                                 <?php
@@ -273,7 +292,7 @@
 
 <script>
     const Gestion = <?= json_encode($Gestion)?>;
-    console.log(Gestion);
+   // console.log(Gestion);
     $(document).ready(function($) {
         $('body').on('click', '#buscarPaciente', function(e){
             var inputSelect = $('#inputSelect').val();
@@ -311,7 +330,7 @@
                     }
                 })
             }else{
-                msj_error_noti('ESPECIFICAR UN VALOR')
+                msj_error_noti('ESPECIFICAR UN VALOR');
             }
         });
     }); 

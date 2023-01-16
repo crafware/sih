@@ -8,8 +8,7 @@ function getServerIp()
 	}
 }
 ?>
-<?= modules::run('Sections/Menu/index'); ?>
-<!--<?= modules::run('Sections/Menu/HeaderCamas'); ?>-->
+<?= modules::run('Sections/Menu/HeaderCamas'); ?>
 <div class="box-row">
 	<div class="box-cell">
 		<div class="box-inner col-md-12" style="padding: 10px">
