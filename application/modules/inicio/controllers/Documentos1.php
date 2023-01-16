@@ -1526,6 +1526,9 @@ class Documentos extends Config{
         ));
 
         $this->load->view('documentos/NotaIngresoHosp',$sql);
+        //http://localhost/sih/Hospitalizacion/Pacientes
+        //http://localhost/sih/Sections/Documentos/Expediente/00000000189/?tipo=Hospitalizacion
+        //http://localhost/sih/Inicio/Documentos/NotaIngresoHosp/189
     }
 
     public function GenerarNotaProcedimientos($Nota) {
