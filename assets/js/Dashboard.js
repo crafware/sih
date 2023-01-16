@@ -1,4 +1,4 @@
-$(document).ready(function (e){
+/*$(document).ready(function (e){
        setInterval(function (e){
         AjaxDashboard_ac();
     },60000);
@@ -23,4 +23,4 @@ $(document).ready(function (e){
         });  
     }
 
-});
+});*/

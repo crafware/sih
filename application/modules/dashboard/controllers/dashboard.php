@@ -18,8 +18,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         $this->output->set_content_type('application/json')->set_output(json_encode($json));
     } 
     public function AdmisionContinua() {
-
-        $this->load->view('dashboard_ac');
+        $this->load->view('dashboard_ac_airport');
+    }
+    public function AdmisionContinuaCamas() {
+        $this->load->view('dashboard_ac_camas');
     }
     public function AjaxDashboard_ac() {
     	$checkCamas=  $this->config_mdl->_query("SELECT * FROM os_camas WHERE  area_id='1' AND cama_estado='Ocupado'");
