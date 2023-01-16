@@ -132,13 +132,9 @@ function getServerIp()
         var videosName = ['triage.mp4'];
         var videosNameRandom = [];
         var videoEnReproduccion = "";
-        $(document).ready(function() {
-            $("#mi-video").on('ended', function() {
-                alert('El video ha finalizado!!!');
-            });
-        });
         var dashboardDataTable = {};
 
+        
         function actualizarDashboard_ac(data) {
             if (data["triage_id"] != null) {
                 var triage_id = parseInt(data["triage_id"]).toString();

@@ -33,47 +33,38 @@ function getServerIp()
             padding-top: 0px;
             background-color: black;
         }
-
         #contenidoTabla {
             font-size: 30px;
         }
-
         tr {
             font-size: 40px;
             color: white;
             font-weight: bold;
         }
-
         table thead th {
             border-right: 0px solid #ccc;
             font-size: 40px;
             color: #FFFF3E;
         }
-
         table td {
             padding: 8px 10px;
             border-top: 4px solid #ccc;
             border-right: 0px solid #ccc;
         }
-
         table thead tr {
             background: #2A3A5A;
             height: 30px;
         }
-
         video {
             width: 100%;
             height: auto;
         }
-
         table tr.odd {
             background-color: #182132;
         }
-
         table tr.even {
             background-color: #2A3A5A;
         }
-
         div.panel {
             margin-bottom: 20px;
             background-color: black;
@@ -84,8 +75,8 @@ function getServerIp()
 </head>
 
 <body>
-    <div class="box-row" style="margin-top: 10px">
-        <div class="box-cell col-md-12">
+    <div class="box-row" style="padding: 0px">
+        <div class="box-cell col-md-12" style="padding: 0px">
             <div class="row">
                 <div class="col-md-12">
                     <div class="panel panel-default " style="height: calc(50%)">
@@ -109,7 +100,7 @@ function getServerIp()
                                         <!--<div class="col-md-1 col-seccion-1">
                                             <!--<img src="<?= base_url() ?>assets/multimedia/ser_imss.jpg" style="width: 100%;margin-top: 5px;height: 266px;">
                                         </div>-->
-                                        <div id="divVideos" class="col-md-12">
+                                        <div id="divVideos" class="col-md-12"style="padding-left: 0px;width: 100%;  background-size: 50% 50%;">
                                             <!--<video muted="muted" id="triageVideo" src="<?= base_url() ?>assets/multimedia/triage.mp4" width="640" height="480" autoplay controls></video>-->
                                         </div>
                                     </div>
@@ -129,15 +120,11 @@ function getServerIp()
     <script src="<?= base_url('assets/js/Dashboard.js?') . md5(microtime()) ?>" type="text/javascript"></script>
     <script src="<?= "http://" . getServerIp() . ':3001/socket.io/socket.io.js' ?>" type="text/javascript"></script>
     <script type="text/javascript">
-        var videosName = ['triage.mp4', 'codigoCerebro.mp4'];
-        var ImagenName = ["13267775.jpg", "FjgUyTUUYAALsUs.jpeg", "Fk2ldPHWQAEgLe2.jpeg", "Fk7XIYpWYAY7NP8.jpeg", "FlGHHUyWYAIMEj3.jpeg"];
+        var videosName = []//['triage.mp4', 'codigoCerebro.mp4'];
+        var ImagenName = []//["13267775.jpg", "FjgUyTUUYAALsUs.jpeg", "Fk2ldPHWQAEgLe2.jpeg", "Fk7XIYpWYAY7NP8.jpeg", "FlGHHUyWYAIMEj3.jpeg"];
+        
         var videosNameRandom = [];
         var videoEnReproduccion = "";
-        $(document).ready(function() {
-            $("#mi-video").on('ended', function() {
-                alert('El video ha finalizado!!!');
-            });
-        });
         var dashboardDataTable = {};
 
         function actualizarDashboard_ac(data) {
@@ -151,7 +138,7 @@ function getServerIp()
                     dashboardDataTable[triage_id]["cama"] = data["cama_nombre"]
                     dashboardDataTable[triage_id]["estado"] = data["estado_salud"]
                 } else if (data["tipo"] == "delete") {
-                    console.log(data)
+                    //console.log(data)
                     delete dashboardDataTable[triage_id];
                 } else if (data["tipo"] == "updateestadosalud") {
                     dashboardDataTable[triage_id]["estado"] = data["estado_salud"]
@@ -212,7 +199,12 @@ function getServerIp()
             tableroAeropuerto.innerHTML = tr + '</tbody></table>'
         }
 
-        function getDataDashboard_ac(data) {
+        function getDataDashboard_ac(d) {
+            //console.log(d)
+            //console.log(d["row"])
+            data = d["row"]
+            videosName = d["videosName"]
+            ImagenName = d["ImagenName"]
             for (d in data) {
                 if (data[d]["triage_id"] != null) {
                     var triage_id = parseInt(data[d]["triage_id"]).toString();
@@ -223,6 +215,8 @@ function getServerIp()
                 }
             }
             actualizarDashboard()
+            iniciarVideosImagenes()
+            stateChange2()
         }
         const socket = io(":3001", {
             cors: {
@@ -256,13 +250,10 @@ function getServerIp()
             document.getElementById("tableroAeropuerto").style.display = "none";
             document.getElementById("tableroVideo").style.display = null;
             document.getElementById(videoEnReproduccion).style.display = null;
-            console.log(videoEnReproduccion)
             if (videoEnReproduccion.includes("video")){
-                console.log("mortrarImagen")
                 document.getElementById(videoEnReproduccion).play();
             }
             else if (videoEnReproduccion.includes("imagen")){
-                console.log("mortrarImagen")
                 mortrarImagen(videoEnReproduccion)
             }
                 
@@ -272,6 +263,16 @@ function getServerIp()
             document.getElementById(videoEnReproduccion).style.display = null;
             document.getElementById("titulo").style.display = "none";
             document.getElementById("tableroAeropuerto").style.display = "none";
+            var img = $('#'+videoEnReproduccion);
+            if(img.width > img.height){
+                img.css('width', (window.innerWidth-30)+"px");
+                img.css('height', (window.innerHeight-40) +"px");
+                //img.css('height',(screen.height/screen.width)*img.height()+"px");
+            }else{
+                img.css('width', (window.innerWidth-30)+"px");
+                img.css('height', (window.innerHeight-40) +"px");
+                //img.css('height',(screen.height/screen.width)*img.width()+"px");
+            }
             await new Promise(resolve => setTimeout(resolve, 22000));
             document.getElementById("tableroVideo").style.display = "none";
             document.getElementById(videoEnReproduccion).style.display = "none";
@@ -295,19 +296,27 @@ function getServerIp()
             var videoDiv3 = '" width="640" height="480" autoplay controls></video>'
             var divVideos = document.getElementById("divVideos");
 
-            var imagenDiv1 = '<img style="display:none;width: 100%;margin-top: 5px;height: 100%;" id="'
+            var imagenDiv1_w = '<img style="display:none;" id="'
+            var imagenDiv1_h = '<img style="display:none;" id="'
             var imagenDiv2 = '" src="<?= base_url() ?>assets/multimedia/dashboard_ac/'
             var imagenDiv3 = '">'
-
+            var dirM = "<?= base_url() ?>assets/multimedia/dashboard_ac/"
             for (v in videosName) {
                 divVideos.innerHTML += videoDiv1 + "video" + v + videoDiv2 + videosName[v] + videoDiv3
             }
             for (i in ImagenName) {
-                divVideos.innerHTML += imagenDiv1 + "imagen" + i + imagenDiv2 + ImagenName[i] + imagenDiv3
+                var foto = new Image();
+                //console.log(dirM+ImagenName[i])
+                foto.src = dirM+ImagenName[i];
+                if(foto.width < foto.height){
+                    divVideos.innerHTML += imagenDiv1_h + "imagen" + i + imagenDiv2 + ImagenName[i] + imagenDiv3
+                }else{
+                    divVideos.innerHTML += imagenDiv1_w + "imagen" + i + imagenDiv2 + ImagenName[i] + imagenDiv3
+                }
             }
             var divVideos = document.getElementById("divVideos");
             for (var i = 0; i < videosName.length; i++) {
-                console.log("video" + i)
+                //console.log("video" + i)
                 document.getElementById("video" + i).addEventListener("ended", async function() {
                     document.getElementById("tableroVideo").style.display = "none";
                     document.getElementById(videoEnReproduccion).style.display = "none";
@@ -327,8 +336,6 @@ function getServerIp()
             }
         }
 
-        iniciarVideosImagenes()
-        stateChange2()
     </script>
 </body>
 
