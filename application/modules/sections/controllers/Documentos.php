@@ -28,9 +28,8 @@ class Documentos extends Config{
         $sql['PINFO']= $this->config_mdl->_get_data_condition('paciente_info',array(
             'triage_id'=>$paciente
         ))[0];
-
+        
         if($_GET['tipo']=='Choque'){
-            
             $choque= $this->config_mdl->_get_data_condition('os_choque_v2',array(
                 'triage_id'=>$paciente
             ));
