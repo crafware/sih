@@ -48,6 +48,7 @@ class Login extends Config{
         ))[0];
         if(in_array($this->input->post('empleado_area'), $areas)){
             if(!empty($sql)){
+                $_SESSION['empleado_roles']=$sql[0]['empleado_roles'];
                 $sql_roles=  $this->config_mdl->_get_data_condition('os_empleados_roles',array(
                     'empleado_id'=>$sql[0]['empleado_id'],
                     'rol_id'=>$sqlGetRol['areas_acceso_rol']

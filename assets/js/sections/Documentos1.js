@@ -627,7 +627,7 @@ $(document).ready(function () {
             $('.btn_otro_medicamento').val('1');
             $('.btn_otro_medicamento').text('Ver catalogo');
           }
-
+ 
           $('#via').append(opcion_via);
           $('.formulario_prescripcion').removeAttr('hidden');
           $('.tiempo_tipo_medicamento').empty();

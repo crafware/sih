@@ -1,13 +1,13 @@
 <?php ob_start();
 //El margen se modifica dependiendo el número de residentes en la nota
-$margenBajo = "50mm";
-if (count($Residentes) == 3) {
+$margenBajo = "55mm";
+/*if (count($Residentes) == 3) {
   $margenBajo = "78mm";
 } else if (count($Residentes) == 2) {
   $margenBajo = "71mm";
 } else if (count($Residentes) == 1) {
   $margenBajo = "60mm";
-}
+}*/
 ?>
 <page backtop="80mm" backbottom="30" backleft="49" backright="5mm">
   <page_header>
@@ -365,7 +365,7 @@ if (count($Residentes) == 3) {
   </div>
 </page>
 
-<page backtop="80mm" backbottom="<?= $margenBajo ?>" backleft="5mm" backright="1mm">
+<page backtop="80mm" backbottom="<?= $margenBajo ?>" backleft="10mm" backright="9mm">
   <page_header>
     <img src="<?= base_url() ?>assets/doc/DOC4301282.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
     <div style="position: absolute;margin-top: 15px">
@@ -487,8 +487,7 @@ if (count($Residentes) == 3) {
       margin-bottom: 0px;
     }
   </style>
-  <div style="text-align: justify; ">
-  <!--<div style="width: 570px; text-align: justify; ">-->
+ <div style="width: 685px; text-align: justify; ">
     <!--<div style="position:absolute; left: -10px; margin-top: -17px; font-size: 12px;">-->
     <?php if ($_GET['indicaciones'] == 1) { ?>
       <h4>INDICACIONES Y ORDENES MEDICAS</h4>
@@ -796,44 +795,32 @@ if (count($Residentes) == 3) {
     <?php  } /* FIN DEL else para ipimier inoidcaciones o nota medica */ ?>
     <!--<p><?= print_r($Nota) ?></p>-->
   </div>
-
   <page_footer>
-    <?php
-    if (count($residentes) == 0) {
-      $top = 910;
-    } else if (count($residentes) > 0) {
-      $top = 870;
-    }
-    ?>
-    <div style="position: absolute;top: <?= $top ?>px;left: 215px;width: 240px;font-size: 10px;text-align: center">
-      <?= $medicoTratante['empleado_nombre'] ?> <?= $medicoTratante['empleado_apellidos'] ?><br>
-      <span style="margin-top: -6px;margin-bottom: -8px">____________________________________</span><br>
-      <b>NOMBRE DEL MÉDICO TRATANTE</b>
-    </div>
-    <div style="position: absolute;top: <?= $top ?>px;left: 430px;width: 160px;font-size: 10px;text-align: center">
-      <?= $medicoTratante['empleado_cedula'] ?> - <?= $medicoTratante['empleado_matricula'] ?> <br>
-      <span style="margin-top: -6px;margin-bottom: -8px">_____________________________</span><br>
-      <b>CÉDULA Y MATRICULA</b>
-    </div>
-    <div style="position: absolute;top: <?= $top ?>px;left: 590px;width: 110px;font-size: 10px;text-align: center">
-      <br>
-      <span style="margin-top: -6px;margin-bottom: -8px">_________________</span><br>
-      <b>FIRMA</b>
-    </div>
-
-    <?php if (!empty($residentes)) { ?>
-      <div style="position: absolute;top: <?= $top + 40 ?>px;left: 260px;width: 300px;font-size: 10px;text-align: left;">
-
-        <?php foreach ($residentes as $value) { ?>
-          <?= $value['nombre_residente'] ?> <?= $value['apellido_residente'] ?> (<?= $value['cedulap_residente'] ?>) | <?= $value['grado'] ?><br>
-        <?php }
-        if (count($residentes) > 1) { ?>
-          <span style="margin-top: 10px;"><b>OTROS MÉDICOS</b></span>
-        <?php } ?>
-      </div>
-    <?php } ?>
-
-  </page_footer>
+        <?php 
+            $top = 935;
+            $empleado_roles = explode(",",$_SESSION["empleado_roles"]);
+            $mostrar_residentes = 0;
+            for($i = 0;$i< count($empleado_roles);$i++){
+                if($empleado_roles[$i] == "77"){
+                    $mostrar_residentes = 1;
+                    $top = 900;
+                }
+            } 
+            ?>
+            <div style="position: absolute;top: <?= $top ?>px;left: 30px;right: 5px;font-size: 10px; text-align:right;">
+                <b>Dr. <?= $medicoTratante['empleado_apellidos'] ?> <?= $medicoTratante['empleado_nombre'] ?> médico Adscrito del servicio <?= $ServicioM[0]["especialidad_nombre"]?> MATRICULA: <?= $medicoTratante['empleado_matricula'] ?></b>
+            </div>
+            <?php if($mostrar_residentes == 1){
+                if (!empty($residentes)) { ?>
+                    <div style="position: absolute;top: <?=$top+15?>px;width:730px;right: 5px;font-size: 10px;text-align: right;">
+                        <b>
+                            <?php foreach ($residentes as $value){?>
+                            Dr. <?=$value['apellido_residente']?>  <?=$value['nombre_residente']?> médico residente del servicio <?= $ServicioM[0]["especialidad_nombre"]?> Matricula <?=$value['cedulap_residente']?> Grado <?=$value['grado']?>;
+                            <?php }?>  
+                        </b>
+                    </div>
+        <?php }} ?>
+    </page_footer>
 </page>
 <?php
 $html =  ob_get_clean();

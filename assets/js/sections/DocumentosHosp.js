@@ -770,11 +770,8 @@ $(document).ready(function () {
       }
     });
     /*Guardar Documento Nota de Ingreso*/
-    $('.guardarNotaIngreso').submit(function (e){ 
-<<<<<<< HEAD
-      console.log(document.getElementById("triage_id"))
-=======
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
+    $('.guardarNotaIngreso').submit(function (e){ //////////////
+      console.log(document.getElementById("triage_id"));
         e.preventDefault();
         $.ajax({
             url: base_url+"Sections/Documentos/AjaxGuardaNotaIngresoHosp",

@@ -195,7 +195,7 @@
                                                 }?>
                                             </td>
                                             <td >           <!-- Aciones -->
-                                                <a href="<?=  base_url()?>Sections/Documentos/Expediente/<?=$value['triage_id']?>/?tipo=Hospitalizacion" target="_blank">
+                                                <a href="<?=  base_url()?>Sections/Documentos/Expediente/<?=$value['triage_id']?>/?tipo=Hospitalizacion&empleado_id=<?=$Medico["empleado_id"]?>?empleado_roles=<?=$Medico["empleado_roles"]?>" target="_blank">
                                                     <i class="fa fa-pencil-square-o icono-accion tip" data-original-title="Requisitar Información"></i>
                                                 </a>
                                                 <?php if($value['ce_hf']){?>
@@ -219,6 +219,7 @@
                                     </tfoot>
                                 </table>
                             </div>
+                            
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane animated fadeIn" id="tab_3">

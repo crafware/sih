@@ -61,26 +61,6 @@
                 <h4>ANTECEDENTES</h4>
             </div>
             <div class="panel-body ">
-<<<<<<< HEAD
-                <div class="form-group" id='area_editor_div2'>
-                    <h5><span class=""><b>Antecedentes Heredofamiliares</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div2');" class="form-control editor" id="area_editor2" rows="6" name="antecedentes_herfam" placeholder=""><?= $notaIngreso[0]['antecedentes_heredofamiliares'] ?></textarea>
-                </div>
-                <div class="form-group" id='area_editor_div3'>
-                    <h5><span class=""><b>Antecedentes Personales no Patológicos</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div3');" class="form-control editor" id="area_editor3" rows="5" name="antecedentes_no_patologicos" placeholder=""><?= $notaIngreso[0]['antecedentes_personales_nopatologicos'] ?></textarea>
-                </div>
-                <div class="form-group" id='area_editor_div4'>
-                    <h5><span class=""><b>Antecedentes Personales Patológicos</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div4');" class="form-control editor" id="area_editor4" rows="8" name="antecedentes_patologicos"><?= $notaIngreso[0]['antecedentes_personales_patologicos'] ?></textarea>
-                </div>
-                <?php if ($info['triage_paciente_sexo'] == 'MUJER') { ?>
-                    <div class="form-group" id='area_editor_div5'>
-                        <h5><span class=""><b>Antecedentes Gineco Obstetricos</b></span></h5>
-                        <textarea onchange="deleteTypeLetter('area_editor_div5');" class="form-control editor" id="area_editor5" rows="8" name="antecedentes_ginecoobstetricos"><?= $notaIngreso[0]['antecedentes_ginecoobstetricos'] ?></textarea>
-                    </div>
-                <?php } ?>
-=======
                 <div class="form-group" id = 'area_editor_div2'>
                    <h5><span class = ""><b>Antecedentes Heredofamiliares</b></span></h5>
                     <textarea onchange="deleteTypeLetter('area_editor_div2');"  class="form-control editor" id="area_editor2" rows="6" name="antecedentes_herfam" placeholder="Escribe algo ..."><?=$notaIngreso[0]['antecedentes_heredofamiliares']?></textarea>
@@ -99,27 +79,12 @@
                     <textarea onchange="deleteTypeLetter('area_editor_div5');" class="form-control editor" id="area_editor5" rows="8" name="antecedentes_ginecoobstetricos" placeholder="Escribe algo ..."><?=$notaIngreso[0]['antecedentes_ginecoobstetricos']?></textarea>
                 </div>
                 <?php }?>
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
             </div>
         </div>
         <!-- Panel de Estado Actual  padecimiento y exploracion fisica-->
         <div class="panel panel-default panel-y">
-<<<<<<< HEAD
             <div class="panel-heading">
                 <h4>ESTADO ACTUAL</h4>
-=======
-            <div class="panel-heading"><h4>ESTADO ACTUAL</h4></div>
-            <div class="panel-body">
-                <div class="form-group" id = 'area_editor_div6'>
-                    <h5><span class = ""><b>Padecimiento Actual</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div6');" class="form-control editor" id="area_editor6" rows="8" name="padecimiento_actual" placeholder="Escribe algo ..."><?=$notaIngreso[0]['padecimiento_actual']?></textarea>
-                </div>
-                <div class="form-group" id = 'area_editor_div7'>
-                    <h5><span class = ""><b>Exploración Fisica</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div7');" class="form-control editor" id="area_editor7" rows="8" name="exploracion_fisica" placeholder="Escribe algo ..."><?=$notaIngreso[0]['exploracion_fisica']?></textarea>
-                </div>
-                
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
             </div>
             <div class="panel-body">
                 <div class="form-group" id='area_editor_div6'>
@@ -219,11 +184,7 @@
             </div>
             <div class="panel-body">
                 <div class="form-group">
-<<<<<<< HEAD
                     <h4><span class=""><b>Diagnóstico de Ingreso y Comorbilidades</b></span></h4>
-=======
-                    <h5><span class = ""><b>Diagnóstico de Ingreso y Comorbilidades</b></span></h5>
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="">Diagnóstico con código CIE-10</label>
@@ -236,15 +197,9 @@
                         </div>
                     </div>
                 </div>
-<<<<<<< HEAD
                 <div class="form-group" id='area_editor_div10'>
                     <h5><span class=""><b>Comentarios</b></span></h5>
                     <textarea onchange="deleteTypeLetter('area_editor_div10');" class="form-control editor" id="area_editor10" rows="2" name="comentario" placeholder=""><?= $notaIngreso[0]['comentario'] ?></textarea>
-=======
-                <div class="form-group" id = 'area_editor_div10'>
-                     <h5><span class = ""><b>Comentarios</b></span></h5>
-                    <textarea onchange="deleteTypeLetter('area_editor_div10');" class="form-control editor" id="area_editor10" rows="2" name="comentario" placeholder="Escriba sus comentarios ..."><?=$notaIngreso[0]['comentario']?></textarea>
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
                 </div>
                 <!-- Estado de salud -->
                 <div class="form-group">
@@ -436,26 +391,16 @@
                 </div>
                 <!-- Cuidados especificos de enfermeria-->
                 <div class="col-sm-12">
-<<<<<<< HEAD
                     <div class="form-group" id='area_editor_div11'>
                         <h5><span><b>d) Cuidados especiales de enfermería</b></span></h5>
                         <textarea onchange="deleteTypeLetter('area_editor_div11');" class="form-control hf_cuidadosenfermeria editor" id="area_editor11" name="cuidadosEspecialesEnfermeria" placeholder="Cuidados especiales de enfermeria"><?= $plan[0]['cuidados_eenfermeria'] ?></textarea>
-=======
-                    <div class="form-group" id = 'area_editor_div11'>
-                          <h5><span><b>d) Cuidados especiales de enfermería</b></span></h5>
-                          <textarea onchange="deleteTypeLetter('area_editor_div11');" class="form-control hf_cuidadosenfermeria editor" id="area_editor11" name="cuidadosEspecialesEnfermeria" placeholder="Anote los cuidados especiales de enfermeria"><?=$plan[0]['cuidados_eenfermeria']?></textarea>
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
                     </div>
                 </div>
                 <!-- Soliciones parenterales -->
                 <div class="col-sm-12" id="divCuidadosGenerales">
                     <div class="form-group" id='area_editor_div12'>
                         <h5><span><b>e) Soluciones parenterales</b></span></h5>
-<<<<<<< HEAD
                         <textarea onchange="deleteTypeLetter('area_editor_div12');" class="form-control hf_solucionesp editor" id="area_editor12" name="solucionesParenterales" rows="5" placeholder="Soluciones Parenterales"><?= $plan[0]['soluciones_parenterales'] ?></textarea>
-=======
-                        <textarea onchange="deleteTypeLetter('area_editor_div12');" class="form-control hf_solucionesp editor" id="area_editor12" name="solucionesParenterales" placeholder="Anote las soluciones parenterales"><?=$plan[0]['soluciones_parenterales']?></textarea>
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
                     </div>
                 </div>
                 <!-- Prescripcion de medicamentos -->
@@ -543,99 +488,6 @@
                                     <div class="input-group m-b">
                                         <span class="input-group-addon back-imss border-back-imss">
                                             AGREGAR PRESCRIPCIÓN DE MEDICAMENTOS
-<<<<<<< HEAD
-=======
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12" style="padding:0">
-                                <div class="col-sm-12" style="padding: 0;">
-                                    <div class="form-group">
-                                        <label><b>Medicamento / Forma farmacéutica</b></label>
-                                        <div class="input-group">
-                                            <div id="borderMedicamento" >
-                                                <select id="select_medicamento" onchange="indicarInteraccion()" class="form control select2 selectpicker" style="width: 100%" hidden>
-                                                    <option value="0">-Seleccionar-</option>
-                                                    <?php foreach ($Medicamentos as $value) {?>
-                                                    <option value="<?=$value['medicamento_id']?>" ><?=$value['medicamento']?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                            <div id="border_otro_medicamento" hidden>
-                                                <input type="text" class="form-control" id="input_otro_medicamento" placeholder="Indicar otro medicamento">
-                                            </div>
-                                            <span class="input-group-btn otro_boton_span">
-                                                <button class="btn btn-default btn_otro_medicamento" type="button" value="0" title="Indicar otro medicamento que no esta en catalogo">Otro medicamento</button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <!-- Formulario para antibiotico NTP
-                                         El formulrio es desplegado en una ventana modal* -->
-                                    <div class="form-group form-antibiotico-npt" hidden>
-                                         <input class="form-control" id="categoria_safe"/>
-                                         <input class="form-control aminoacido" />
-                                         <input class="form-control dextrosa" />
-                                         <input class="form-control lipidos-intravenosos" />
-                                         <input class="form-control agua-inyectable" />
-                                         <input class="form-control cloruro-sodio" />
-                                         <input class="form-control sulfato-magnesio" />
-                                         <input class="form-control cloruro-potasio" />
-                                         <input class="form-control fosfato-potasio" />
-                                         <input class="form-control gluconato-calcio" />
-                                         <input class="form-control albumina" />
-                                         <input class="form-control heparina" />
-                                         <input class="form-control insulina-humana" />
-                                         <input class="form-control zinc" />
-                                         <input class="form-control mvi-adulto" />
-                                         <input class="form-control oligoelementos" />
-                                         <input class="form-control vitamina" />
-                                         <input class="form-control total-npt" />
-                                         <!-- Campos antimicrobianos y oncologicos -->
-                                         <input class="form-control diluyente" />
-                                         <input class="form-control vol_diluyente" />
-                                    </div>
-                                    <!-- Fin formulario para antibiotico NTP -->
-                                </div>
-                                <!-- identificador de los medicamentos con interaccion interaccion_amarilla,
-                                     el select se llena al seleccionar un medicamento -->
-                                <div hidden class="col-sm-2">
-                                    <label><b>interaccion_amarilla</b></label>
-                                    <div id="borderMedicamento">
-                                      <select id="interaccion_amarilla" class="" style="width: 100%" >
-                                          <option value="0">-Seleccionar-</option>
-                                          <?php foreach ($Medicamentos as $value) {?>
-                                          <option value="<?=$value['medicamento_id']?>" ><?=$value['interaccion_amarilla']?></option>
-                                          <?php } ?>
-                                      </select>
-                                    </div>
-                                </div>
-                                <div hidden class="col-sm-2" style="padding: 1;">
-                                    <label><b>interaccion_roja</b></label>
-                                    <div id="borderMedicamento">
-                                      <select id="interaccion_roja" class="" style="width: 100%" >
-                                          <option value="0">-Seleccionar-</option>
-                                          <?php foreach ($Medicamentos as $value) {?>
-                                          <option value="<?=$value['medicamento_id']?>" ><?=$value['interaccion_roja']?></option>
-                                          <?php } ?>
-                                      </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Via de administración , dosis, unidad, frecuencia, horario -->
-                            <div class="col-sm-12" style="padding:0">
-                                <div class="col-sm-5" style="padding-left: 0px;">
-                                    <label><b>Via de administración</b></label>
-                                    <div class="input-group" id="borderVia">
-                                        <div id="opcion_vias_administracion">
-                                            <select class="form control select2 width100" id="via">
-                                                <option value="0">-Seleccionar-</option>
-                                            </select>
-                                        </div>
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default btn_otra_via" type="button" value="0" title="Indicar otra via de administración">Otra</button>
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
                                         </span>
                                     </div>
                                 </div>
@@ -1013,30 +865,17 @@
             <div class="panel-body">
                 <div class="col-md-12">
                     <?php
+                    $medicoRol = -1;
                     foreach ($INFO_MEDICO as $value) {
                         $medicoRol = $value['empleado_roles'];
                     }
-                    if ($medicoRol == 2) { ?>
-                        <div class="col-md-12" style="background: white; padding: 25px 15px 15px 15px">
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label><b>NOMBRE</b></label>
-                                        <input type="text" name="medicoTratante" value="<?= $value['empleado_nombre'] . ' ' . $value['empleado_apellidos'] ?>" readonly="" class="form-control">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label><b>MATRICULA</b></label>
-                                        <input type="text" name="MedicoTratante" value="<?= $value['empleado_matricula'] ?>" readonly="" class="form-control">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label><b>CEDULA PROFESIONAL</b></label>
-                                        <input type="text" name="cedulaMedico" value="<?= $value['empleado_cedula'] ?>" readonly="" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php } else {
-
+                    $empleado_roles = explode(",",$medicoRol);
+                    for($i = 0;$i< count($empleado_roles);$i++){
+                        if($empleado_roles[$i] == "77"){
+                            $medicoRol = 77;
+                        }
+                    }
+                    if ($medicoRol == 77) {
                         $medicoTratante = $this->config_mdl->sqlGetDataCondition('os_empleados', array('empleado_id' => $notaIngreso[0]['id_medico_tratante']));
                     ?>
                         <div class="col-sm-12 col-md-12" style="padding-bottom: 10px">
@@ -1045,7 +884,6 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-8 col-ms-8">
-<<<<<<< HEAD
                                     <label>Nombre de supervisor Médico de Base:</label>
                                     <?php $medicoTratante = $notaIngreso[0]['id_medico_tratante'] == '' ? '' : $medicoTratante[0]['empleado_apellidos'] . ' ' . $medicoTratante[0]['empleado_nombre']; ?>
                                     <input class="form-control" name="medicosBase" id="medicosBase" placeholder="Tecleé el nombre del medico y seleccione" value="<?= $medicoTratante ?>" autocomplete="off" required>
@@ -1054,22 +892,11 @@
                                 <div class="col-sm-3 col-md-3">
                                     <label>Matriucula </label>
                                     <input class="form-control" id="medicoMatricula" type="text" name="medicoMatricula" placeholder="Matrícula Medico" value="<?= $medicoTratante[0]['empleado_matricula'] ?>" readonly>
-=======
-                                  <label>Nombre de supervisor Médico de Base:</label>
-                                  <?php $medicoTratanteBase = $notaIngreso[0]['id_medico_tratante'] =='' ? '': $medicoTratante[0]['empleado_apellidos'].' '.$medicoTratante[0]['empleado_nombre'];?>
-                                  <input class="form-control" name="medicosBase" id="medicosBase" placeholder="Tecleé el nombre del medico y seleccione" value="<?=$medicoTratanteBase?>" autocomplete="off" required>     
-                                  <input type="hidden" name="medicoTratante" id="id_medico_tratante" value="<?=$notaIngreso[0]['id_medico_tratante']?>"> 
-                                </div>
-                                <div class="col-sm-3 col-md-3">
-                                  <label>Matriucula </label>           
-                                    <input class="form-control" name="medicoMatricula" id="medicoMatricula" value="<?=$medicoTratante[0]['empleado_matricula']?>"  readonly>  
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-12 disabled" style="padding-bottom: 12px">
                             <div class="form-group">
-<<<<<<< HEAD
 
                                 <div class="col-sm-4 col-md-3">
                                     <label>Nombre(s) de médico(s) residente(s):</label>
@@ -1092,30 +919,6 @@
                                     <a href='#' class="btn btn-success btn-xs " style="width:100%;height:100%;padding:7px;" id="add_otro_residente" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
                                 </div>
 
-=======
-                               
-                              <div class="col-sm-4 col-md-3"> 
-                                <label>Nombre(s) de médico(s) residente(s):</label>  
-                                <input type="text" required class="form-control" id="" name="nombre_residente[]" placeholder="Nombre(s)" value="<?=$Residentes[0]['nombre_residente']?>" >
-                              </div>
-                              <div class="col-sm-3">
-                                <label>Apellido paterno y materno </label>
-                                   <input type="text" class="form-control" id="medico<?=$i ?>" name="apellido_residente[]" placeholder="Apellidos" value="<?=$Residentes[0]['apellido_residente']?>" required>
-                                 </div>                             
-                              <div class="col-sm-3 col-md-3">
-                                <label>Matricula</label>
-                                <input class="form-control" id="residenteCedula" type="text" name="cedula_residente[]" placeholder="Cédula Profesional" value="<?=$Residentes[0]['cedulap_residente']?>" required>
-                              </div>
-                              <div class="col-sm-2 col-md-2">
-                                <label>Grado</label>
-                                <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[0]['grado']?>" required>
-                              </div>
-                              <div class="col-sm-1 col-md-1">
-                                <label>Agregar +</label>
-                                <a href='#' class="btn btn-success btn-xs " style="width:100%;height:100%;padding:7px;" id="add_otro_residente" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
-                              </div>
-                          
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
                             </div>
                         </div>
                         <div id="medicoResidente" style="padding-top: 10px">
@@ -1139,7 +942,29 @@
                                 </div>
                             <?php } ?>
                         </div>
-                    <?php } ?>
+                    <?php }else { ?>
+                        <div class="col-md-12" style="background: white; padding: 25px 15px 15px 15px">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label><b>NOMBRE</b></label>
+                                        <input type="text" name="medicoTratante" value="<?= $value['empleado_nombre'] . ' ' . $value['empleado_apellidos'] ?>" readonly="" class="form-control">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label><b>MATRICULA</b></label>
+                                        <input type="text" name="MedicoTratante" value="<?= $value['empleado_matricula'] ?>" readonly="" class="form-control">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label><b>CEDULA PROFESIONAL</b></label>
+                                        <input type="text" name="cedulaMedico" value="<?= $value['empleado_cedula'] ?>" readonly="" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } 
+                    
+                    
+                    ?>
                 </div>
             </div>
         </div>

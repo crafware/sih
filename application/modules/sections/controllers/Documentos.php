@@ -15,34 +15,12 @@ class Documentos extends Config
     {
         die('ACCESO NO PERMITIDO');
     }
-<<<<<<< HEAD
     public function Expediente($paciente)
     {
         if ($_GET['tipo'] == 'Choque') {
 
             $choque = $this->config_mdl->_get_data_condition('os_choque_v2', array(
                 'triage_id' => $paciente
-=======
-    public function Expediente($paciente) {
-        $sql['DocumentosHoja']= $this->config_mdl->_get_data('pc_documentos',array(
-            'doc_nombre'=>'Hoja Frontal'
-        ));
-
-        /*$sql['DocumentosNotas']= $this->config_mdl->_query("SELECT * FROM pc_documentos WHERE doc_nombre!='Hoja Frontal'");
-        */
-
-        $sql['info']=  $this->config_mdl->_get_data_condition('os_triage',array(
-            'triage_id'=> $paciente
-        ))[0];
-
-        $sql['PINFO']= $this->config_mdl->_get_data_condition('paciente_info',array(
-            'triage_id'=>$paciente
-        ))[0];
-        
-        if($_GET['tipo']=='Choque'){
-            $choque= $this->config_mdl->_get_data_condition('os_choque_v2',array(
-                'triage_id'=>$paciente
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
             ));
             if ($choque[0]['medico_id'] == '') {
                 $this->config_mdl->_update_data('os_choque_v2', array(
@@ -53,12 +31,8 @@ class Documentos extends Config
                 $this->AccesosUsuarios(array('acceso_tipo' => 'Médico Choque', 'triage_id' => $paciente, 'areas_id' => $choque[0]['choque_id']));
             }
         }
-<<<<<<< HEAD
         if ($_GET['tipo'] == 'Hospitalizacion') {
 
-=======
-        if($_GET['tipo']=='Hospitalizacion'){
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
 
             $sql['IngresosHospitalarios'] = $this->config_mdl->_get_data_condition('um_ingresos_hospitalario', array(
                 'triage_id' => $paciente
@@ -77,7 +51,6 @@ class Documentos extends Config
                 'id_nota' => $NotaIngresoHospital[0]['id_nota']
             ));
         }
-<<<<<<< HEAD
         $sql['HojasFrontales'] = $this->config_mdl->_get_data_condition('os_consultorios_especialidad_hf', array(
             'triage_id' => $paciente
         ));
@@ -88,15 +61,6 @@ class Documentos extends Config
 
         $sql['ce'] = $this->config_mdl->_get_data_condition('os_consultorios_especialidad', array(
             'triage_id' => $paciente
-=======
-
-        $sql['HojasFrontales']= $this->config_mdl->_get_data_condition('os_consultorios_especialidad_hf',array(
-            'triage_id'=> $paciente
-        ));
-                
-        $sql['ce']= $this->config_mdl->_get_data_condition('os_consultorios_especialidad',array(
-            'triage_id'=> $paciente
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
         ))[0];
 
         $sql['obs'] = $this->config_mdl->_get_data_condition('os_observacion', array(
@@ -108,22 +72,16 @@ class Documentos extends Config
             os_empleados.empleado_servicio=um_especialidades.especialidad_id AND
             doc_notas.triage_id=" . $paciente . " ORDER BY notas_fecha DESC");
 
-<<<<<<< HEAD
         $sql['info'] =  $this->config_mdl->_get_data_condition('os_triage', array(
             'triage_id' => $paciente
         ))[0];
 
         $sql['cama'] =  $this->config_mdl->_get_data_condition('os_camas', array(
             'triage_id' => $paciente
-=======
-        $sql['cama']=  $this->config_mdl->_get_data_condition('os_camas',array(
-            'triage_id'=> $paciente
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
         ))[0];
 
         $sql['piso'] = $this->config_mdl->_query("SELECT piso_nombre_corto FROM os_pisos,os_pisos_camas WHERE 
             os_pisos.piso_id=os_pisos_camas.piso_id AND os_pisos_camas.cama_id='{$sql['cama']['cama_id']}'");
-<<<<<<< HEAD
 
         $sql['AvisoMp'] = $this->config_mdl->_query("SELECT * FROM os_empleados, ts_ministerio_publico WHERE
             os_empleados.empleado_id=ts_ministerio_publico.medico_familiar AND
@@ -135,9 +93,6 @@ class Documentos extends Config
             'doc_nombre' => 'Hoja Frontal'
         ));
         $sql['DocumentosNotas'] = $this->config_mdl->_query("SELECT * FROM pc_documentos WHERE doc_nombre!='Hoja Frontal'");
-=======
-        
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
         $sql['Prescripcion'] = $this->config_mdl->_query("SELECT count(prescripcion_id)total_prescripcion
                                                           FROM prescripcion WHERE estado = 0 and triage_id = " . $paciente);
         $sql['ordeninternamiento'] = $this->config_mdl->_get_data_condition('um_orden_internamiento', array(
@@ -189,7 +144,10 @@ class Documentos extends Config
 
         /* checar si hay notas de ingreso hospitalaria del paciente y por servicio*/
 
-
+        $sql["Medico"] = array(
+            "empleado_roles"    => $_GET["empleado_roles"],
+            "empleado_id"       => $_GET["empleado_id"]
+        );
         $this->load->view('Documentos/Expediente', $sql);
     }
     public function AjaxRegistrarBitacoraPrescripcion()
@@ -1476,7 +1434,6 @@ class Documentos extends Config
             'triage_id' => $_GET['folio'],
             'sv_tipo' => $_GET['inputVia']
         ))[0];
-<<<<<<< HEAD
         $sql['Especialidades'] =  $this->config_mdl->sqlGetData('um_especialidades');
 
         $sql['Usuario'] = $this->config_mdl->_query("SELECT * FROM os_empleados WHERE empleado_id ='$this->UMAE_USER'");
@@ -1484,23 +1441,11 @@ class Documentos extends Config
 
         $sql['MedicosBase'] = $this->config_mdl->_query(
             "SELECT empleado_id, empleado_matricula,empleado_nombre, empleado_apellidos FROM os_empleados
-=======
-        $sql['Especialidades']=  $this->config_mdl->sqlGetData('um_especialidades');
-        
-        $sql['Usuario'] = $this->config_mdl->_query("SELECT * FROM os_empleados WHERE empleado_id ='$this->UMAE_USER'" );
-        
-        
-        /*$sql['MedicosBase']= $this->config_mdl->_query("SELECT empleado_id, empleado_matricula,empleado_nombre, empleado_apellidos FROM os_empleados
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
                                                         WHERE empleado_roles != 77 AND empleado_servicio =
                                                           (SELECT empleado_servicio
                                                            FROM os_empleados
                                                            WHERE empleado_id = '$this->UMAE_USER')"
-<<<<<<< HEAD
         );
-=======
-                                                         );*/
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
 
         $sql['Medicamentos'] = $this->config_mdl->_query("SELECT medicamento_id,
                                                                  CONCAT(medicamento,' ',gramaje, ', ', forma_farmaceutica)medicamento,
@@ -1517,7 +1462,6 @@ class Documentos extends Config
             os_pisos.piso_id=os_pisos_camas.piso_id AND os_pisos_camas.cama_id='{$sql['cama']['cama_id']}'");
 
 
-<<<<<<< HEAD
 
         $sql['Vias'] = array(
             '(cerebelomedular)', 'Auricular (ótica)', 'Bolo Intravenoso', 'Bucal', 'campo eléctrico', 'Conjuntival', 'Cutánea', 'Dental',
@@ -1539,29 +1483,9 @@ class Documentos extends Config
         );
 
         $sql['MedicosBaseNota'] = $this->config_mdl->_query("SELECT empleado_nombre,empleado_apellidos,empleado_matricula
-=======
-        $sql['Vias'] = array('(cerebelomedular)','Auricular (ótica)','Bolo Intravenoso','Bucal','campo eléctrico','Conjuntival','Cutánea','Dental',
-        'Electro-osmosis','En los ventrículos cerebrales','Endocervical','Endosinusial','Endotraqueal','Enteral','Epidural','Extra-amniótico',
-        'Gastroenteral','Goteo Intravenoso','In vitro','Infiltración','Inhalatoria','Intercelular','Intersticial','Intra corpus cavernoso',
-        'Intraamniótica','Intraarterial','Intraarticular','Intrabdominal','Intrabiliar','Intrabronquial','Intrabursal','Intracardiaca',
-        'Intracartilaginoso','Intracaudal','Intracavernosa','Intracavitaria','Intracerebral','Intracervical','Intracisternal','Intracorneal',
-        'Intracoronaria','Intracoronario','Intradérmica','Intradiscal','Intraductal','Intraduodenal','Intradural','Intraepidermal','Intraesofágica',
-        'Intraesternal','Intragástrica ','Intragingival','Intrahepática','Intraileal','Intramedular','Intrameníngea','Intramuscular','Intraocular',
-        'Intraovárica','Intrapericardial','Intraperitoneal','Intrapleural','Intraprostática','Intrapulmonar','Intrasinovial',
-        'Intrasinusal (senosparanasales)','Intratecal','Intratendinosa','Intratesticular','Intratimpánica','Intratoráxica','Intratraqueal',
-        'Intratubular','Intratumoral','Intrauterina','Intravascular','Intravenosa','Intraventricular','Intravesicular','Intravítrea','Iontoforesis',
-        'Irrigación','la túnica fibrosa del ojo)','Laríngeo','Laringofaringeal','médula espinal)','Nasal','Oftálmica','Oral','Orofaríngea',
-        'Otra Administración es diferente de otros contemplados en ésta lista','Parenteral','Párpados y la superficie del globo ocular',
-        'Percutánea','Periarticular','Peridura','Perineural','Periodontal','Por difusión','Rectal','Retrobulbal','Sistémico','Sonda nasogástrica',
-        'Subaracnoidea','Subconjuntival','Subcutánea','Sublingual','Submucosa','Técnica de vendaje oclusivo','Tejido blando','tejidos del cuerpo',
-        'Tópica','Transdérmica','Transmamaria','Transmucosa','Transplacentaria','Transtimpánica','Transtraqueal','Ureteral','Uretral',
-        'Uso Intralesional','Uso Intralinfático','Uso oromucosa','Vaginal','Vía a través de Hemodiálisis');
-        
-        /*$sql['MedicosBaseNota'] = $this->config_mdl->_query("SELECT empleado_nombre,empleado_apellidos,empleado_matricula
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
                                                              FROM os_empleados
                                                              WHERE empleado_id = (
-                                                               SELECT notas_medicotratante FROM doc_notas WHERE notas_id = $Nota)");*/
+                                                               SELECT notas_medicotratante FROM doc_notas WHERE notas_id = $Nota)");
         $sql['Prescripcion'] = $this->config_mdl->_query("SELECT *
                                                           FROM prescripcion INNER JOIN catalogo_medicamentos ON
                                                           prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
@@ -1923,1274 +1847,6 @@ class Documentos extends Config
                     $observacion = $otroMedicamento . '-' . $observacion;
                 }
                 $datosPrescripcion = array(
-<<<<<<< HEAD
-=======
-                  'empleado_id'         => $this->UMAE_USER,
-                  'triage_id'           => $this->input->post('triage_id'),
-                  'medicamento_id'      => $this->input->post("idMedicamento[$x]"),
-                  'via'                 => $this->input->post("via_admi[$x]"),
-                  'fecha_prescripcion'  => $fecha_actual,
-                  'dosis'               => $this->input->post("dosis[$x]"),
-                  'frecuencia'          => $this->input->post("frecuencia[$x]"),
-                  'aplicacion'          => $this->input->post("horaAplicacion[$x]"),
-                  'fecha_inicio'        => $this->input->post("fechaInicio[$x]"),
-                  'tiempo'              => $this->input->post("duracion[$x]"),
-                  'periodo'             => $this->input->post("periodo[$x]"),
-                  'fecha_fin'           => $this->input->post("fechaFin[$x]"),
-                  'observacion'         => $observacion,
-                  'estado'              => "1"
-                );
-                $this->config_mdl->_insert('prescripcion',$datosPrescripcion);
-              }
-              //Número de antibioticos apt
-              for($x = 0; $x < count( $this->input->post('idMedicamento_npt')); $x++){
-                //Se guardan en un arreglo los datos del medicamento
-                $datosPrescripcion = array(
-                  'empleado_id'         => $this->UMAE_USER,
-                  'triage_id'           => $this->input->post('triage_id'),
-                  'medicamento_id'      => $this->input->post("idMedicamento_npt[$x]"),
-                  'via'                 => $this->input->post("via_admi[$x]"),
-                  'fecha_prescripcion'  => $fecha_actual,
-                  'dosis'               => $this->input->post("dosis[$x]"),
-                  'frecuencia'          => $this->input->post("frecuencia[$x]"),
-                  'aplicacion'          => $this->input->post("horaAplicacion[$x]"),
-                  'fecha_inicio'        => $this->input->post("fechaInicio[$x]"),
-                  'tiempo'              => $this->input->post("duracion[$x]"),
-                  'periodo'             => $this->input->post("periodo[$x]"),
-                  'fecha_fin'           => $this->input->post("fechaFin[$x]"),
-                  'observacion'         => $this->input->post("observacion[$x]"),
-                  'estado'              => "1"
-                );
-                //Se registra el medicamento
-                $this->config_mdl->_insert('prescripcion',$datosPrescripcion);
-                //Se consulta la ultima prescripcion registrada
-                $ultima_prescripcion = $this->config_mdl->_get_last_id('prescripcion','prescripcion_id');
-                /*
-                Se toman los datos necesarios para un npt
-                con la variable $ultima_prescripcion, identificamos la prescripcion con la que se
-                asocia prescripcion y npt
-                */
-                $datos_npt = array(
-                  'prescripcion_id' => $ultima_prescripcion,
-                  'aminoacido' => $this->input->post("aminoacido[$x]"),
-                  'dextrosa' => $this->input->post("dextrosa[$x]"),
-                  'lipidos' => $this->input->post("lipidos_intravenosos[$x]"),
-                  'agua_inyect' => $this->input->post("agua_inyectable[$x]"),
-                  'cloruro_sodio' => $this->input->post("cloruro_sodio[$x]"),
-                  'sulfato' => $this->input->post("sulfato_magnesio[$x]"),
-                  'cloruro_potasio' => $this->input->post("cloruro_potasio[$x]"),
-                  'fosfato' => $this->input->post("fosfato_potasio[$x]"),
-                  'gluconato' => $this->input->post("gluconato_calcio[$x]"),
-                  'albumina' => $this->input->post("albumina[$x]"),
-                  'heparina' => $this->input->post("heparina[$x]"),
-                  'insulina' => $this->input->post("insulina_humana[$x]"),
-                  'zinc' => $this->input->post("zinc[$x]"),
-                  'mvi' => $this->input->post("mvi_adulto[$x]"),
-                  'oligoelementos' => $this->input->post("oligoelementos[$x]"),
-                  'vitamina' => $this->input->post("vitamina[$x]")
-                );
-                $this->config_mdl->_insert('prescripcion_npt', $datos_npt);
-              }
-              //Número de antibioticos antimicrobiano u oncologico
-              for($x = 0; $x < count( $this->input->post('idMedicamento_onco_antimicro')); $x++){
-                $datosPrescripcion = array(
-                  'empleado_id' => $this->UMAE_USER,
-                  'triage_id' => $this->input->post('triage_id'),
-                  'medicamento_id' => $this->input->post("idMedicamento_onco_antimicro[$x]"),
-                  'dosis' => $this->input->post("dosis[$x]"),
-                  'fecha_prescripcion' => date('d-m-Y')." ".date('H:i'),
-                  'via' => $this->input->post("via_admi[$x]"),
-                  'frecuencia' => $this->input->post("frecuencia[$x]"),
-                  'aplicacion' => $this->input->post("horaAplicacion[$x]"),
-                  'fecha_inicio' => $this->input->post("fechaInicio[$x]"),
-                  'tiempo' => $this->input->post("duracion[$x]"),
-                  'periodo' => $this->input->post("periodo[$x]"),
-                  'fecha_fin' => $this->input->post("fechaFin[$x]"),
-                  'observacion' => $this->input->post("observacion[$x]"),
-                  'estado' => "1"
-                );
-                $this->config_mdl->_insert('prescripcion',$datosPrescripcion);
-                $ultima_prescripcion = $this->config_mdl->_get_last_id('prescripcion','prescripcion_id');
-                $categoria_safe = $this->input->post("categoria_safe[$x]");
-                $datos_onco_antimicrobiano = array(
-                  'prescripcion_id' => $ultima_prescripcion,
-                  'categoria_safe' => $categoria_safe,
-                  'diluente' => $this->input->post("diluyente[$x]"),
-                  'vol_dilucion' => $this->input->post("vol_diluyente[$x]")
-                );
-                $this->config_mdl->_insert('prescripcion_onco_antimicrobianos', $datos_onco_antimicrobiano);
-              }
-              // Se toma el ID de las precripcines activas
-              $Prescripciones = $this->config_mdl->_query("SELECT prescripcion_id
-                                                           FROM prescripcion
-                                                           WHERE estado != 0 and triage_id = ".$this->input->post('triage_id'));
-
-              $this->config_mdl->_delete_data( 'nm_notas_prescripcion', array( 'notas_id' => $this->input->post('notas_id') ) );
-              for($x = 0; $x < count($Prescripciones); $x++){
-                $NotaPrescripcion = array(
-                  'notas_id' => $this->config_mdl->_get_last_id('doc_notas','notas_id'),
-                  'prescripcion_id' => $Prescripciones[$x]['prescripcion_id']
-                );
-                // Se registra la relacion entre notas y prescripcion
-                $this->config_mdl->_insert('nm_notas_prescripcion', $NotaPrescripcion);
-              }
-           /*Fin registro prescripcion*/
-        }
-        if($this->input->post('via')=='Interconsulta'){
-            $this->config_mdl->_update_data('doc_430200',array(
-                'doc_estatus'=>'Evaluado',
-                'doc_fecha_r'=> date('Y-m-d'),
-                'doc_hora_r'=> date('H:i:s'),
-                'doc_nota_id'=>$MaxNota,
-                'empleado_recive'=> $this->UMAE_USER
-            ),array(
-                'doc_id'=> $this->input->post('doc_id')
-            ));
-        }
-
-        /*
-        $sqlCheck= $this->config_mdl->sqlGetDataCondition('os_triage_signosvitales',array(
-            'triage_id'=>$this->input->post('triage_id'),
-            'sv_tipo'=> $this->input->post('inputVia')
-        ),'sv_id');
-         */
-
-        //-----------------Actualizacion de estado_salud en os_camas-------//
-        
-        $os_camas = $this->config_mdl->_query("SELECT * FROM os_camas WHERE  area_id = 1 AND triage_id =".$this->input->post('triage_id').";");
-        if(!empty($os_camas)){
-            $estado_salud = array("estado_salud" => $this->input->post('nota_estadosalud'));
-            $this->config_mdl->_update_data('os_camas', $estado_salud, array( 'triage_id'=> $this->input->post('triage_id')));
-        }
-
-        $this->setOutput(array('accion'=>'1','notas_id'=>$id_nota));
-        
-        //-----------------solicitud_laboratorio_nota_evolución------------//
-
-        if($last_id_notas && $this->input->post('accion')=='add'){
-            $nota_id = $last_id_notas;
-        }else{
-             $nota_id = $this->input->post('notas_id');
-        }
-
-        if($nota_id!="0"){
-
-
-            $data_solicitud_laboratorio=array(
-            'input_via'       =>  $this->input->post('inputVia'), ///
-            'tipo_nota'       =>  $this->input->post('tipo_nota'),
-            'nota_id'         =>  $nota_id,   ///
-            'fecha_solicitud' =>  date('d-m-Y'),
-            'triage_id'       =>  $this->input->post('triage_id'),
-            'estudios'        =>  $this->input->post('arreglo_id_catalogo_estudio')
-            );
-
-            if($this->input->post('solicitud_laboratorio_id')){
-                $this->config_mdl->_update_data('um_solicitud_laboratorio',$data_solicitud_laboratorio,array( 'solicitud_id'=>  $this->input->post('solicitud_laboratorio_id') )); 
-            }else if($this->input->post('arreglo_id_catalogo_estudio')!="{}"){
-                     $this->config_mdl->_insert('um_solicitud_laboratorio',$data_solicitud_laboratorio);
-            }
-
-        }
-        
-        //-----------------solicitud_laboratorio_nota_evolución------------
-
-    }
-
-    public function AjaxConsultarDiluyente(){
-      $medicamento_id = $this->input->get('medicamento_id');
-      $sql = $this->config_mdl->_query("SELECT diluyente, volumen_diluyente
-                                       FROM catalogo_medicamentos
-                                       WHERE medicamento_id = $medicamento_id");
-      print json_encode($sql);
-    }
-    public function AjaxConteoEstadoPrescripciones(){
-      $sql['Prescripciones_activas'] = $this->config_mdl->_query("SELECT COUNT(prescripcion_id)activas FROM prescripcion
-                                                                  WHERE estado = 1 AND triage_id = ".$_GET['folio']);
-      $sql['Prescripciones_canceladas'] = $this->config_mdl->_query("SELECT prescripcion.prescripcion_id
-                                                                    FROM prescripcion
-                                                                    INNER JOIN catalogo_medicamentos ON
-                                                                    prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                                                    INNER JOIN os_triage ON
-                                                                    prescripcion.triage_id = os_triage.triage_id
-                                                                    INNER JOIN btcr_prescripcion ON
-                                                                    prescripcion.prescripcion_id = btcr_prescripcion.prescripcion_id
-                                                                    WHERE os_triage.triage_id =".$_GET['folio']." GROUP BY prescripcion_id");
-      print json_encode($sql);
-    }
-    public function AjaxModificarPrescripcion(){
-      $datos = array(
-        'via' => $this->input->get('via'),
-        'frecuencia' => $this->input->get('frecuencia'),
-        'aplicacion' => $this->input->get('aplicacion'),
-        'fecha_inicio' => $this->input->get('fecha_inicio'),
-        'tiempo' => $this->input->get('tiempo'),
-        'periodo' => $this->input->get('periodo'),
-        'observacion' => $this->input->get('observacion'),
-        'dosis' => $this->input->get('dosis')
-      );
-
-      $condicion = array(
-        'prescripcion_id' => $this->input->get('prescripcion_id')
-      );
-
-      $sql = $this->config_mdl->_update_data('prescripcion', $datos, $condicion);
-      print json_encode($sql);
-    }
-    public function AjaxPrescripciones(){
-      $estado = $_GET['estado'];
-      $sql['Prescripcion'] = $this->config_mdl->_query("SELECT catalogo_medicamentos.medicamento_id AS id_medicamento, medicamento, categoria_farmacologica,
-                                                        fecha_prescripcion, dosis, observacion, prescripcion.via AS via_administracion, frecuencia, aplicacion,
-                                                        fecha_inicio, tiempo, periodo, fecha_fin, prescripcion_id, estado
-                                                        FROM prescripcion INNER JOIN catalogo_medicamentos ON
-                                                        prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                                        INNER JOIN os_triage ON prescripcion.triage_id = os_triage.triage_id
-                                                        WHERE os_triage.triage_id =".$_GET['folio']." 
-                                                        AND estado !=0 
-                                                        AND STR_TO_DATE(fecha_fin,'%d/%m/%Y') >= CURDATE()");
-
-      print json_encode($sql['Prescripcion']);
-    }
-
-    public function AjaxPrescripcionesSinValidar(){
-      $estado = $_GET['estado'];
-      $sql['Prescripcion'] = $this->config_mdl->_query("SELECT catalogo_medicamentos.medicamento_id AS id_medicamento, medicamento, categoria_farmacologica,
-                                                        fecha_prescripcion, dosis, observacion, prescripcion.via AS via_administracion, frecuencia, aplicacion,
-                                                        fecha_inicio, tiempo, periodo, fecha_fin, prescripcion_id, estado
-                                                        FROM prescripcion INNER JOIN catalogo_medicamentos ON
-                                                        prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                                        INNER JOIN os_triage ON prescripcion.triage_id = os_triage.triage_id
-                                                        WHERE os_triage.triage_id =".$_GET['folio']."  AND estado !=0 ");
-
-      print json_encode($sql['Prescripcion']);
-    }
-
-    public function AjaxNotificacionFarmacovigilancia(){
-      $triage_id = $this->input->get('folio');
-      $consulta = "SELECT notificacion_id, medicamento, notificacion,
-                  concat(empleado_nombre, ' ' ,empleado_apellidos)empleado
-                  FROM `um_notificaciones_prescripciones`
-                  INNER JOIN prescripcion
-                    ON um_notificaciones_prescripciones.prescripcion_id = prescripcion.prescripcion_id
-                  INNER JOIN catalogo_medicamentos
-                    ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                  INNER JOIN os_empleados
-                    ON os_empleados.empleado_id = um_notificaciones_prescripciones.empleado_id
-                  WHERE triage_id = $triage_id";
-      $sql = $this->config_mdl->_query($consulta);
-      print json_encode($sql);
-
-    }
-    public function AjaxBitacoraPrescripciones(){
-      $sql = $this->config_mdl->_query("SELECT prescripcion.prescripcion_id, fecha_prescripcion,
-                                          CONCAT(medicamento, ' ', gramaje)medicamento, catalogo_medicamentos.medicamento_id,
-                                          observacion
-                                        FROM prescripcion
-                                        INNER JOIN catalogo_medicamentos ON
-                                        prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                        INNER JOIN os_triage ON
-                                        prescripcion.triage_id = os_triage.triage_id
-                                        INNER JOIN btcr_prescripcion ON
-                                        prescripcion.prescripcion_id = btcr_prescripcion.prescripcion_id
-                                        WHERE os_triage.triage_id =".$_GET['folio']." GROUP BY prescripcion_id");
-      print json_encode($sql);
-    }
-    // Obtenemos un numero que determina si el medicamento es de safe, infectologia
-    // o una solucion.
-    public function AjaxTipoMedicamento(){
-      $sql = $this->config_mdl->_query("SELECT safe, categoria_farmacologica FROM catalogo_medicamentos
-                                        WHERE medicamento_id = ".$_GET['medicamento_id']."; ");
-      print json_encode($sql);
-    }
-    public function AjaxConsultarViasAdministracion(){      
-      $medicamento = $this->input->get('medicamento');
-      $consulta = "SELECT via FROM catalogo_medicamentos WHERE medicamento LIKE '$medicamento%' GROUP BY via ";
-      $sql = $this->config_mdl->_query($consulta);
-      print json_encode($sql);
-    }
-    public function AjaxBitacoraHistorialMedicamentos(){
-      $sql = $this->config_mdl->_query("SELECT fecha_prescripcion,
-                                          prescripcion.via as via_administracion, dosis,
-                                          frecuencia, aplicacion, fecha_inicio, fecha_fin,
-                                          observacion, fecha, tipo_accion, motivo,
-                                          catalogo_medicamentos.medicamento_id
-                                        FROM prescripcion
-                                        INNER JOIN catalogo_medicamentos ON
-                                        prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                        INNER JOIN os_triage ON
-                                        prescripcion.triage_id = os_triage.triage_id
-                                        INNER JOIN btcr_prescripcion ON
-                                        prescripcion.prescripcion_id = btcr_prescripcion.prescripcion_id
-                                        WHERE os_triage.triage_id =".$_GET['folio']."
-                                        AND prescripcion.prescripcion_id=".$_GET['prescripcion_id']."
-                                        ORDER BY medicamento");
-      print json_encode($sql);
-    }
-    /*Funcion para Guardar Nota medica o editarla*/
-    public function TarjetaDeIdentificacion($Paciente) {
-        $sql['info']= $this->config_mdl->sqlGetDataCondition('os_tarjeta_identificacion',array(
-            'triage_id'=>$Paciente
-        ))[0];
-        $this->load->view('Documentos/Doc_TarjetaIdentificacion',$sql);
-    }
-
-    public function AjaxTarjetaDeIdentificacion() {
-        $check= $this->config_mdl->sqlGetDataCondition('os_tarjeta_identificacion',array(
-            'triage_id'=> $this->input->post('triage_id')
-        ),'ti_id');
-        $data=array(
-            'ti_enfermedades'=> $this->input->post('ti_enfermedades'),
-            'ti_alergias'=> $this->input->post('ti_alergias'),
-            'ti_fecha'=> date('d/m/Y'),
-            'ti_hora'=> date('H:i'),
-            'empleado_id'=> $this->UMAE_USER,
-            'triage_id'=> $this->input->post('triage_id')
-        );
-        if(empty($check)){
-            $this->config_mdl->_insert('os_tarjeta_identificacion',$data);
-        }else{
-            unset($data['ti_fecha']);
-            unset($data['ti_hora']);
-            $this->config_mdl->_update_data('os_tarjeta_identificacion',$data,array(
-                'triage_id'=> $this->input->post('triage_id')
-            ));
-        }
-        $this->setOutput(array('accion'=>'1'));
-    }
-    
-    public function AjaxGuardarDiagnosticos() {
-        $sqlDiagnostico= $this->config_mdl->sqlGetDataCondition('um_cie10',array(
-            'cie10_nombre'=> $this->input->post('cie10_nombre')
-        ));
-
-        $data = array(
-            'fecha_dx'          => date('d-m-Y'),
-            'hora_dx'           => date('H:i'),
-            'triage_id'         => $this->input->post('triage_id'),
-            'cie10_id'          => $sqlDiagnostico[0]['cie10_id'],
-            'tipo_diagnostico'  => $this->input->post('tipo_diagnostico'),
-            'complemento'       => $this->input->post('complemento'),
-            'medico_id'         => $this->UMAE_USER,
-            'tipo_nota'         => $this->input->post('tipo_nota')
-        );
-        
-        // Condiciones via Jquery de una accion (accion de JS no de URL)
-        if($this->input->post('accion')=='add'){
-            $this->config_mdl->_insert('paciente_diagnosticos',$data);
-            if($_GET['a']=='edit') {
-                $datos = array(
-                    'hf_id'          => $_GET['hf'],
-                    'diagnostico_id' => $this->config_mdl->_get_last_id('paciente_diagnosticos','diagnostico_id')
-                );
-                $this->config_mdl->_insert('diagnostico_hoja_frontal',$datos);
-            }
-        }else if($this->input->post('accion')=='convertir a primario') {
-            $this->config_mdl->_insert('paciente_diagnosticos', $data);
-        }else if($this->input->post('accion')=='cambiar principal'){
-            $this->config_mdl->_insert('paciente_diagnosticos', $data);
-        }else if($this->input->post('accion')=='convertir a egreso'){
-            $this->config_mdl->_insert('paciente_diagnosticos', $data);
-        }else if($this->input->post('accion')=='cambiar_principal_a_secundario'){
-            $this->config_mdl->_update_data('paciente_diagnosticos',array(
-                'tipo_diagnostico' =>$this->input->post('tipo_diagnostico')), array(
-                'diagnostico_id'=> $this->input->post('diagnostico_id')
-            ));
-
-        }else  {
-            unset($data['fecha_dx']);
-            $this->config_mdl->_update_data('paciente_diagnosticos',$data,array(
-                'diagnostico_id'=> $this->input->post('diagnostico_id')
-            ));
-        }
-        
-        $this->setOutput(array('accion'=>'1','post'=> $this->input->post()));
-    }
-    
-
-    public function AjaxConsultarDiagnosticos(){
-      $folio = $this->input->get('folio');
-      $consulta = "SELECT *
-                   FROM paciente_diagnosticos
-                   INNER JOIN um_cie10
-                     ON paciente_diagnosticos.cie10_id = um_cie10.cie10_id
-                   WHERE triage_id =".$folio." ORDER BY tipo_diagnostico";
-    
-      $sql = $this->config_mdl->_query($consulta);
-      print json_encode($sql);
-    }
-
-    public function AjaxEliminarDiagnostico() {
-
-        $this->config_mdl->_delete_data('paciente_diagnosticos',array(
-            'diagnostico_id'=> $this->input->post('diagnostico_id')
-        ));
-         $this->config_mdl->_delete_data('diagnostico_hoja_frontal',array(
-            'diagnostico_id'=> $this->input->post('diagnostico_id')
-        ));
-
-        $this->setOutput(array('accion'=>'1'));
-    }
-
-    public function AjaxObtenerDiagnosticos() {
-        $tipo_nota = $this->input->post('tipo_nota');
-        $accion=$this->input->post('accion');
-        $area=$this->input->post('tipo');
-
-        // $sqlFechaNotaInicial = $this->config_mdl->_get_data_condition('os_consultorios_especialidad_hf',array(
-        //     'triage_id'=>  $this->input->post('triage_id')
-        // ))[0];
-        $sqlFechaNotas = $this->config_mdl->_get_data_condition('doc_notas',array(
-            'triage_id'=>  $this->input->post('triage_id')
-        ),'notas_fecha')[0];
-        
-        if($area=='Hospitalizacion'){
-            $sqlFechaNotaInicial =  $this->config_mdl->sqlGetDataCondition('um_notas_ingresos_hospitalario',array(
-                'triage_id'=>  $this->input->post('triage_id')
-            ),'fecha_elabora')[0];
-
-            $fechas = $sqlFechaNotaInicial['fecha_elabora'];
-            //$fechas = date("d/m/Y", strtotime($fecha));
-
-        }else {
-            $sqlFechaNotaInicial =  $this->config_mdl->sqlGetDataCondition('os_consultorios_especialidad_hf',array(
-                'triage_id'=>  $this->input->post('triage_id')
-            ),'hf_fg')[0];
-            
-            $fechas = $sqlFechaNotaInicial['hf_fg'];
-        }
-
-        //Se consulta la existencia de diagnosticos principales y Dx de Egreso
-
-        $consultaDxPrincipal = $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos
-                       WHERE triage_id = '".$this->input->post('triage_id')."' AND tipo_diagnostico = 1");
-        
-        $consultaDxEgreso = $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos
-                       WHERE triage_id = '".$this->input->post('triage_id')."' AND tipo_diagnostico = 3");
-
-        
-        switch($accion) {
-            case "add"  :
-                if($tipo_nota=="Nota Inicial" && empty($sqlFechaNotaInicial)) {
-                    $sql= $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos, um_cie10 WHERE 
-                    paciente_diagnosticos.cie10_id=um_cie10.cie10_id AND 
-                    paciente_diagnosticos.triage_id='{$this->input->post('triage_id')}' ORDER BY tipo_diagnostico='0' DESC");
-                
-                }else {
-
-                    $sql= $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos, um_cie10 WHERE 
-                    paciente_diagnosticos.cie10_id=um_cie10.cie10_id AND 
-                    paciente_diagnosticos.triage_id='".$this->input->post('triage_id')."' ORDER BY tipo_diagnostico='0' DESC");
-                }    break;
-
-            case "edit" : 
-                if($tipo_nota=="Nota Inicial") {    
-                    $sql= $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos, um_cie10 WHERE 
-                    paciente_diagnosticos.cie10_id=um_cie10.cie10_id AND paciente_diagnosticos.fecha_dx <= CURDATE()  AND
-                    paciente_diagnosticos.triage_id='{$this->input->post('triage_id')}' ORDER BY tipo_diagnostico='0' DESC");
-                }else {
-                    $sql= $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos, um_cie10 WHERE 
-                    paciente_diagnosticos.cie10_id=um_cie10.cie10_id AND paciente_diagnosticos.fecha_dx <='{$sqlFechaNotas}'  AND
-                    paciente_diagnosticos.triage_id='{$this->input->post('triage_id')}' ORDER BY tipo_diagnostico='0' DESC");
-                } break;
-            default:
-            $sql= $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos, um_cie10 WHERE 
-                    paciente_diagnosticos.cie10_id=um_cie10.cie10_id AND 
-                    paciente_diagnosticos.triage_id='{$this->input->post('triage_id')}' ORDER BY tipo_diagnostico='0' DESC");
-        } 
-           
-        foreach ($sql as $value) {
-         
-            if($value['tipo_diagnostico']=='0') {
-                $tipo_diagnostico = 'Dx de Ingreso';
-                $color = "label green";
-            }else if($value['tipo_diagnostico'] == '1') {
-                $tipo_diagnostico = 'Dx Principal';
-                $color = "label blue";
-            }else  if($value['tipo_diagnostico'] == '2') {
-                $tipo_diagnostico = 'Dx Secundario';
-                $color = "label amber";
-            }else if($value['tipo_diagnostico'] == '3') {
-                $tipo_diagnostico = 'Dx de Egreso';
-                $color = "label red";
-                $eliminar .= '<i class="fa fa-trash-o icono-accion eliminar-diagnostico-cie10 tip pointer" data-id="'.$value['diagnostico_id'].'" data-toggle="tooltip" title="Borrar diagnóstico" style="margin-left: 5px"></i>';
-            }
-
-            if($tipo_nota == 'Nota de Evolución' || $tipo_nota=='Nota de Valoracion' || $tipo_nota=='Nota de Interconsulta') {
-                 
-                $row.= '<div class="col-md-12" style="margin-top: -10px;">
-                              <div class="alert alert-success alert-dismissable fade in">
-                                <div class="row" style="margin-right: -36px; margin-top: -10px;margin-bottom: -9px;">
-                                    <div class="col-md-9">
-                                        <strong>Diagnóstico:</strong> '.$value['cie10_nombre'].'&nbsp;&nbsp;&nbsp;&nbsp;<b>Clave:</b>'.$value['cie10_clave'].'<br>
-                                        <h6 style="font-size:12px"><strong>Complemento de diagnóstico:</strong> '.($value['complemento']!='' ? $value['complemento'] : 'Sin Observaciones').'</h6>
-                                    </div>
-                                    <div class="col-md-3" style="margin-top: 10px>
-                                        <h6 style="font-size:15px"><strong>'.($value['tipo_diagnostico']=='0' || $value['tipo_diagnostico']=='1' ? '<span class="label green">'.$tipo_diagnostico.'</span>' : '<span class="label amber">'.$tipo_diagnostico.'</span>').'</strong></h6>
-                                        <h6 style="font-size:10px;margin-top: 3px;">Agregado el '.$value['fecha_dx'].' en '.$value['tipo_nota'].'</h6>
-                                    </div>';
-                if($tipo_diagnostico == 'Dx de Ingreso' && empty($consultaDxPrincipal)) {
-                   $idDiv='update_dxprincipal';
-                   $row.=           '<div class="col-md-4" style="left: 600px;padding: 0px;margin-top:-24px">
-                                        <h6>¿Es diagnóstico principal?&nbsp;&nbsp;
-                                            <input type="radio" class="custom-control-input" name="dxprimario" value="Si" data-id="'.$value['diagnostico_id'].'" data-obs="'.$value['complemento'].'" data-nombre="'.$value['cie10_nombre'].'" data-tipo_diagnostico="'.$value['tipo_diagnostico'].'">
-                                            <label class="custom-control-label"></i> Si</label>&nbsp;&nbsp;
-                                            <input type="radio" class="custom-control-input" name="dxprimario" value="No">
-                                           <label class="custom-control-label" for="defaultUnchecked"> No</label>
-                                        </h6>
-                                    </div>';
-                }else if($tipo_diagnostico == 'Dx Principal' && COUNT($consultaDxPrincipal != 0)){
-                    $idDiv='cambiar_dxprincipal';
-                    $row.=          '<div class="col-md-4" style="left: 600px;padding: 0px;margin-top:-24px">
-                                        <h6>¿Cambiar diagnóstico principal?&nbsp;&nbsp;
-                                            <input type="radio" class="custom-control-input" name="cambioDxPrincipal" value="Si" data-id="'.$value['diagnostico_id'].'" data-obs="'.$value['complemento'].'" data-nombre="'.$value['cie10_nombre'].'" data-tipo_diagnostico="'.$value['tipo_diagnostico'].'">
-                                            <label class="custom-control-label"></i> Si</label>&nbsp;&nbsp;
-                                            <input type="radio" class="custom-control-input" name="cambioDxPrincipal" value="No">
-                                           <label class="custom-control-label" for="defaultUnchecked"> No</label>
-                                        </h6>
-                                   </div>'; 
-                }     
-                    $row.=      '</div>
-                              </div>
-                            </div>';
-                    $row.=  '<div class="col-md-12 hidden" id="'.$idDiv.'" style="margin-top: -10px;">
-                                <div class="input-group m-b">
-                                    <span class="input-group-addon"><i class="fa fa-stethoscope" style="font-size: 16px"></i></span>
-                                    <input type="text" class="form-control update_dx" name="cie10_nombre" placeholder="Tecleé y seleccione el diagnóstico primario (minimo 5 caracteres)" autocomplete="off">
-                                    <span class="input-group-addon back-imss border-back-imss add-cie10">
-                                    <i class="fas fa fa-search pointer"></i></span>
-                                </div>
-                            </div>';
-                    
-                } else if ($tipo_nota == 'Nota Inicial') {
-                    
-                    $row.=  '<div class="col-md-12" style="margin-top: -10px;">
-                                <div class="alert alert-info alert-dismissable fade in">
-                                    <div class="row" style="margin-right: -36px; margin-top: -10px;margin-bottom: -9px;">
-                                        <div class="col-md-9">
-                                            <strong>Diagnóstico:</strong> '.$value['cie10_nombre'].'&nbsp;&nbsp;&nbsp;&nbsp;Clave:'.$value['cie10_clave'].' '.'<br>
-                                            <h6 style="font-size:12px"><strong>Complemento de diagnóstico:</strong> '.($value['complemento']!='' ? $value['complemento'] : 'Sin Observaciones').'</h6>
-                                        </div>
-                                        <div class="col-md-2" style="margin-top: 10px>
-                                            <h6 style="font-size:15px"><strong>'.($value['tipo_diagnostico']=='0' ? '<span class="label green">'.$tipo_diagnostico.'</span>' : '<span class="label amber">'.$tipo_diagnostico.'</span>').'</strong></h6>
-                                            <h6 style="font-size:10px;margin-top: 3px;">Agregado el '.$value['fecha_dx'].' en '.$value['tipo_nota'].'</h6>                                
-                                        </div>
-                                        <div class="col-md-1 center-block" style="margin-top: 10px">
-                                            <i class="fa fa-pencil icono-accion editar-diagnostico-cie10 tip pointer" data-id="'.$value['diagnostico_id'].'" data-obs="'.$value['complemento'].'" data-nombre="'.$value['cie10_nombre'].'" data-tipo_diagnostico="'.$value['tipo_diagnostico'].'" data-toggle="tooltip" title="Editar"></i>&nbsp;
-                                            <i class="fa fa-trash-o icono-accion eliminar-diagnostico-cie10 tip pointer" data-id="'.$value['diagnostico_id'].'" data-toggle="tooltip" title="Borrar diagnóstico"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
-            } else { // Si es Nota de Egreso
-
-                $row.=  '<div class="col-md-12" style="margin-top: -10px;">
-                            <div class="alert alert-info alert-dismissable fade in">
-                                <div class="row" style="margin-right: -36px; margin-top: -10px;margin-bottom: -9px;">
-                                    <div class="col-md-9">
-                                        <strong>Diagnóstico:</strong> '.$value['cie10_nombre'].'&nbsp;&nbsp;&nbsp;&nbsp;Clave:'.$value['cie10_clave'].'<br>
-                                        <h6 style="font-size:12px"><strong>Complemento de diagnóstico:</strong> '.($value['complemento']!='' ? $value['complemento'] : 'Sin Observaciones').'</h6>
-                                    </div>
-                                    <div class="col-md-2" style="margin-top: 10px>
-                                        <h6 style="font-size:15px"><strong><span class="'.$color.'">'.$tipo_diagnostico.'</span></strong></h6>
-                                        <h6 style="font-size:10px;margin-top: 3px;">Agregado el '.$value['fecha_dx'].' en '.$value['tipo_nota'].'</h6>                                
-                                    </div>
-                                    <div class="col-md-1 center-block" style="margin-top: 10px">
-                                        <i class="fa fa-pencil icono-accion editar-diagnostico-cie10 tip pointer" data-id="'.$value['diagnostico_id'].'" data-obs="'.$value['complemento'].'" data-nombre="'.$value['cie10_nombre'].'" data-tipo_diagnostico="'.$value['tipo_diagnostico'].'" data-toggle="tooltip" title="Editar"></i>
-                                        '.$eliminar.'
-                                    </div>';
-                    
-                        if($tipo_diagnostico == 'Dx de Ingreso' && empty($consultaDxPrincipal)) {
-                            
-                            $row.=  '<div class="col-md-10">
-                                        <h5><strong>¿Es Diagnóstico de Egreso? &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <label class="md-check">
-                                                <input type="radio" class="custom-control-input" name="dxEgreso" value="Si" data-id="'.$value['diagnostico_id'].'" data-obs="'.$value['complemento'].'" data-nombre="'.$value['cie10_nombre'].'" data-tipo_diagnostico="'.$value['tipo_diagnostico'].'" data-cie10_id="'.$value['cie10_id'].'"> <i class="red"></i><strong>Si</strong>
-                                            </label>&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <label class="md-check">
-                                                    <input type="radio" class="custom-control-input" name="dxEgreso" value="No">
-                                                    <i class="red"></i><strong>No</strong>
-                                            </label>
-                                        </h5>
-                                    </div>';
-
-                        }else if($tipo_diagnostico == 'Dx Principal' && !empty($consultaDxPrincipal)) {
-                            if(empty($consultaDxEgreso)) {
-                            $row.=  '<div class="col-md-10">
-                                        <h5><strong>¿Es Diagnóstico de Egreso éste Dx Principal? &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <label class="md-check">
-                                               <input type="radio" class="custom-control-input" name="dxEgreso" value="Si" data-id="'.$value['diagnostico_id'].'" data-obs="'.$value['complemento'].'" data-nombre="'.$value['cie10_nombre'].'" data-tipo_diagnostico="'.$value['tipo_diagnostico'].'">
-                                                <i class="red"></i><strong>Si</strong>
-                                            </label>&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <label class="md-check">
-                                                <input type="radio" class="custom-control-input" name="dxEgreso" value="No">
-                                                <i class="red"></i><strong>No</strong>
-                                            </label>
-                                        </<h5>
-                                    </div>'; 
-                            }  
-                        }
-                                                
-                    $row.=      '</div>
-                            </div>
-                        </div>'; // Cierre class="col-md-12"
-
-                    $row.=  '<div class="col-md-12 hidden" id="cambio_dxi_dxe" style="margin-top: 0px;">
-                                <div class="input-group m-b">
-                                    <span class="input-group-addon"><i class="fa fa-stethoscope" style="font-size: 16px"></i></span>
-                                    <input type="text" class="form-control update_dx" name="cie10_nombre" placeholder="Tecleé y seleccione el diagnóstico de Egreso (minimo 5 caracteres)" autocomplete="off">
-                                    <span class="input-group-addon back-imss border-back-imss add-cie10">
-                                    <i class="fas fa fa-search pointer"></i></span>
-                                </div>
-                            </div>';
-            }    
-        } // fin For
-        $this->setOutputV2(array('row'=>$row));
-    }
-    public function AjaxHistorialReaccionesAdversas(){
-      $paciente = $this->input->get('paciente');
-      $sql = $this->config_mdl->_query('SELECT medicamento,efecto FROM um_ram
-                                        INNER JOIN prescripcion
-                                        	ON um_ram.prescripcion_id = prescripcion.prescripcion_id
-                                        INNER JOIN catalogo_medicamentos
-                                        	ON catalogo_medicamentos.medicamento_id = prescripcion.medicamento_id
-                                        WHERE um_ram.triage_id = '.$paciente);
-      print json_encode($sql);
-    }
-    public function AjaxHistorialAlergiaMedicamentos(){
-      $paciente = $this->input->get('paciente');
-      $sql = $this->config_mdl->_query("SELECT medicamento FROM um_alergias_medicamentos
-                                        INNER JOIN catalogo_medicamentos
-                                          ON um_alergias_medicamentos.medicamento_id = catalogo_medicamentos.medicamento_id
-                                        WHERE triage_id = $paciente");
-      print json_encode($sql);
-    }
-    public function AjaxRegistrarEfectoAdverso(){
-      $data = array(
-        'prescripcion_id' => $this->input->get('prescripcion_id'),
-        'triage_id' => $this->input->get('paciente'),
-        'efecto' => $this->input->get('motivo')
-      );
-      $this->config_mdl->_insert('um_ram',$data);
-      $sql = $this->config_mdl->_get_data_condition('um_ram',
-      array('triage_id' => $this->input->get('paciente')));
-      print json_encode($sql);
-    }
-    
-    public function AjaxCIE10() {
-        $cie10_nombre= $this->input->post('cie10_nombre');
-        $sql= $this->config_mdl->_query("SELECT * FROM um_cie10 WHERE cie10_nombre LIKE '%$cie10_nombre%' LIMIT 50");
-        foreach ($sql as $value) {
-            $um_cie10.='<li>'.$value['cie10_nombre'].'</li>';
-        }
-        $this->setOutput(array('um_cie10'=>$um_cie10));
-    }
-    public function AjaxCheckCIE10() {
-        $sql= $this->config_mdl->sqlGetDataCondition('um_cie10',array(
-            'cie10_nombre'=> $this->input->post('cie10_nombre')
-        ));
-        if(!empty($sql)){
-            $this->setOutput(array('accion'=>'1'));
-        }else{
-            $this->setOutput(array('accion'=>'2'));
-        }
-    }
-    
-    public function GuardarGlasgowHfAbierto() {
-
-                //apertura ocular
-            $hf_abierto_glasgow_s1=$this->input->post('hf_glasgow_expontanea')+
-                                    $this->input->post('hf_glasgow_hablar')+
-                                    $this->input->post('hf_glasgow_dolor')+
-                                    $this->input->post('hf_glasgow_ausente');
-                //Respuesta motora
-            $hf_abierto_glasgow_s2=$this->input->post('hf_glasgow_obedece')+
-                                    $this->input->post('hf_glasgow_localiza')+
-                                    $this->input->post('hf_glasgow_retira')+
-                                    $this->input->post('hf_glasgow_flexion')+
-                                    $this->input->post('hf_glasgow_extension')+
-                                    $this->input->post('hf_glasgow_ausencia');
-                // Respuesta verbal
-            $hf_abierto_glasgow_s3=$this->input->post('hf_glasgow_orientado')+
-                                    $this->input->post('hf_glasgow_confuso')+
-                                    $this->input->post('hf_glasgow_incoherente')+
-                                    $this->input->post('hf_glasgow_sonidos')+
-                                    $this->input->post('hf_glasgow_arespuesta');
-
-            $total_glasgow=$hf_abierto_glasgow_s1+$hf_abierto_glasgow_s2+$hf_abierto_glasgow_s3;
-            $data_totalGlasgow=array(
-                'triage_puntaje_total'=>$total_glasgow
-            );
-
-            $this->config_mdl->_insert('os_consultorios_especialidad_hf',$data_totalGlasgow);
-    }
-    public function GuardarRiesgoTrobosisHfAbierto() {
-
-         //Edad
-    }
-
-    public function ObtenerMedicamentos(){
-       $sql['medicamentos'] = $this ->config_mdl-> _get_data('catalogo_medicamentos');
-       print json_encode($sql);
-       return json_encode($sql);
-    }
-    public function AjaxDosisMaxima(){
-      $medicamento_id = $this->input->get('medicamento_id');
-      $consulta = "SELECT * FROM catalogo_medicamentos WHERE medicamento_id = $medicamento_id";
-      $query = $this->config_mdl->_query($consulta);
-      print json_encode($query);
-    }
-
-    public function AjaxActualizarDiagnostico() {
-        $sqlDiagnostico= $this->config_mdl->sqlGetDataCondition('um_cie10',array(
-            'cie10_nombre'=> $this->input->post('cie10_nombre')
-        ));
-        $data=array(
-            'triage_id'         => $this->input->post('triage_id'),
-            'cie10_id'          => $sqlDiagnostico[0]['cie10_id'],
-            'tipo_diagnostico'  => "1",
-            'complemento'       => $this->input->post('complemento'),
-            'fecha_dx'          => date('d-m-Y'),
-            'medico_id'         => $this->UMAE_USER,
-            'tipo_nota'         => $this->input->post('tipo_nota')  
-        );
-           
-        if($this->input->post('accion')=='add'){
-            $this->config_mdl->_insert('paciente_diagnosticos',$data);
-        }else{
-            unset($data['fecha_dx']);
-            $this->config_mdl->_update_data('paciente_diagnosticos',$data,array(
-                'diagnostico_id'=> $this->input->post('diagnostico_id')
-            ));
-        }
-        $this->setOutput(array('accion'=>'1','post'=> $this->input->post()));
-    }
-    public function AjaxUltimaNota(){
-      $triage_id = $this->input->post('triage_id');;
-      $tipo_nota = $this->input->post('tipo_nota');
-      switch ($tipo_nota) {
-          case 'Nota de Evolución':
-                
-                break;
-          case 'Nota de Valoracion':
-
-                break;
-          case 'Nota de Interconsulta':
-                break;
-          default:
-              
-              break;
-      }
-      $consultaNota = "SELECT * FROM doc_nota INNER JOIN doc_notas ON doc_nota.notas_id = doc_notas.notas_id AND
-                      triage_id = '{$folio}' AND notas_tipo = '{$tipo_nota}' AND empleado_sevicio_id =
-                      ORDER BY nota_id DESC LIMIT 1";
-
-      $consulta430200 = "SELECT doc_nota_id FROM doc_430200 WHERE doc_estatus= 'Evaluado' AND triage_id = 3";
-      $sql = $this->config_mdl->_query($consultaNota);
-      if(COUNT($sql) < 1){
-        $sql = $this->config_mdl->_query($consultaHFrontal);
-      }
-      print json_encode($sql);
-    }
-    
-    /* Nota de Alta Hospitalario*/
-    public function AjaxNotaEgreso() {
-      
-        $matricula = $this->input->post('medicoMatricula');
-        $selectProceso = $this->input->post('proceso');
-
-        switch ($selectProceso){
-            case 0: // NO haty nada es egreso de admision continua
-                    $proceso = 0;
-                    break;
-            case 1:  // Pre-alta
-                    $proceso = 1;
-                    $fecha_hora_alta = 'Pendiente';
-                    $prealta = 1;
-                    $alta = 0;
-                    $altacancelada=0;
-                    break;
-            case 2: // ALta
-                    $proceso = 2;
-                    $fecha_hora_alta = date('Y-m-d H:i');
-                    $prealta = 0;
-                    $alta = 1;
-                    $altacancelada=0;
-                    $doc_43051 = $this->config_mdl->_get_data_condition('doc_43051', array(
-                        'triage_id' => $this->input->post('triage_id')
-                    ))[0];
-                    break;
-            case 3: // Cancelar Alta
-                    $proceso = 3;
-                    $fecha_hora_alta = 'Cancelada';
-                    $prealta = 0;
-                    $alta = 0;
-                    $altacancelada=1;
-                    break;
-        }
-
-        $sql['empleado'] = $this->config_mdl->_query("SELECT empleado_id, empleado_servicio
-                                                        FROM os_empleados WHERE empleado_id = $this->UMAE_USER");
-
-        $sql['medicoBaseId'] = $this->config_mdl->_query("SELECT empleado_id, empleado_servicio, empleado_roles
-                                                         FROM os_empleados WHERE empleado_matricula = '$matricula'");
-        if(empty($sql['medicoBaseId'])) { // Si es un médico de base quiem realiza la nota no selecciona otro
-            $medicoTratante = $this->UMAE_USER;
-        }else {
-            $medicoTratante = $sql['medicoBaseId'][0]['empleado_id'];
-        }
-        $dataNotas=array(
-            'triage_id'             => $this->input->post('triage_id'),
-            'empleado_id'           => $this->UMAE_USER, 
-            'empleado_servicio_id'  => $sql['empleado'][0]['empleado_servicio'],
-            'notas_medicotratante'  => $medicoTratante,
-            'notas_fecha'           => date('d-m-Y'), //date('Y-m-d')
-            'notas_hora'            => date('H:i'),
-            'notas_tipo'            => $this->input->post('tipo_nota'),
-            'notas_via'             => $this->input->post('inputVia'),
-            'notas_area'            => $this->UMAE_AREA      
-
-        );
-
-        $dataNotaEgreso=array(
-            'fecha_nota'        => date('d-m-Y'),
-            'hora_nota'         => date('H:i'),
-            'motivo_egreso'     => $this->input->post('motivo_egreso'),
-            'resumen_clinico'   => $this->input->post('resumen_clinico'),
-            'exploracion_fisica'=> $this->input->post('exploracion_fisica'),
-            'laboratorios'      => $this->input->post('laboratorios'),
-            'gabinetes'         => $this->input->post('gabinetes'),
-            'pronostico'        => $this->input->post('pronostico'),
-            'plan'              => $this->input->post('plan'),
-            'req_oxigeno'       => $this->input->post('req_oxigeno'),
-            'req_ambulancia'    => $this->input->post('req_ambulancia'),
-            'informe_medico'    => $this->input->post('familiar_informe'),
-            'recibe_informe'    => $this->input->post('recibe_informe'),
-            'estado_alta'       => $proceso
-        );
-
-        $dataAlta = array(
-            'proceso'        => $proceso,
-            'fecha_alta'     => $f,
-            'fecha_hora_alta'=> $fecha_hora_alta,
-            'comentarios'    => $this->input->post('comentarios'),
-            'prealta'        => $prealta,
-            'alta'           => $alta,
-            'altacancelada'  => $altacancelada
-
-        );
-
-        if($this->input->post('accion')=='add'){ //Si se agrega nueva nota
-
-            $this->config_mdl->_insert('doc_notas',$dataNotas);
-            $nota_id = $this->config_mdl->_get_last_id('doc_notas','notas_id');
-            $dataNotaEgreso +=['nota_id' => $nota_id]; 
-            
-            $this->config_mdl->_insert('doc_nota_egreso', $dataNotaEgreso);          
-            
-            $dataSV=array(
-                'sv_tipo'       => $this->input->post('inputVia'),
-                'sv_fecha'      => date('Y-m-d'),
-                'sv_hora'       => date('H:i:s'),
-                'sv_ta'         => $this->input->post('sv_ta'),
-                'sv_temp'       => $this->input->post('sv_temp'),
-                'sv_fc'         => $this->input->post('sv_fc'),
-                'sv_fr'         => $this->input->post('sv_fr'),
-                'sv_oximetria'  => $this->input->post('sv_oximetria'),
-                'sv_dextrostix' => $this->input->post('sv_dextrostix'),
-                'sv_peso'       => $this->input->post('sv_peso'),
-                'sv_talla'      => $this->input->post('sv_talla'),
-                'triage_id'     => $this->input->post('triage_id'),
-                'empleado_id'   => $this->UMAE_USER,
-                'nota_id'       => $nota_id
-            );
-            $this->config_mdl->_insert('os_triage_signosvitales',$dataSV);
-
-            $consulta = "SELECT diagnostico_id, tipo_diagnostico, cie10_id FROM paciente_diagnosticos
-                          WHERE triage_id = ".$this->input->post('triage_id');
-            
-            $sqlResult = $this->config_mdl->_query($consulta);
-
-            for($x = 0; $x < COUNT($sqlResult); $x++){
-                $this->config_mdl->_insert('diagnostico_notas',array(
-                    'notas_id'          => $this->config_mdl->_get_last_id('doc_notas','notas_id'),
-                    'diagnostico_id'    => $sqlResult[$x]['diagnostico_id'],
-                    'tipo_diagnostico'  => $sqlResult[$x]['tipo_diagnostico'],
-                    'cie10_id'          => $sqlResult[$x]['cie10_id']));
-            }
-            for($i = 0; $i < count($this->input->post('nombre_residente')); $i++){
-                $datosResidente = array(
-                    'notas_id'           => $this->config_mdl->_get_last_id('doc_notas','notas_id'),
-                    'nombre_residente'   => $this->input->post("nombre_residente[$i]"),
-                    'apellido_residente' => $this->input->post("apellido_residente[$i]"),
-                    'cedulap_residente'  => $this->input->post("cedula_residente[$i]"),
-                    'grado'              => $this->input->post("grado[$i]")
-                );
-
-                if(count($datosResidente) > 0){
-                    $this->config_mdl->_insert('um_notas_residentes',$datosResidente);
-                }
-            }
-            
-             /* Mandar informacion de Pre-alta */
-            $id_nota_egreso = $this->config_mdl->_get_last_id('doc_nota_egreso','docnota_id');
-            $dataAlta += ['id_nota_egreso' => $id_nota_egreso];
-            $this->config_mdl->_insert('um_alta_hospitalaria',$dataAlta);
-
-            // si se edita la nota, se confirma o se cancela la Alta si se confirma ALta se actualiza doc_43051
-        }else {  
-            
-            unset($data['notas_hora']);
-            unset($data['notas_fecha']);
-            unset($data['empleado_id']);
-            
-            $this->config_mdl->_update_data('doc_notas',array(
-                'notas_medicotratante'  => $medicoTratante,
-            ),array(
-                'notas_id'  => $this->input->post('notas_id')
-            ));
-            $nota_id = $this->input->post('notas_id');
-
-            $this->config_mdl->_update_data('doc_nota_egreso',array(
-                'motivo_egreso'     =>  $this->input->post('motivo_egreso'),
-                'resumen_clinico'   =>  $this->input->post('resumen_clinico'),
-                'exploracion_fisica'=>  $this->input->post('exploracion_fisica'),
-                'laboratorios'      =>  $this->input->post('laboratorios'),
-                'gabinetes'         =>  $this->input->post('gabinetes'),
-                'pronostico'        =>  $this->input->post('pronostico'),
-                'plan'              =>  $this->input->post('plan'),
-                'req_oxigeno'       =>  $this->input->post('req_oxigeno'),
-                'req_ambulancia'    =>  $this->input->post('req_ambulancia'),
-                'informe_medico'    =>  $this->input->post('familiar_informe'),
-                'recibe_informe'    =>  $this->input->post('recibe_informe'),
-                'estado_alta'       => $proceso
-            ),array(
-                'nota_id'  =>  $nota_id
-            ));
-            if ($this->input->post('tipo_nota')=='Nota de Alta') {
-                $docnota_id = $this->config_mdl->_get_data_condition('doc_nota_egreso',array(
-                    'nota_id'=>  $nota_id
-                ))[0];
-            
-                $this->config_mdl->_update_data('um_alta_hospitalaria', array(
-                    'proceso'        => $proceso,
-                    'fecha_alta'     => date('Y-m-d'),
-                    'fecha_hora_alta'=> $fecha_hora_alta,
-                    'comentarios'    => $this->input->post('comentarios'),
-                    'prealta'        => $prealta,
-                    'alta'           => $alta,
-                    'altacancelada'  => $altacancelada
-                    ),array(
-                            'id_nota_egreso' => $docnota_id['docnota_id']
-                ));
-            }
-
-        }
-
-       $this->config_mdl->_update_data('os_camas', array(
-            'proceso' => $proceso),
-            array('cama_id' => $this->input->post('cama_id')));
-            
-
-        $this->setOutput(array(
-            'accion'        => '1',
-            'notas_id'      => $nota_id,
-            'prealta'       => $prealta, 
-            'alta'          => $alta, 
-            'altacancelada' => $altacancelada));
-    }
-
-    public function NotaIngresoHospitalario() {
-        $sql['Especialidades']= $this->config_mdl->_query("SELECT * FROM um_especialidades WHERE especialidad_interconsulta = 1 GROUP BY um_especialidades.especialidad_nombre");
-        $sql['info']=  $this->config_mdl->_get_data_condition('os_triage',array(
-            'triage_id'=> $this->input->get_post('folio')
-        ))[0];
-        $sql['ingresoHosp']=  $this->config_mdl->_get_data_condition('um_ingresos_hospitalario',array(
-            'triage_id'=>  $this->input->get_post('folio')
-        ));
-        
-        $sql['notaIngreso']=  $this->config_mdl->_get_data_condition('um_notas_ingresos_hospitalario',array(
-            'id_nota'=>  $this->input->get_post('idnota')
-        ));
-        $sql['escalaSalud']=  $this->config_mdl->_get_data_condition('um_notas_escalas_salud',array(
-            'triage_id'=>  $this->input->get_post('folio')
-        ));
-        $sql['plan']=  $this->config_mdl->_get_data_condition('um_notas_plan_ordenes',array(
-            'triage_id'=> $this->input->get_post('folio'),
-            'id_nota'  => $_GET['idnota']
-        ));
-       
-        $sql['INFO_MEDICO']=  $this->config_mdl->_get_data_condition('os_empleados',array(
-            'empleado_id'=>  $_SESSION['UMAE_USER']
-        ));
-        
-        $sql['PINFO']= $this->config_mdl->_get_data_condition('paciente_info',array(
-            'triage_id'=>$this->input->get_post('folio')
-        ))[0];
-        $sql['SignosVitales']= $this->config_mdl->_get_data_condition('os_triage_signosvitales',array(
-            'triage_id'=>$this->input->get_post('folio')
-        ))[0];
-        $sql['Documentos']= $this->config_mdl->_get_data_condition('pc_documentos',array(
-            'doc_nombre'=>'Hoja Frontal'
-        ));
-        $sql['Medicamentos'] = $this->config_mdl->_query("SELECT medicamento_id,
-                                                                 CONCAT(medicamento,' ',gramaje, ', ', forma_farmaceutica)medicamento,
-                                                                 interaccion_amarilla,interaccion_roja
-                                                          FROM catalogo_medicamentos
-                                                          WHERE existencia = 1 ORDER BY medicamento");
-        
-        $sql['Prescripcion'] = $this->config_mdl->_query("SELECT *
-                                                          FROM prescripcion
-                                                          INNER JOIN catalogo_medicamentos
-                                                            ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                                          WHERE estado != 0 AND triage_id =".$_GET['folio']);
-        $sql['Diagnosticos'] = $this->config_mdl->_query("SELECT cie10_clave, cie10_nombre, complemento FROM paciente_diagnosticos
-                                                          INNER JOIN diagnostico_hoja_frontal
-                                                            ON paciente_diagnosticos.diagnostico_id = diagnostico_hoja_frontal.diagnostico_id
-                                                          INNER JOIN um_cie10
-                                                            ON um_cie10.cie10_id = paciente_diagnosticos.cie10_id
-                                                          WHERE triage_id = ".$_GET['folio']." ORDER BY tipo_diagnostico");
-        
-        $sql['Prescripciones_canceladas'] = $this->config_mdl->_query("SELECT prescripcion.prescripcion_id
-                                                                      FROM prescripcion
-                                                                      INNER JOIN catalogo_medicamentos ON
-                                                                      prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                                                      INNER JOIN os_triage ON
-                                                                      prescripcion.triage_id = os_triage.triage_id
-                                                                      INNER JOIN btcr_prescripcion ON
-                                                                      prescripcion.prescripcion_id = btcr_prescripcion.prescripcion_id
-                                                                      WHERE os_triage.triage_id =".$_GET['folio']." GROUP BY prescripcion_id");
-
-        $sql['Interconsultas'] = $this->config_mdl->_query("SELECT * FROM um_interconsultas_historial
-                                                            INNER JOIN doc_430200
-                                                                ON doc_430200.doc_id = um_interconsultas_historial.doc_id
-                                                            WHERE um_interconsultas_historial.id_nota = '{$this->input->get_post('idnota')}' 
-                                                            AND triage_id = ".$_GET['folio']);
-        
-        $sql['MedicosBase']= $this->config_mdl->_query("SELECT empleado_id, empleado_matricula,empleado_nombre, empleado_apellidos FROM os_empleados
-                                                        WHERE empleado_roles != 77 AND empleado_servicio =
-                                                          (SELECT empleado_servicio
-                                                           FROM os_empleados
-                                                           WHERE empleado_id = '$this->UMAE_USER')"
-                                                         );
-     
-        
-        $sql['Procedimientos']= $this->config_mdl->_query("SELECT * FROM um_procedimientos WHERE especialidad_id = 1 GROUP BY um_procedimientos.numero");
-
-        //---------------mhma----------///
-        $sql['um_catalogo_laboratorio_area']= $this->config_mdl->_query("SELECT DISTINCT area FROM um_catalogolaboratorio");
-        
-        $sql['um_catalogo_laboratorio']= $this->config_mdl->_query("SELECT * FROM um_catalogolaboratorio");
-
-        foreach ($sql['um_catalogo_laboratorio_area'] as $area) {
-          $tipos[$area['area']] = $this->config_mdl->_query("SELECT DISTINCT tipo FROM um_catalogolaboratorio WHERE area = '".$area['area']."'" );
-        }
-
-        $sql['um_catalogo_laboratorio_tipos']= $tipos;
-
-        $sql['um_estudios_obj']= $this->config_mdl->_query("SELECT * FROM um_solicitud_laboratorio WHERE input_via = '".$_GET['tipo']."' AND tipo_nota='".$_GET['TipoNota']."' AND id_nota= '".$_GET['idnota']."'"." AND triage_id = '".$_GET['folio']."'");
-        
-        //---------------mhma----------///
-
-        $sql['Residentes'] = $this->config_mdl->sqlGetDataCondition('um_notas_residentes',array(
-            'idnota_ingresohosp'=> $sql['notaIngreso'][0]['id_nota']
-        ));
-
-        $this->load->view('Documentos/Nota_Header',$sql);
-        $this->load->view('Documentos/NotaIngresoHospitalario',$sql);
-    }
-    
-    /* Guardar Nota de Ingreso Hospitalario */
-    public function AjaxGuardaNotaIngresoHosp() {
-        $ingresoHosp= $this->config_mdl->_get_data_condition('um_ingresos_hospitalario',array(
-            'triage_id'=>  $this->input->post('triage_id')
-        ))[0];
-
-        $sqlCheckDiagnosticos = $this->config_mdl->sqlGetDataCondition('paciente_diagnosticos',array(
-            'triage_id'=> $this->input->post('triage_id')
-        ));
-        $sqlCheckNotaIngreso= $this->config_mdl->sqlGetDataCondition('um_notas_ingresos_hospitalario',array(
-            'triage_id'=> $this->input->post('triage_id')
-        ),'id_nota');
-
-
-        foreach ($this->input->post('procedimientos') as $procedimientos_select) {
-          $procedimientos.=$procedimientos_select.',';
-        }
-        if($this->input->post('medicoTratante')!='') {
-            $medicoTratante = $this->input->post('medicoTratante'); 
-        }else {
-            $medicoTratante = $this->UMAE_USER; 
-        }
-
-        $dataNota=array(
-            'triage_id'                             => $this->input->post('triage_id'),
-            'id_medico'                             => $this->UMAE_USER,
-            'id_medico_tratante'                    =>  $medicoTratante,
-            'id_servicio'                           => Modules::run('Config/ObtenerEspecialidadID',array('Usuario'=>$this->UMAE_USER)),
-            'tipo_documento'                        => $this->input->post('hf_documento'),
-            'fecha_elabora'                         => date('Y-m-d'),
-            'hora_elabora'                          => date('H:i:s'),
-            'tipo_interrogatorio'                   => $this->input->post('tipo_interrogatorio'),                  
-            'motivo_ingreso'                        => $this->input->post('motivo_ingreso'),        
-            'antecedentes_heredofamiliares'         => $this->input->post('antecedentes_herfam'),
-            'antecedentes_personales_nopatologicos' => $this->input->post('antecedentes_no_patologicos'),
-            'antecedentes_personales_patologicos'   => $this->input->post('antecedentes_patologicos'),
-            'antecedentes_ginecoobstetricos'        => $this->input->post('antecedentes_ginecoobstetricos'),
-            'padecimiento_actual'                   => $this->input->post('padecimiento_actual'),     
-            'exploracion_fisica'                    => $this->input->post('exploracion_fisica'), 
-            'estudios_laboratorio'                  => $this->input->post('estudios_laboratorio'),
-            'estudios_gabinete'                     => $this->input->post('estudios_gabinete'),
-            'estado_salud'                          => $this->input->post('estado_salud'),
-            'pronostico'                            => $this->input->post('pronostico'),
-            'procedimientos'                        => trim($procedimientos, ','),
-            'comentario'                            => $this->input->post('comentario')
-        );
-           
-
-
-        /** Comprueba si no hay Hoaja inicial y guarda los campos dl formulario Nota Inicial
-         *  Regresa en formato Json respuesta 
-        */       
-        //if(empty($sqlCheckNotaIngreso)){
-        if($this->input->post('accion')=='add'){ 
-            if(!empty($sqlCheckDiagnosticos)){       
-                $last_idnota =$this->config_mdl->_insert('um_notas_ingresos_hospitalario',$dataNota);
-                if($last_idnota ) $last_idnota = $this->db->insert_id();
-                
-                /*
-                Se consultan los diagnosticos del paciente registrados
-                para ser asignados en la hoja frontal
-                */
-
-                $diagnostico = $this->config_mdl->_query("SELECT diagnostico_id
-                                                          FROM paciente_diagnosticos
-                                                          WHERE triage_id =".$this->input->post('triage_id')."");
-        
-                for($x = 0; $x < count($diagnostico); $x++){
-                        $datos = array(
-                            'id_nota' => $this->config_mdl->_get_last_id('um_notas_ingresos_hospitalario','id_nota'),
-                            'diagnostico_id' => $diagnostico[$x]['diagnostico_id']
-                        );
-                        $this->config_mdl->_insert('diagnostico_hoja_frontal',$datos);
-                }
-
-                /* ------------------------------------- ESCALAS DE SALUD --------------------------------------------------*
-                 *-------------------------------- $dataES datos de Escalas De Salud ----------------------------------------*/
-
-                $dataES=array(
-                    'id_nota'           => $last_idnota, 
-                    'triage_id'         => $this->input->post('triage_id'),
-                    'id_servicio'       => Modules::run('Config/ObtenerEspecialidadID',array('Usuario'=>$this->UMAE_USER)),
-                    'escala_eva'        => $this->input->post('escala_eva'),
-                    'escala_glasgow'    => $this->input->post('escala_glasgow'),
-                    'glasgow_ocular'    => $this->input->post('apertura_ocular'),
-                    'glasgow_motora'    => $this->input->post('respuesta_motora'),
-                    'glasgow_verbal'    => $this->input->post('respuesta_verbal'),
-                    'riesgo_caida'      => $this->input->post('riesgo_caida'),
-                    'escala_riesgo_trombosis' => $this->input->post('escala_riesgo_trombosis')
-                );
-                 $this->config_mdl->_insert('um_notas_escalas_salud',$dataES);
-
-                 /* --------------------------------------- PLAN ------------------------------------------- *
-                  * ---------------------------------- ORDENES MEDICAS --------------------------------------*/
-                
-                $hf_nutricion = "";
-                $radio_nutricion = $this->input->post('dieta');
-                $select_nutricion = $this->input->post('tipoDieta');
-                $otros_nutricion = $this->input->post('otraDieta');
-                /* las siguiendes condiciones son para indexar el campo 'nota_nutricion'
-                  de esta forma se conoce el origen del dato.*/
-
-                //Indica que el valor viene de una caja de texto
-                if($otros_nutricion != "" & $select_nutricion == 13){
-                  $hf_nutricion = $otros_nutricion;
-                // Indica que el valor viene de un select
-                }else if($select_nutricion >= 1 || $select_nutricion <=12 ){
-                  $hf_nutricion = $select_nutricion;
-                // Indica que el valor viene de un radio
-                }else if($radio_nutricion == 0){
-                  $hf_nutricion = $radio_nutricion;
-                }
-
-                $select_signos = $this->input->post("tomaSignos");
-                $otros_signos = $this->input->post("otrasIndicacionesSignos");
-                $hf_svycuidados = $select_signos;
-                if($select_signos == "3"){
-                  $hf_svycuidados = $otros_signos;
-                }
-                
-                $hf_cgenfermeria = 1;
-                if($this->input->post("cuidados_genfermeria") != 1){
-                  $hf_cgenfermeria = 0;
-                }
-
-                $dataPlan=array(
-                    'id_nota'                => $last_idnota,
-                    'triage_id'              => $this->input->post('triage_id'),
-                    'id_servicio'            => Modules::run('Config/ObtenerEspecialidadID',array('Usuario'=>$this->UMAE_USER)),
-                    'dieta'                  => $hf_nutricion,
-                    'dieta_indicaciones'     => $this->input->post('dieta_indicaciones'),
-                    'toma_signos_vitales'    => $hf_svycuidados,
-                    'cuidados_genfermeria'   => $hf_cgenfermeria,
-                    'cuidados_eenfermeria'   => $this->input->post('cuidadosEspecialesEnfermeria'),
-                    'soluciones_parenterales'=> $this->input->post('solucionesParenterales')             
-                );
-                
-                $this->config_mdl->_insert('um_notas_plan_ordenes',$dataPlan);
-
-                /* -------------------------------------Solicitud de interconsultas ----------------------------------------*/
-                for($x = 0; $x < count($this->input->post('nota_interconsulta')); $x++){
-                    $this->config_mdl->_update_data('um_ingresos_hospitalario',array(
-                       'estado'=>'Interconsulta',
-                       'interconsulta'=>'Si'
-                    ),array(
-                       'triage_id'=>  $this->input->post('triage_id')
-                    ));
-
-                    $datos_interconsulta = array(
-                      'doc_servicio_envia'      => Modules::run('Config/ObtenerEspecialidadID',array('Usuario'=>$this->UMAE_USER)),
-                      'doc_servicio_solicitado' => $this->input->post("nota_interconsulta[$x]"),
-                      'triage_id'               => $this->input->post('triage_id'),
-                      'empleado_envia'          => $this->UMAE_USER,
-                      'doc_estatus'             => 'En Espera',
-                      'doc_fecha'               => date('Y-m-d'),
-                      'doc_hora'                => date('H:i'),
-                      'doc_area'                => $this->UMAE_AREA,
-                      'doc_modulo'              => 'Hospitalizacion',
-                      'motivo_interconsulta'    => $this->input->post('motivo_interconsulta'),
-                      'id_nota'                 => $this->config_mdl->_get_last_id('um_notas_ingresos_hospitalario','id_nota')
-                    );
-    
-                    $this->config_mdl->_insert('doc_430200',$datos_interconsulta);
-                }
-                    /*
-                    Se consultan las interconsultas realizadas en la nota inicial, para
-                    ser registrados en la tabla um_interconsutas _historial
-                    */
-                $interconsultas_ni = $this->config_mdl->_query("SELECT doc_id FROM doc_430200
-                                                                WHERE id_nota = ".$this->config_mdl->_get_last_id('um_notas_ingresos_hospitalario','id_nota'));
-                for($x = 0; $x < count($interconsultas_ni); $x++){
-                  $datos = array(
-                    "id_nota" => $this->config_mdl->_get_last_id('um_notas_ingresos_hospitalario','id_nota'),
-                    "doc_id" => $interconsultas_ni[$x]['doc_id']
-                  );
-                  $this->config_mdl->_insert('um_interconsultas_historial',$datos);
-                }
-
-                /* --------------------------  Inicio Registro de prescricpiones  ------------------------------------*
-                 * ---------------------------------------------------------------------------------------------------*/
-                
-                $fecha_actual = date('d-m-Y');
-                // Numero de prescripciones ingresadas, almacena en arreglo y registra en la
-                // tabla "prescripcio"
-                for($x = 0; $x < count($this->input->post('idMedicamento')); $x++){
-                  $observacion = $this->input->post("observacion[$x]");
-                  $otroMedicamento = $this->input->post("nomMedicamento[$x]");
-                  if($this->input->post("idMedicamento[$x]") == '1'){
-                    $observacion = $otroMedicamento.'-'.$observacion;
-                  }
-                  $datosPrescripcion = array(
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
                     'empleado_id' => $this->UMAE_USER,
                     'triage_id' => $this->input->post('triage_id'),
                     'medicamento_id' => $this->input->post("idMedicamento[$x]"),
@@ -4173,40 +2829,39 @@ class Documentos extends Config
     }
 
     /* Nota de Egreso */
-    public function AjaxNotaEgreso()
-    {
-
+    public function AjaxNotaEgreso() {
+      
         $matricula = $this->input->post('medicoMatricula');
         $selectProceso = $this->input->post('proceso');
 
-        switch ($selectProceso) {
+        switch ($selectProceso){
             case 0: // NO haty nada es egreso de admision continua
-                $proceso = 0;
-                break;
+                    $proceso = 0;
+                    break;
             case 1:  // Pre-alta
-                $proceso = 1;
-                $fecha_hora_alta = 'Pendiente';
-                $prealta = 1;
-                $alta = 0;
-                $altacancelada = 0;
-                break;
+                    $proceso = 1;
+                    $fecha_hora_alta = 'Pendiente';
+                    $prealta = 1;
+                    $alta = 0;
+                    $altacancelada=0;
+                    break;
             case 2: // ALta
-                $proceso = 2;
-                $fecha_hora_alta = date('Y-m-d H:i');
-                $prealta = 0;
-                $alta = 1;
-                $altacancelada = 0;
-                $doc_43051 = $this->config_mdl->_get_data_condition('doc_43051', array(
-                    'triage_id' => $this->input->post('triage_id')
-                ))[0];
-                break;
+                    $proceso = 2;
+                    $fecha_hora_alta = date('Y-m-d H:i');
+                    $prealta = 0;
+                    $alta = 1;
+                    $altacancelada=0;
+                    $doc_43051 = $this->config_mdl->_get_data_condition('doc_43051', array(
+                        'triage_id' => $this->input->post('triage_id')
+                    ))[0];
+                    break;
             case 3: // Cancelar Alta
-                $proceso = 3;
-                $fecha_hora_alta = 'Cancelada';
-                $prealta = 0;
-                $alta = 0;
-                $altacancelada = 1;
-                break;
+                    $proceso = 3;
+                    $fecha_hora_alta = 'Cancelada';
+                    $prealta = 0;
+                    $alta = 0;
+                    $altacancelada=1;
+                    break;
         }
 
         $sql['empleado'] = $this->config_mdl->_query("SELECT empleado_id, empleado_servicio
@@ -4214,30 +2869,30 @@ class Documentos extends Config
 
         $sql['medicoBaseId'] = $this->config_mdl->_query("SELECT empleado_id, empleado_servicio, empleado_roles
                                                          FROM os_empleados WHERE empleado_matricula = '$matricula'");
-        if (empty($sql['medicoBaseId'])) { // Si es un médico de base quiem realiza la nota no selecciona otro
+        if(empty($sql['medicoBaseId'])) { // Si es un médico de base quiem realiza la nota no selecciona otro
             $medicoTratante = $this->UMAE_USER;
-        } else {
+        }else {
             $medicoTratante = $sql['medicoBaseId'][0]['empleado_id'];
         }
-        $dataNotas = array(
+        $dataNotas=array(
             'triage_id'             => $this->input->post('triage_id'),
-            'empleado_id'           => $this->UMAE_USER,
+            'empleado_id'           => $this->UMAE_USER, 
             'empleado_servicio_id'  => $sql['empleado'][0]['empleado_servicio'],
             'notas_medicotratante'  => $medicoTratante,
             'notas_fecha'           => date('d-m-Y'), //date('Y-m-d')
             'notas_hora'            => date('H:i'),
             'notas_tipo'            => $this->input->post('tipo_nota'),
             'notas_via'             => $this->input->post('inputVia'),
-            'notas_area'            => $this->UMAE_AREA
+            'notas_area'            => $this->UMAE_AREA      
 
         );
 
-        $dataNotaEgreso = array(
+        $dataNotaEgreso=array(
             'fecha_nota'        => date('d-m-Y'),
             'hora_nota'         => date('H:i'),
             'motivo_egreso'     => $this->input->post('motivo_egreso'),
             'resumen_clinico'   => $this->input->post('resumen_clinico'),
-            'exploracion_fisica' => $this->input->post('exploracion_fisica'),
+            'exploracion_fisica'=> $this->input->post('exploracion_fisica'),
             'laboratorios'      => $this->input->post('laboratorios'),
             'gabinetes'         => $this->input->post('gabinetes'),
             'pronostico'        => $this->input->post('pronostico'),
@@ -4251,7 +2906,7 @@ class Documentos extends Config
 
         $dataAlta = array(
             'proceso'        => $proceso,
-            'fecha_alta'     => date('Y-m-d'),
+            'fecha_alta'     => $f,
             'fecha_hora_alta'=> $fecha_hora_alta,
             'comentarios'    => $this->input->post('comentarios'),
             'prealta'        => $prealta,
@@ -4260,15 +2915,15 @@ class Documentos extends Config
 
         );
 
-        if ($this->input->post('accion') == 'add') { //Si se agrega nueva nota
+        if($this->input->post('accion')=='add'){ //Si se agrega nueva nota
 
-            $this->config_mdl->_insert('doc_notas', $dataNotas);
-            $nota_id = $this->config_mdl->_get_last_id('doc_notas', 'notas_id');
-            $dataNotaEgreso += ['nota_id' => $nota_id];
-
-            $this->config_mdl->_insert('doc_nota_egreso', $dataNotaEgreso);
-
-            $dataSV = array(
+            $this->config_mdl->_insert('doc_notas',$dataNotas);
+            $nota_id = $this->config_mdl->_get_last_id('doc_notas','notas_id');
+            $dataNotaEgreso +=['nota_id' => $nota_id]; 
+            
+            $this->config_mdl->_insert('doc_nota_egreso', $dataNotaEgreso);          
+            
+            $dataSV=array(
                 'sv_tipo'       => $this->input->post('inputVia'),
                 'sv_fecha'      => date('Y-m-d'),
                 'sv_hora'       => date('H:i:s'),
@@ -4284,55 +2939,54 @@ class Documentos extends Config
                 'empleado_id'   => $this->UMAE_USER,
                 'nota_id'       => $nota_id
             );
-            $this->config_mdl->_insert('os_triage_signosvitales', $dataSV);
+            $this->config_mdl->_insert('os_triage_signosvitales',$dataSV);
 
             $consulta = "SELECT diagnostico_id, tipo_diagnostico, cie10_id FROM paciente_diagnosticos
-                          WHERE triage_id = " . $this->input->post('triage_id');
-
+                          WHERE triage_id = ".$this->input->post('triage_id');
+            
             $sqlResult = $this->config_mdl->_query($consulta);
 
-            for ($x = 0; $x < COUNT($sqlResult); $x++) {
-                $this->config_mdl->_insert('diagnostico_notas', array(
-                    'notas_id'          => $this->config_mdl->_get_last_id('doc_notas', 'notas_id'),
+            for($x = 0; $x < COUNT($sqlResult); $x++){
+                $this->config_mdl->_insert('diagnostico_notas',array(
+                    'notas_id'          => $this->config_mdl->_get_last_id('doc_notas','notas_id'),
                     'diagnostico_id'    => $sqlResult[$x]['diagnostico_id'],
                     'tipo_diagnostico'  => $sqlResult[$x]['tipo_diagnostico'],
-                    'cie10_id'          => $sqlResult[$x]['cie10_id']
-                ));
+                    'cie10_id'          => $sqlResult[$x]['cie10_id']));
             }
-            for ($i = 0; $i < count($this->input->post('nombre_residente')); $i++) {
+            for($i = 0; $i < count($this->input->post('nombre_residente')); $i++){
                 $datosResidente = array(
-                    'notas_id'           => $this->config_mdl->_get_last_id('doc_notas', 'notas_id'),
+                    'notas_id'           => $this->config_mdl->_get_last_id('doc_notas','notas_id'),
                     'nombre_residente'   => $this->input->post("nombre_residente[$i]"),
                     'apellido_residente' => $this->input->post("apellido_residente[$i]"),
                     'cedulap_residente'  => $this->input->post("cedula_residente[$i]"),
                     'grado'              => $this->input->post("grado[$i]")
                 );
 
-                if (count($datosResidente) > 0) {
-                    $this->config_mdl->_insert('um_notas_residentes', $datosResidente);
+                if(count($datosResidente) > 0){
+                    $this->config_mdl->_insert('um_notas_residentes',$datosResidente);
                 }
             }
-
-            /* Mandar informacion de Pre-alta */
-            $id_nota_egreso = $this->config_mdl->_get_last_id('doc_nota_egreso', 'docnota_id');
+            
+             /* Mandar informacion de Pre-alta */
+            $id_nota_egreso = $this->config_mdl->_get_last_id('doc_nota_egreso','docnota_id');
             $dataAlta += ['id_nota_egreso' => $id_nota_egreso];
-            $this->config_mdl->_insert('um_alta_hospitalaria', $dataAlta);
+            $this->config_mdl->_insert('um_alta_hospitalaria',$dataAlta);
 
             // si se edita la nota, se confirma o se cancela la Alta si se confirma ALta se actualiza doc_43051
-        } else {
-
+        }else {  
+            
             unset($data['notas_hora']);
             unset($data['notas_fecha']);
             unset($data['empleado_id']);
-
-            $this->config_mdl->_update_data('doc_notas', array(
+            
+            $this->config_mdl->_update_data('doc_notas',array(
                 'notas_medicotratante'  => $medicoTratante,
-            ), array(
+            ),array(
                 'notas_id'  => $this->input->post('notas_id')
             ));
             $nota_id = $this->input->post('notas_id');
 
-            $this->config_mdl->_update_data('doc_nota_egreso', array(
+            $this->config_mdl->_update_data('doc_nota_egreso',array(
                 'motivo_egreso'     =>  $this->input->post('motivo_egreso'),
                 'resumen_clinico'   =>  $this->input->post('resumen_clinico'),
                 'exploracion_fisica'=>  $this->input->post('exploracion_fisica'),
@@ -4345,55 +2999,40 @@ class Documentos extends Config
                 'informe_medico'    =>  $this->input->post('familiar_informe'),
                 'recibe_informe'    =>  $this->input->post('recibe_informe'),
                 'estado_alta'       => $proceso
-            ), array(
+            ),array(
                 'nota_id'  =>  $nota_id
             ));
-            if ($this->input->post('tipo_nota') == 'Nota de Prealta') {
-                $docnota_id = $this->config_mdl->_get_data_condition('doc_nota_egreso', array(
-                    'nota_id' =>  $nota_id
+            if ($this->input->post('tipo_nota')=='Nota de Alta') {
+                $docnota_id = $this->config_mdl->_get_data_condition('doc_nota_egreso',array(
+                    'nota_id'=>  $nota_id
                 ))[0];
-
+            
                 $this->config_mdl->_update_data('um_alta_hospitalaria', array(
                     'proceso'        => $proceso,
                     'fecha_alta'     => date('Y-m-d'),
-                    'fecha_hora_alta' => $fecha_hora_alta,
+                    'fecha_hora_alta'=> $fecha_hora_alta,
                     'comentarios'    => $this->input->post('comentarios'),
                     'prealta'        => $prealta,
                     'alta'           => $alta,
                     'altacancelada'  => $altacancelada
-                ), array(
-                    'id_nota_egreso' => $docnota_id['docnota_id']
+                    ),array(
+                            'id_nota_egreso' => $docnota_id['docnota_id']
                 ));
             }
-            /*
-            if($proceso == 2){
-                
-                $this->config_mdl->_update_data('doc_43051',array(
-                    'salida_medico'  => $medicoTratante,
-                    'salida_servicio'=> Modules::run('Config/ObtenerEspecialidadID',array('Usuario'=>$this->UMAE_USER)),
-                ),array(
-                    'id'  => $doc_43051['triage_id']
-                ));
-            }*/
+
         }
 
-        $this->config_mdl->_update_data('os_camas',
-            array('proceso' => $proceso),
-            array('cama_id' => $this->input->post('cama_id'))
-        );
-
+       $this->config_mdl->_update_data('os_camas', array(
+            'proceso' => $proceso),
+            array('cama_id' => $this->input->post('cama_id')));
+            
 
         $this->setOutput(array(
-
             'accion'        => '1',
             'notas_id'      => $nota_id,
-            'prealta'       => $prealta,
-            'alta'          => $alta,
-            'altacancelada' => $altacancelada,
-            "datos"         => $dataNotaEgreso,
-            "dataNotas"     => $dataNotas,
-            "tipo_nota"     => $this->input->post('tipo_nota')
-        ));
+            'prealta'       => $prealta, 
+            'alta'          => $alta, 
+            'altacancelada' => $altacancelada));
     }
 
     public function NotaIngresoHospitalario()
@@ -4501,6 +3140,7 @@ class Documentos extends Config
     /* Guardar Nota de Ingreso Hospitalario */
     public function AjaxGuardaNotaIngresoHosp()
     {
+        $idNotaIngreso = null;
         $ingresoHosp = $this->config_mdl->_get_data_condition('um_ingresos_hospitalario', array(
             'triage_id' =>  $this->input->post('triage_id')
         ))[0];
@@ -4554,7 +3194,9 @@ class Documentos extends Config
         //if(empty($sqlCheckNotaIngreso)){
         if ($this->input->post('accion') == 'add') {
             if (!empty($sqlCheckDiagnosticos)) {
+                
                 $last_idnota = $this->config_mdl->_insert('um_notas_ingresos_hospitalario', $dataNota);
+                $idNotaIngreso = $last_idnota;
                 if ($last_idnota) $last_idnota = $this->db->insert_id();
 
                 /*
@@ -5108,24 +3750,12 @@ class Documentos extends Config
 
         //-----------------solicitud_laboratorio------------
         /** Comprueba si no se ha ingresado Un diagnostico entonce manda a mensaje a Jquery que no debe de haber un diagnsotico de ingreso
-<<<<<<< HEAD
          */
 
         if (empty($sqlCheckDiagnosticos)) {
             $this->setOutput(array('accion' => '0'));
         } else {
-            $this->setOutput(array('accion' => '1', 'val' => 'f'));
-=======
-        */
-      
-        if(empty($sqlCheckDiagnosticos)){
-             $this->setOutput(array('accion'=>'0'));
-        }else {
-            $this->setOutput(array('accion'        => '1',
-                                   'val'           => 'f', 
-                                   'idNotaIngreso' => $id_nota));
-         
->>>>>>> a6775f3a0b2c5a51e4fb9bd7d4f322d2ac3951ec
+            $this->setOutput(array('accion' => '1', 'val' => 'f', "idNotaIngreso" => $this->config_mdl->_get_last_id('um_notas_ingresos_hospitalario', 'id_nota')));
         }
     }
 
@@ -5150,6 +3780,7 @@ class Documentos extends Config
 
     public function AjaxNotaProcedimientos()
     {
+        $procedimientos = "";
 
         $dataSV = array(
             'sv_tipo'       => $this->input->post('inputVia'),
@@ -5199,19 +3830,7 @@ class Documentos extends Config
             'procedimientos'    => trim($procedimientos, ',')
         );
 
-        for ($i = 0; $i < count($this->input->post('nombre_residente')); $i++) {
-            $dataResidentes = array(
-                // 'notas_id'           => $this->config_mdl->_get_last_id('doc_notas','notas_id'),
-                'nombre_residente'   => $this->input->post("nombre_residente[$i]"),
-                'apellido_residente' => $this->input->post("apellido_residente[$i]"),
-                'cedulap_residente'  => $this->input->post("cedula_residente[$i]"),
-                'grado'              => $this->input->post("grado[$i]")
-            );
-
-            if (count($datosResidente) > 0) {
-                $this->config_mdl->_insert('um_notas_residentes', $datosResidente);
-            }
-        }
+       
 
         /* Agregar datos a las tablas */
 
@@ -5221,10 +3840,20 @@ class Documentos extends Config
             /* Agrega el id de la noata con notas_id a los arreglos $dataNotaProcedimiento, $dataSV y $dataResidentes */
             $dataNotaProcedimiento['notas_id'] = $notas_id;
             $dataSV['nota_id'] = $notas_id;
-            $dataResidentes['notas_id'] = $notas_id;
+            //$dataResidentes['notas_id'] = $notas_id;
             $this->config_mdl->_insert('os_triage_signosvitales', $dataSV);
             $this->config_mdl->_insert('um_notas_procedimientos', $dataNotaProcedimiento);
-            $this->config_mdl->_insert('um_notas_residentes', $dataResidentes);
+            //$this->config_mdl->_insert('um_notas_residentes', $dataResidentes);
+            for ($i = 0; $i < count($this->input->post('nombre_residente')); $i++) {
+                $dataResidentes = array(
+                    'notas_id'           => $this->config_mdl->_get_last_id('doc_notas','notas_id'),
+                    'nombre_residente'   => $this->input->post("nombre_residente[$i]"),
+                    'apellido_residente' => $this->input->post("apellido_residente[$i]"),
+                    'cedulap_residente'  => $this->input->post("cedula_residente[$i]"),
+                    'grado'              => $this->input->post("grado[$i]")
+                );
+                $this->config_mdl->_insert('um_notas_residentes', $dataResidentes);
+            }
         } else {
             unset($dataNota['notas_fecha']);
             unset($dataNota['notas_hora']);
@@ -5244,7 +3873,7 @@ class Documentos extends Config
             ));
         }
 
-        $this->setOutput(array('accion' => '1', 'notas_id' => $notas_id));
+        $this->setOutput(array('accion' => '1', 'notas_id' => $notas_id, "post" => $_POST));
     }
 
     public function BuscarDxPreop()

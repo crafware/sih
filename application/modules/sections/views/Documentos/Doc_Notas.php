@@ -1155,31 +1155,19 @@
         <div class="panel-heading"><h4>Médico Tratante</h4></div>
         <div class="panel-body">
           <div class="col-md-12">
-              <?php 
+          <?php 
+                  $medicoRol = -1;
+                  $medicoRoles = null;
                   foreach ($Usuario as $value) {
-                    $medicoRol = $value['empleado_roles'];
+                    $medicoRoles = $value['empleado_roles'];
                   } 
-                  if($medicoRol == 2) {?>                                  
-                      <div class="col-md-12" style="background: white; padding: 25px 15px 15px 15px">
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-6">
-                                  <label><b>NOMBRE</b></label>
-                                  <input type="text" name="medicoTratante" value="<?=$value['empleado_nombre'].' '.$value['empleado_apellidos']?>" readonly="" class="form-control">
-                                </div>doc_notas
-                                <div class="col-md-3">
-                                    <label><b>MATRICULA</b></label>
-                                    <input type="text" name="MedicoTratante" value="<?=$value['empleado_matricula']?>" readonly="" class="form-control">
-                                </div>
-                                <div class="col-md-3">
-                                  <label><b>CEDULA PROFESIONAL</b></label>
-                                  <input type="text" name="cedulaMedico" value="<?=$value['empleado_cedula']?>" readonly="" class="form-control">
-                              </div>
-                            </div>
-                        </div>
-                      </div>                      
-              <?php }else {?>   
-
+                  $empleado_roles = explode(",",$medicoRoles);
+                  for($i = 0;$i< count($empleado_roles);$i++){
+                      if($empleado_roles[$i] == "77"){
+                          $medicoRol = 77;
+                      }
+                  }
+                  if($medicoRol == 77) {?>   
                       <div class="col-sm-12 col-md-12" style="padding-bottom: 10px">
                           <div style="background: white; border-bottom: 2px solid #E6E9ED">
                               <h4>MÉDICO TRATANTE <small>NOMBRE DE MEDICOS RESIDENTES</small></h4>
@@ -1218,7 +1206,7 @@
                             </div>
                             <div class="col-sm-1 col-md-1">
                               <label>Agregar +</label>
-                              <a href='#' class="btn btn-success btn-xs " style="width:100%;height:100%;padding:7px;" id="add_otro_residente" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
+                              <a href='#' class="btn btn-success btn-xs " style="width:100%;height:100%;padding:7px;" id="add_otro_residente2" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
                             </div>
                         
                           </div>
@@ -1241,9 +1229,31 @@
                                  <div class="col-sm-2 col-md-2">
                                   <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[$i]['grado']?>" required>
                                   </div>
+                                  <div class=col-sm-1 >
+                                    <a href="#" class="btn btn-danger delete btn-xs" style="width:100%;height:100%;padding:7px;" id="quitar_residente"><span class="glyphicon glyphicon-remove"></span></a>
+                                  </div>
                               </div>
                           <?php }?>
                       </div>
+              <?php }else {?>                                  
+                      <div class="col-md-12" style="background: white; padding: 25px 15px 15px 15px">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                  <label><b>NOMBRE</b></label>
+                                  <input type="text" name="medicoTratante" value="<?=$value['empleado_nombre'].' '.$value['empleado_apellidos']?>" readonly="" class="form-control">
+                                </div>
+                                <div class="col-md-3">
+                                    <label><b>MATRICULA</b></label>
+                                    <input type="text" name="MedicoTratante" value="<?=$value['empleado_matricula']?>" readonly="" class="form-control">
+                                </div>
+                                <div class="col-md-3">
+                                  <label><b>CEDULA PROFESIONAL</b></label>
+                                  <input type="text" name="cedulaMedico" value="<?=$value['empleado_cedula']?>" readonly="" class="form-control">
+                              </div>
+                            </div>
+                        </div>
+                      </div>                      
               <?php }?>               
           </div>
         </div>
