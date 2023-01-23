@@ -77,7 +77,7 @@ class Hospitalizacion extends Config{
         $sqlMedico= $this->config_mdl->sqlGetDataCondition('os_empleados',array(
             'empleado_id'=> $this->UMAE_USER
         ));
-        
+        $sql['Medico'] = $sqlMedico[0];
         $especialidad = $this->config_mdl->_get_data_condition("um_especialidades",array(
                         'especialidad_id'=>$sqlMedico[0]['empleado_servicio']))[0];
 

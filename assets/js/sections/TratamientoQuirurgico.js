@@ -54,7 +54,6 @@ $(document).ready(function () {
     });
 
     $('.solicitud-intervencion').submit(function (e) {
-        console.log("dddddddd")
         e.preventDefault()
         $.ajax({
             url: base_url + "Sections/SolicitudDeIntervencion/AjaxSolicitudeIntervencion",
@@ -259,6 +258,7 @@ $(document).ready(function () {
     
 })
 function intervencion2(data){
+    
     $.ajax({
       url: base_url + "Sections/SolicitudDeIntervencion/AjaxSolicitudeIntervencion",
       type: 'POST',

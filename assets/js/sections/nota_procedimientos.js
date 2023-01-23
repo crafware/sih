@@ -5,24 +5,25 @@ $(document).ready(function () {
       /*la varivable cont incrementa cada ves que se genera un nuevo médico residente
       la variable se concatena al identificador del campo con el proposito de tener distinguir cada uno
       en el momento de ser eliminados*/
-
+      console.log("cont hola mundo");
       if(cont >= 4){
         alert('La nota medica solo acepta maximo 4 medicos residentes');
       }
       else{
         cont += 1;
         $("#medicoResidente").append(
-        '<div id=areaResidentes'+ cont +' style="padding: 10px 0px 30px 0px">'+
-        '<div class=col-sm-3 >'+
+        //'<div id=areaResidentes'+ cont +' style="padding: 10px 0px 30px 0px">'+
+        '<div class="col-sm-12 form-group" id=areaResidentes'+ cont +'>'+
+        '<div class="col-sm-4 col-md-3">  '+
         '<input id="medico'+ cont +'" class="form-control"  type="text" required name="nombre_residente[]" placeholder="Nombre(s)">'+
         '</div>'+
-        '<div class=col-sm-3 >'+
+        '<div class="col-sm-4 col-md-3"> '+
         '<input id="medico'+ cont +'" class=form-control type="text" required name="apellido_residente[]" placeholder="Apellidos">'+
         '</div>'+
-        '<div class=col-sm-3 >'+
+        '<div class="col-sm-3 col-md-3">'+
         '<input id="medico'+ cont +'" class=form-control type="text" required name="cedula_residente[]" placeholder="Cédula Profesional">'+
         '</div>'+
-        '<div class=col-sm-2 >'+
+        '<div class="col-sm-2 col-md-2">'+
         '<input id="grado'+ cont +'" class="form-control"  type="text" required name="grado[]" placeholder="Grado (ej. R3MI)">'+
         '</div>'+
         '<div class=col-sm-1 >'+
@@ -32,7 +33,7 @@ $(document).ready(function () {
    console.log(cont);
       } 
 
-    $('body #quitar_residente'+cont).click(function (e) {
+   /* $('body #quitar_residente'+cont).click(function (e) {
                 var didConfirm = confirm("Are you sure You want to delete");
                 if (didConfirm == true) {
                     $('#areaResidentes'+cont).remove();
@@ -41,10 +42,53 @@ $(document).ready(function () {
                 } else {
                     return false;
                 }
-    });
+    });*/
 
   });
+  $('#add_otro_residente2').click (function(e) {
+  
+    /*la varivable cont incrementa cada ves que se genera un nuevo médico residente
+    la variable se concatena al identificador del campo con el proposito de tener distinguir cada uno
+    en el momento de ser eliminados*/
+    console.log(cont);
+    if(cont >= 4){
+      alert('La nota medica solo acepta maximo 4 medicos residentes');
+    }
+    else{
+      cont += 1;
+      $("#medicoResidente").append(
+      '<div class="col-sm-12 form-group" id=areaResidentes'+ cont +'>'+
+      '<div class="col-sm-4 col-md-3">  '+
+      '<input id="medico'+ cont +'" class="form-control"  type="text" required name="nombre_residente[]" placeholder="Nombre(s)">'+
+      '</div>'+
+      '<div class="col-sm-4 col-md-3"> '+
+      '<input id="medico'+ cont +'" class=form-control type="text" required name="apellido_residente[]" placeholder="Apellidos">'+
+      '</div>'+
+      '<div class="col-sm-3 col-md-3">'+
+      '<input id="medico'+ cont +'" class=form-control type="text" required name="cedula_residente[]" placeholder="Cédula Profesional">'+
+      '</div>'+
+      '<div class="col-sm-2 col-md-2">'+
+      '<input id="grado'+ cont +'" class="form-control"  type="text" required name="grado[]" placeholder="Grado (ej. R3MI)">'+
+      '</div>'+
+      '<div class=col-sm-1 >'+
+      '<a href="#" class="btn btn-danger delete btn-xs" style="width:100%;height:100%;padding:7px;" id="quitar_residente'+cont+'"><span class="glyphicon glyphicon-remove"></span></a>'+
+      '</div>'+
+      '</div>');
+ console.log(cont);
+    } 
 
+  $('body #quitar_residente'+cont).click(function (e) {
+              var didConfirm = confirm("Are you sure You want to delete");
+              if (didConfirm == true) {
+                  $('#areaResidentes'+cont).remove();
+                  cont -=1;
+                  return true;
+              } else {
+                  return false;
+              }
+  });
+
+});
   $('#medicosBase').typeahead({
           displayText: function(item) {
                  return (item.empleado_nombre+' '+item.empleado_apellidos)
@@ -74,13 +118,10 @@ $(document).ready(function () {
   $('.notaProcedimientos').submit(function (e) {
         e.preventDefault();
         SendAjax($(this).serialize(),'Sections/Documentos/AjaxNotaProcedimientos',function (response) {
-            if(response.accion=='1'){
-              
-              ActionCloseWindowsReload();
-              AbrirDocumentoMultiple(base_url+'Inicio/Documentos/GenerarNotaProcedimientos/'+response.notas_id+'?inputVia='+$('input[name=inputVia]').val(),'NOTAS');
-              
-
-            }
+          if(response.accion=='1'){
+            ActionCloseWindowsReload();
+            AbrirDocumentoMultiple(base_url+'Inicio/Documentos/GenerarNotaProcedimientos/'+response.notas_id+'?inputVia='+$('input[name=inputVia]').val(),'NOTAS');
+          }
         },'','No');
     });  
 

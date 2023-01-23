@@ -10,7 +10,7 @@
                 <div class="panel-body b-b b-light">
                     <div class="row">
                         <div class="col-md-4">
-                            <label for=""><b>Buscar foliooooo</b></label>
+                            <label for=""><b>Buscar folio</b></label>
                             <div class="input-group m-b">
                                 <span class="input-group-addon back-imss border-back-imss">
                                     <i class="fa fa-search"></i>

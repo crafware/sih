@@ -47,7 +47,7 @@ $(document).ready(function () {
     if($('#procedimientos').val() == 'edit'){  
         $('#procedimientos').val($('#procedimientos').attr('data-value').split(',')).select2();
     }
-
+ 
     var triage_paciente_accidente_lugar=$('input[name=pia_lugar_accidente]').val();
     if(triage_paciente_accidente_lugar=='TRABAJO'){
         $('.col-hojafrontal-info').removeClass('hide');
@@ -1286,6 +1286,39 @@ $(document).ready(function () {
         }
 
     });
+    $("#add_otro_residente2").click (function(e) {
+        
+      /*la varivable cont incrementa cada ves que se genera un nuevo médico residente
+      la variable se concatena al identificador del campo con el proposito de tener distinguir cada uno
+      en el momento de ser eliminados*/
+
+      if(cont >= 4){
+        alert('La nota medica solo acepta maximo 3 medicos residentes');
+      }
+      else{
+        cont += 1;
+        $("#medicoResidente").append(
+        '<div class="col-sm-12 form-group" id=areaResidentes'+ cont +'>'+
+        '<div class="col-sm-4 col-md-3">'+
+        '<input id="medico'+ cont +'" class="form-control"  type="text" required name="nombre_residente[]" placeholder="Nombre(s)">'+
+        '</div>'+
+        '<div class="col-sm-4 col-md-3">'+
+        '<input id="medico'+ cont +'" class=form-control type="text" required name="apellido_residente[]" placeholder="Apellidos">'+
+        '</div>'+
+        '<div class=col-sm-3  col-md-3>'+
+        '<input id="medico'+ cont +'" class=form-control type="text" required name="cedula_residente[]" placeholder="Cédula Profesional">'+
+        '</div>'+
+        '<div class=col-sm-2 col-md-2>'+
+        '<input id="grado'+ cont +'" class="form-control"  type="text" required name="grado[]" placeholder="Grado (ej. R3MI)">'+
+        '</div>'+
+        '<div class=col-sm-1 >'+
+        '<a href="#" onclick=quitarResidenteFormulario('+cont+') class="btn btn-danger delete btn-xs" style="width:100%;height:100%;padding:7px;" id="quitar_residente"><span class="glyphicon glyphicon-remove"></span></a>'+
+        '</div>'+
+        '</div>');
+        console.log(cont);
+      }
+
+  });
     // valida que se selecciones los campos de la escala de glasgow
     $('.btn_modal_glasgow').click(function(){
       var ocular = ($('input[name=apertura_ocular]').is(':checked')) ? parseInt($('input[name=apertura_ocular]:checked').val()) : 0;

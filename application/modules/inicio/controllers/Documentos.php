@@ -646,9 +646,7 @@ class Documentos extends Config{
                             AND os_consultorios_especialidad_hf.hf_fg ='$inputFechaInicio'
                             AND os_observacion.observacion_fe = '$fechaInicioObs'
                             AND os_consultorios_especialidad_hf.hf_hg BETWEEN '$horaInicial_A' AND '$horaFinal_A' 
-
                         UNION
-
                         SELECT
                             os_triage.triage_id,
                             os_triage.triage_horacero_f,
@@ -750,7 +748,6 @@ class Documentos extends Config{
                             AND os_observacion.observacion_fe = '$fechaInicioObs'
                             AND os_consultorios_especialidad_hf.triage_id = os_triage.triage_id
                             AND os_consultorios_especialidad_hf.hf_hg BETWEEN '$horaInicial' AND '$horaFinal' 
-
                         ");
                     $sql['Notas']= $this->config_mdl->_query("
                         SELECT  os_triage.triage_id,
@@ -1167,7 +1164,140 @@ class Documentos extends Config{
         ));
 
         //print json_encode($sql);
+        $this->valueGenerarNotas($sql);
+
         $this->load->view('documentos/Notas',$sql);
+    }
+    public function valueGenerarNotas(&$sql) //Adactar
+    {
+        $limFila = 100;
+        $limColumna = 46;
+        $lim = 0;
+        $titulo_len = 4;
+        $nota = &$sql["Nota"];
+        $Diagnosticos = &$sql["Diagnosticos"];
+        $toma_signos = &$sql["toma_signos"];
+        if ($sql['indicaciones'] == 1) {
+            $this->valueTitleLen('INDICACIONES_Y_ORDENES_MEDICAS', $lim, $titulo_len, $limColumna, $nota, true);
+        } else {
+            $nombre = 'nota_problema';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, true);
+            $nota['lim_1'] = $lim;
+            $nombre = 'nota_interrogatorio';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $nota['lim_2'] = $lim;
+            $nombre = 'nota_exploracionf';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $nota['lim_3'] = $lim;
+            $nombre = 'nota_auxiliaresd';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $nombre = 'nota_procedimientos';
+            if ($nota[$nombre] != '') {
+                if ($lim > $limColumna) {
+                    $nota[$nombre . '_p1'] = "2";
+                } else {
+                    $aux = $titulo_len;
+                    $procedimiento = explode(',', $nota['nota_procedimientos']);
+                    $aux += count($procedimiento) * $titulo_len;
+                    if (($lim + $aux) > $limColumna)
+                        $nota[$nombre . '_p1'] = "2";
+                    else
+                        $nota[$nombre . '_p1'] = "1";
+                    $lim += $aux;
+                }
+            }
+            $nombre = 'nota_analisis';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $nombre = 'Diagnosticos';
+            if (!empty($Diagnosticos)) {
+                if ($lim > $limColumna) {
+                    $nota[$nombre . '_p1'] = "2";
+                } else {
+                    $aux = 3 * $titulo_len;
+                    foreach ($Diagnosticos as $value) {
+                        if ($value['tipodiag'] == 1 || $value['tipodiag'] == 2) {
+                            $aux += $titulo_len * 3;
+                        }
+                    }
+                    if (($lim + $aux) > $limColumna)
+                        $nota[$nombre . '_p1'] = "2";
+                    else
+                        $nota[$nombre . '_p1'] = "1";
+                    $lim += $aux;
+                }
+            }
+            $nombre = 'nota_pronosticos';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $this->valueTitleLen('PLAN_Y_ORDENES_M', $lim, $titulo_len, $limColumna, $nota, false);
+            $this->valueTitleLen('Dieta', $lim, $titulo_len, $limColumna, $nota, false);
+            if ($nota['nota_svycuidados'] != 0) {
+                $this->valueTitleLen('nota_svycuidados', $lim, $titulo_len, $limColumna, $nota, false);
+            }
+            if ($toma_signos != 0) {
+                $nombre = 'toma_signos';
+                if ($lim > $limColumna) {
+                    $nota[$nombre . '_p1'] = "2";
+                } else {
+                    $aux = $titulo_len;
+                    if (($lim + $aux) > $limColumna)
+                        $nota[$nombre . '_p1'] = "2";
+                    else
+                        $nota[$nombre . '_p1'] = "1";
+                    $lim += $aux;
+                }
+            }
+            $nombre = 'nota_cgenfermeria';
+            if ($nota[$nombre] == '1') {
+                if ($lim > $limColumna) {
+                    $nota[$nombre . '_p1'] = "2";
+                } else {
+                    $aux = $titulo_len * 10;
+                    if (($lim + $aux) > $limColumna)
+                        $nota[$nombre . '_p1'] = "2";
+                    else
+                        $nota[$nombre . '_p1'] = "1";
+                    $lim += $aux;
+                }
+            }
+            $nombre = 'nota_cuidadosenfermeria';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $nombre = 'nota_solucionesp';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        }
+    }
+
+    public function valueTextLen(&$nota, $nombre, &$lim, $limColumna, $titulo_len, $limFila, $firsh)
+    {
+        if ($nota[$nombre] != '') {
+            if ($lim > $limColumna) {
+                $nota[$nombre . '_p1'] = "2";
+            } else {
+                $aux = $titulo_len;
+                $aux += substr($nota[$nombre], "\n");
+                $aux += ceil(strlen($nota[$nombre]) / $limFila) + 1;
+                if (($lim + $aux) > $limColumna)
+                    $nota[$nombre . '_p1'] = "2";
+                else
+                    $nota[$nombre . '_p1'] = "1";
+                $lim += $aux;
+            }
+            if ($firsh) {
+                $nota[$nombre . '_p1'] = "1";
+            }
+        }
+    }
+
+    public function valueTitleLen($nombre, &$lim, $titulo_len, $limColumna, &$nota, $aux)
+    {
+        if ($aux) {
+            $nota[$nombre . '_p1'] = "1";
+        } else {
+            if (($lim + $titulo_len) > $limColumna)
+                $nota[$nombre . '_p1'] = "2";
+            else
+                $nota[$nombre . '_p1'] = "1";
+        }
+        $lim += $titulo_len;
     }
     public function NotaConsultoriosEspecialidad($Nota) {
         $sql['Nota']= $this->config_mdl->_query("SELECT * FROM doc_notas, doc_nota WHERE
@@ -1420,12 +1550,50 @@ class Documentos extends Config{
 
         
         if($sql['notaEgreso']['notas_via']=='Hospitalizacion') {
+            $this->valueNotaEgresoHosp($sql);
             $this->load->view('documentos/NotaEgresoHosp',$sql);
         }else{
             $this->load->view('documentos/NotaEgreso',$sql);
         }
     }
 
+    public function valueNotaEgresoHosp(&$sql)
+    {
+        $limFila = 100;
+        $limColumna = 52;
+        $lim = 0;
+        $aux = 0;
+        $titulo_len = 2;
+        $nota = &$sql["nota"];
+        $notaEgreso = &$sql["notaEgreso"];
+        $Diagnosticos = &$sql["Diagnosticos"];
+        $this->valueTitleLen('motivoEgreso', $lim, $titulo_len, $limColumna, $nota, false);
+        $this->valueTitleLen('DIAGNÓSTICOS_ENCONTRADOS', $lim, $titulo_len, $limColumna, $nota, false);
+        if (!empty($Diagnosticos)) {
+            $aux = 3 * $titulo_len;
+            foreach ($Diagnosticos as $value) {
+                if ($value['tipodiag'] == 1 || $value['tipodiag'] == 2 || $value['tipodiag'] == 3) {
+                    $aux += $titulo_len * 3;
+                }
+            }
+            $lim += $aux;
+        }
+        $notaEgreso['lim_1'] = $lim;
+        $nombre = 'resumen_clinico';
+        $this->valueTextLen($notaEgreso, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        $nombre = 'exploracion_fisica';
+        $this->valueTextLen($notaEgreso, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        $nombre = 'laboratorios';
+        $this->valueTextLen($notaEgreso, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        $nombre = 'gabinetes';
+        $this->valueTextLen($notaEgreso, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        $nombre = 'pronostico';
+        $this->valueTextLen($notaEgreso, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        $nombre = 'plan';
+        $this->valueTextLen($notaEgreso, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        $nombre = 'comentarios';
+        $this->valueTextLen($notaEgreso, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+    }
     public function NotaIngresoHosp($idNota){
         
         $sql['nota']=  $this->config_mdl->_get_data_condition('um_notas_ingresos_hospitalario',array(
@@ -1526,10 +1694,187 @@ class Documentos extends Config{
         $sql['residentes']= $this->config_mdl->_get_data_condition('um_notas_residentes',array(
             'idnota_ingresohosp' => $idNota
         ));
-
+        $this->valueNotaIngresoHosp($sql);
         $this->load->view('documentos/NotaIngresoHosp',$sql);
     }
 
+    public function valueNotaIngresoHosp(&$sql)
+    {
+        $limFila = 100;
+        $limColumna = 58;
+        $lim = 0;
+        $aux = 0;
+        $titulo_len = 2;
+        $nota = &$sql["nota"];
+        $nombre = 'tipo_interrogatorio';
+        if ($nota[$nombre] != '') {
+            if ($lim > $limColumna) {
+                $nota[$nombre . '_p1'] = "1";
+            } else {
+                $aux = $titulo_len; //sub titulo
+                $aux += substr($nota[$nombre], "\n");
+                $aux += ceil(strlen($nota[$nombre]) / $limFila);
+                if (($lim + $aux) > $limColumna)
+                    $nota[$nombre . '_p1'] = "1";
+                else
+                    $nota[$nombre . '_p1'] = "1";
+                $lim += $aux;
+            }
+        }
+        $nombre = 'motivo_ingreso';
+        if ($nota[$nombre] != '') {
+            if ($lim > $limColumna) {
+                $nota[$nombre . '_p1'] = "1";
+            } else {
+                $aux = $titulo_len; //sub titulo
+                $aux += substr($nota[$nombre], "\n");
+                $aux += ceil(strlen($nota[$nombre]) / $limFila) + 1;
+                if (($lim + $aux) > $limColumna)
+                    $nota[$nombre . '_p1'] = "1";
+                else
+                    $nota[$nombre . '_p1'] = "1";
+                $lim += $aux;
+            }
+        }
+        $nombre = 'ANTECEDENTES';
+        if (($lim + $titulo_len) > $limColumna) //ANTECEDENTES
+            $nota[$nombre . '_p1'] = "2";
+        else
+            $nota[$nombre . '_p1'] = "1";
+        $lim += $titulo_len; //ANTECEDENTES
+        $nombre = 'antecedentes_heredofamiliares';
+        if ($nota[$nombre] != '') {
+            if ($lim > $limColumna) {
+                $nota[$nombre . '_p1'] = "2";
+            } else {
+                $aux = $titulo_len; //sub titulo
+                $aux += substr($nota[$nombre], "\n");
+                $aux += ceil(strlen($nota[$nombre]) / $limFila) + 1;
+                if (($lim + $aux) > $limColumna)
+                    $nota[$nombre . '_p1'] = "2";
+                else
+                    $nota[$nombre . '_p1'] = "1";
+                $lim += $aux;
+            }
+        }
+        $nombre = 'antecedentes_personales_nopatologicos';
+        if ($nota[$nombre] != '') {
+            if ($lim > $limColumna) {
+                $nota[$nombre . '_p1'] = "2";
+            } else {
+                $aux = $titulo_len; //sub titulo
+                $aux += substr($nota[$nombre], "\n");
+                $aux += ceil(strlen($nota[$nombre]) / $limFila) + 1;
+                if (($lim + $aux) > $limColumna)
+                    $nota[$nombre . '_p1'] = "2";
+                else
+                    $nota[$nombre . '_p1'] = "1";
+                $lim += $aux;
+            }
+        }
+        $nombre = 'antecedentes_personales_patologicos';
+        if ($nota[$nombre] != '') {
+            if ($lim > $limColumna) {
+                $nota[$nombre . '_p1'] = "2";
+            } else {
+                $aux = $titulo_len; //sub titulo
+                $aux += substr($nota[$nombre], "\n");
+                $aux += ceil(strlen($nota[$nombre]) / $limFila) + 1;
+                if (($lim + $aux) > $limColumna)
+                    $nota[$nombre . '_p1'] = "2";
+                else
+                    $nota[$nombre . '_p1'] = "1";
+                $lim += $aux;
+            }
+        }
+        $nombre = 'antecedentes_ginecoobstetricos';
+        if ($nota[$nombre] != '') {
+            if ($lim > $limColumna) {
+                $nota[$nombre . '_p1'] = "2";
+            } else {
+                $aux = $titulo_len; //sub titulo
+                $aux += substr($nota[$nombre], "\n");
+                $aux += ceil(strlen($nota[$nombre]) / $limFila) + 1;
+                if (($lim + $aux) > $limColumna)
+                    $nota[$nombre . '_p1'] = "2";
+                else
+                    $nota[$nombre . '_p1'] = "1";
+                $lim += $aux;
+            }
+        }
+        $nombre = 'ESTADO_ACTUAL';
+        if (($lim + $titulo_len) > $limColumna) //ANTECEDENTES
+            $nota[$nombre . '_p1'] = "2";
+        else
+            $nota[$nombre . '_p1'] = "1";
+        $lim += $titulo_len; //ANTECEDENTES
+        $nombre = 'padecimiento_actual';
+        if ($nota[$nombre] != '') {
+            if ($lim > $limColumna) {
+                $nota[$nombre . '_p1'] = "2";
+            } else {
+                $aux = $titulo_len; //sub titulo
+                $aux += substr($nota[$nombre], "\n");
+                $aux += ceil(strlen($nota[$nombre]) / $limFila) + 1;
+                if (($lim + $aux) > $limColumna)
+                    $nota[$nombre . '_p1'] = "2";
+                else
+                    $nota[$nombre . '_p1'] = "1";
+                $lim += $aux;
+            }
+        }
+        $nombre = 'exploracion_fisica';
+        if ($nota[$nombre] != '') {
+            if ($lim > $limColumna) {
+                $nota[$nombre . '_p1'] = "2";
+            } else {
+                $aux = $titulo_len; //sub titulo
+                $aux += substr($nota[$nombre], "\n");
+                $aux += ceil(strlen($nota[$nombre]) / $limFila) + 1;
+                if (($lim + $aux) > $limColumna)
+                    $nota[$nombre . '_p1'] = "2";
+                else
+                    $nota[$nombre . '_p1'] = "1";
+                $lim += $aux;
+            }
+        }
+        $nombre = 'EXAMENES_AUXILIARES_DE';
+        if (($lim + $titulo_len) > $limColumna) //ANTECEDENTES
+            $nota[$nombre . '_p1'] = "2";
+        else
+            $nota[$nombre . '_p1'] = "1";
+        $lim += $titulo_len; //ANTECEDENTES
+        $nombre = 'estudios_laboratorio';
+        if ($nota[$nombre] != '') {
+            if ($lim > $limColumna) {
+                $nota[$nombre . '_p1'] = "2";
+            } else {
+                $aux = $titulo_len; //sub titulo
+                $aux += substr($nota[$nombre], "\n");
+                $aux += ceil(strlen($nota[$nombre]) / $limFila) + 1;
+                if (($lim + $aux) > $limColumna)
+                    $nota[$nombre . '_p1'] = "2";
+                else
+                    $nota[$nombre . '_p1'] = "1";
+                $lim += $aux;
+            }
+        }
+        $nombre = 'estudios_gabinete';
+        if ($nota[$nombre] != '') {
+            if ($lim > $limColumna) {
+                $nota[$nombre . '_p1'] = "2";
+            } else {
+                $aux = $titulo_len; //sub titulo
+                $aux += substr($nota[$nombre], "\n");
+                $aux += ceil(strlen($nota[$nombre]) / $limFila) + 1;
+                if (($lim + $aux) > $limColumna)
+                    $nota[$nombre . '_p1'] = "2";
+                else
+                    $nota[$nombre . '_p1'] = "1";
+                $lim += $aux;
+            }
+        }
+    }
     public function GenerarNotaProcedimientos($Nota) {
 
         $sql['notaProcedimientos']= $this->config_mdl->_query("SELECT * FROM doc_notas, um_notas_procedimientos WHERE
@@ -1579,7 +1924,10 @@ class Documentos extends Config{
                 'sv_tipo'=>'Triage'
             ))[0];
         }
-
+        $sql['Residentes'] = $this->config_mdl->_get_data_condition('um_notas_residentes', array(
+            'notas_id' => $Nota
+        ));
+        
         $this->load->view('documentos/NotaProcedimientos',$sql);
         
     }
@@ -1871,4 +2219,3 @@ class Documentos extends Config{
         $this->load->view('Documentos/NotaIndicacionesHosp',$sql);
     }
 }
-
