@@ -4682,15 +4682,16 @@ table.text-center th {
   width: auto !important;
   height: auto !important;
 }
-.bg-teal-gradient {
-  background: #E0F7FA !important;
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #E0F7FA), color-stop(1, #7adddd)) !important;
-  background: -ms-linear-gradient(bottom, #E0F7FA, #7adddd) !important;
-  background: -moz-linear-gradient(center bottom, #E0F7FA 0%, #7adddd 100%) !important;
-  background: -o-linear-gradient(#7adddd, #E0F7FA) !important;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#7adddd', endColorstr='#E0F7FA', GradientType=0) !important;
-  color: #fff;
+.bg-teal-gradient{
+  background:#39cccc !important;
+  background:-webkit-gradient(linear, left bottom, left top, color-stop(0, #39cccc), color-stop(1, #7adddd)) !important;
+  background:-ms-linear-gradient(bottom, #39cccc, #7adddd) !important;
+  background:-moz-linear-gradient(center bottom, #39cccc 0, #7adddd 100%) !important;
+  background:-o-linear-gradient(#7adddd, #39cccc) !important;
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#7adddd', endColorstr='#39cccc', GradientType=0) !important;
+  color:#fff;
 }
+
 .bg-light-blue-gradient {
   background: #3c8dbc !important;
   background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #3c8dbc), color-stop(1, #67a8ce)) !important;
