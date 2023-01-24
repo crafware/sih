@@ -110,7 +110,6 @@ $(document).ready(function () {
         beforeSend: function (xhr) {
             //msj_loading();
         },success: function (data, textStatus, jqXHR) {
-        console.log(data);
         if (data.accion == '1') {
           window.opener.location.reload();
           window.top.close();

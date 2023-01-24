@@ -2858,16 +2858,18 @@ class Documentos extends Config{
                     'cie10_id'          => $sqlResult[$x]['cie10_id']));
             }
             for($i = 0; $i < count($this->input->post('nombre_residente')); $i++){
-                $datosResidente = array(
-                    'notas_id'           => $this->config_mdl->_get_last_id('doc_notas','notas_id'),
-                    'nombre_residente'   => $this->input->post("nombre_residente[$i]"),
-                    'apellido_residente' => $this->input->post("apellido_residente[$i]"),
-                    'cedulap_residente'  => $this->input->post("cedula_residente[$i]"),
-                    'grado'              => $this->input->post("grado[$i]")
-                );
+                if($this->input->post("grado[$i]") != ""){
+                    $datosResidente = array(
+                        'notas_id'           => $this->config_mdl->_get_last_id('doc_notas','notas_id'),
+                        'nombre_residente'   => $this->input->post("nombre_residente[$i]"),
+                        'apellido_residente' => $this->input->post("apellido_residente[$i]"),
+                        'cedulap_residente'  => $this->input->post("cedula_residente[$i]"),
+                        'grado'              => $this->input->post("grado[$i]")
+                    );
 
-                if(count($datosResidente) > 0){
-                    $this->config_mdl->_insert('um_notas_residentes',$datosResidente);
+                    if(count($datosResidente) > 0){
+                        $this->config_mdl->_insert('um_notas_residentes',$datosResidente);
+                    }
                 }
             }
             
@@ -2942,10 +2944,12 @@ class Documentos extends Config{
 
         $this->setOutput(array(
             'accion'        => '1',
+            'acciono'        => '1567',
             'notas_id'      => $nota_id,
             'prealta'       => $prealta, 
             'alta'          => $alta, 
-            'altacancelada' => $altacancelada));
+            'altacancelada' => $altacancelada,
+            "post"          => $_POST));
     }
 
     public function NotaIngresoHospitalario() {
@@ -3347,16 +3351,18 @@ class Documentos extends Config{
 
                 /* -------------------------- Medicos Residenetes ----------------------------------**/
                 for($i = 0; $i < count($this->input->post('nombre_residente')); $i++){
-                    $datosResidente = array(
-                    'idnota_ingresohosp' => $this->config_mdl->_get_last_id('um_notas_ingresos_hospitalario','id_nota'),
-                    'nombre_residente'   => $this->input->post("nombre_residente[$i]"),
-                    'apellido_residente' => $this->input->post("apellido_residente[$i]"),
-                    'cedulap_residente'  => $this->input->post("cedula_residente[$i]"),
-                    'grado'              => $this->input->post("grado[$i]")
-                    );
+                    if($this->input->post("grado[$i]") != ""){
+                        $datosResidente = array(
+                        'idnota_ingresohosp' => $this->config_mdl->_get_last_id('um_notas_ingresos_hospitalario','id_nota'),
+                        'nombre_residente'   => $this->input->post("nombre_residente[$i]"),
+                        'apellido_residente' => $this->input->post("apellido_residente[$i]"),
+                        'cedulap_residente'  => $this->input->post("cedula_residente[$i]"),
+                        'grado'              => $this->input->post("grado[$i]")
+                        );
 
-                    if(count($datosResidente) > 0){
-                        $this->config_mdl->_insert('um_notas_residentes',$datosResidente);
+                        if(count($datosResidente) > 0){
+                            $this->config_mdl->_insert('um_notas_residentes',$datosResidente);
+                        }
                     }
                 }
             }
@@ -3599,6 +3605,7 @@ class Documentos extends Config{
 
                
                for($i = 0; $i < count($this->input->post('nombre_residente')); $i++){
+                if($this->input->post("grado[$i]") != ""){
                     $datosResidente = array(
                         'idnota_ingresohosp' => $this->input->post('id_nota'),
                         'nombre_residente'   => $this->input->post("nombre_residente[$i]"),
@@ -3611,7 +3618,7 @@ class Documentos extends Config{
                             $this->config_mdl->_insert('um_notas_residentes',$datosResidente);
                         }
                     }
-               
+                }
 
                 /* -------------------------------------ACTUALIZACION DE DIAGNOSTICOS ---------------------------------*/
                 $Dignostico_hf = $this->config_mdl->_query("SELECT * FROM diagnostico_hoja_frontal WHERE id_nota ='{$this->input->post('id_nota')}' ");
@@ -3741,8 +3748,8 @@ class Documentos extends Config{
                 'grado'              => $this->input->post("grado[$i]")
             );
 
-            if(count($datosResidente) > 0){
-                $this->config_mdl->_insert('um_notas_residentes',$datosResidente);
+            if(count($dataResidentes) > 0){
+                $this->config_mdl->_insert('um_notas_residentes',$dataResidentes);
             }
         }
 

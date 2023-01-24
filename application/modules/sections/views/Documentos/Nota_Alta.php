@@ -500,6 +500,7 @@
       $('#areaResidentes' + residente).find("input").val("");
       $('#areaResidentes' + residente).attr("required",false)
     }
+    console.log(<?=json_encode($Residentes)?>);
     function medicoResidente(){
       var medicoResidente = document.getElementsByName("medicoResidenteX");
       console.log(medicoResidente)
