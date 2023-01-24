@@ -8,8 +8,12 @@ $margenBajo = "55mm";
 } else if (count($Residentes) == 1) {
   $margenBajo = "60mm";
 }*/
+$width_p1 = 570;
+if ($Nota["Diagnosticos_p1"] != "1") {
+  $width_p1 += 15;
+}
 ?>
-<page backtop="80mm" backbottom="30" backleft="49" backright="5mm">
+<page backtop="80mm" backbottom="30" backleft="46" backright="1mm">
   <page_header>
     <img src="<?= base_url() ?>assets/doc/DOC430128.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
     <div style="position: absolute;margin-top: 15px">
@@ -188,7 +192,7 @@ $margenBajo = "55mm";
       margin-bottom: 0px;
     }
   </style>
-  <div style="width: 570px; text-align: justify; ">
+  <div style="width: <?= $width_p1?>px; text-align: justify;">
     <!--<div style="position:absolute; left: -10px; margin-top: -17px; font-size: 12px;">-->
     <?php if ($Nota['notas_tipo'] == 'Nota de Evolución') {
       $label1 = "RESUMEN CLÍNICO (DIAGNÓSTICO Y SÍNTOMAS)";
@@ -365,7 +369,7 @@ $margenBajo = "55mm";
   </div>
 </page>
 
-<page backtop="80mm" backbottom="<?= $margenBajo ?>" backleft="10mm" backright="9mm">
+<page backtop="80mm" backbottom="<?= $margenBajo ?>" backleft="5mm" backright="9mm">
   <page_header>
     <img src="<?= base_url() ?>assets/doc/DOC4301282.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
     <div style="position: absolute;margin-top: 15px">
@@ -487,7 +491,7 @@ $margenBajo = "55mm";
       margin-bottom: 0px;
     }
   </style>
- <div style="width: 685px; text-align: justify; ">
+ <div style="width: 740px; text-align: justify; ">
     <!--<div style="position:absolute; left: -10px; margin-top: -17px; font-size: 12px;">-->
     <?php if ($_GET['indicaciones'] == 1) { ?>
       <h4>INDICACIONES Y ORDENES MEDICAS</h4>
@@ -793,7 +797,6 @@ $margenBajo = "55mm";
       <!-- fin zona interconsultas -->
 
     <?php  } /* FIN DEL else para ipimier inoidcaciones o nota medica */ ?>
-    <p><?= print_r($Nota) ?></p>
   </div>
   <page_footer>
         <?php 

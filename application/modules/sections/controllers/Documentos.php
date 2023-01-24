@@ -2954,16 +2954,18 @@ class Documentos extends Config
                     'cie10_id'          => $sqlResult[$x]['cie10_id']));
             }
             for($i = 0; $i < count($this->input->post('nombre_residente')); $i++){
-                $datosResidente = array(
-                    'notas_id'           => $this->config_mdl->_get_last_id('doc_notas','notas_id'),
-                    'nombre_residente'   => $this->input->post("nombre_residente[$i]"),
-                    'apellido_residente' => $this->input->post("apellido_residente[$i]"),
-                    'cedulap_residente'  => $this->input->post("cedula_residente[$i]"),
-                    'grado'              => $this->input->post("grado[$i]")
-                );
+                if($this->input->post("grado[$i]") != ""){
+                    $datosResidente = array(
+                        'notas_id'           => $this->config_mdl->_get_last_id('doc_notas','notas_id'),
+                        'nombre_residente'   => $this->input->post("nombre_residente[$i]"),
+                        'apellido_residente' => $this->input->post("apellido_residente[$i]"),
+                        'cedulap_residente'  => $this->input->post("cedula_residente[$i]"),
+                        'grado'              => $this->input->post("grado[$i]")
+                    );
 
-                if(count($datosResidente) > 0){
-                    $this->config_mdl->_insert('um_notas_residentes',$datosResidente);
+                    if(count($datosResidente) > 0){
+                        $this->config_mdl->_insert('um_notas_residentes',$datosResidente);
+                    }
                 }
             }
             

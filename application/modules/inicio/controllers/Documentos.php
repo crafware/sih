@@ -1059,13 +1059,21 @@ class Documentos extends Config{
                                               INNER JOIN um_especialidades
                                                ON os_empleados.empleado_servicio = um_especialidades.especialidad_id
                                               WHERE empleado_id =".$sql['Nota']['empleado_id']);
-        $sql['Diagnosticos'] = $this->config_mdl->_query("SELECT fecha_dx, cie10_clave, complemento, cie10_nombre, diagnostico_notas.tipo_diagnostico AS tipodiag
-                                                          FROM diagnostico_notas
-                                                          INNER JOIN paciente_diagnosticos
-                                                            ON  diagnostico_notas.diagnostico_id = paciente_diagnosticos.diagnostico_id
-                                                          INNER JOIN um_cie10
-                                                          	ON diagnostico_notas.cie10_id = um_cie10.cie10_id
-                                                          WHERE notas_id = ".$Nota." ORDER BY tipodiag");
+        $sql['Diagnosticos'] = $this->config_mdl->_query("SELECT
+                                                diagnostico_id,
+                                                complemento,
+                                                triage_id,
+                                                ( paciente_diagnosticos.cie10_id ) cie10_id1,
+                                                tipo_diagnostico AS tipodiag,
+                                                ( um_cie10.cie10_id ) cie10_id2,
+                                                cie10_clave,
+                                                cie10_nombre,
+                                                fecha_dx 
+                                            FROM
+                                                paciente_diagnosticos
+                                                INNER JOIN um_cie10 ON paciente_diagnosticos.cie10_id = um_cie10.cie10_id 
+                                            WHERE
+                                                triage_id =" . $sql['Nota']['triage_id']." ORDER BY tipodiag");
         $sql['info']= $this->config_mdl->sqlGetDataCondition('os_triage',array(
             'triage_id'=>$sql['Nota']['triage_id']
         ))[0];
@@ -1171,9 +1179,9 @@ class Documentos extends Config{
     public function valueGenerarNotas(&$sql) //Adactar
     {
         $limFila = 100;
-        $limColumna = 46;
+        $limColumna = 40;
         $lim = 0;
-        $titulo_len = 4;
+        $titulo_len = 2;
         $nota = &$sql["Nota"];
         $Diagnosticos = &$sql["Diagnosticos"];
         $toma_signos = &$sql["toma_signos"];
@@ -1196,7 +1204,7 @@ class Documentos extends Config{
                 if ($lim > $limColumna) {
                     $nota[$nombre . '_p1'] = "2";
                 } else {
-                    $aux = $titulo_len;
+                    $aux = $titulo_len * 4;
                     $procedimiento = explode(',', $nota['nota_procedimientos']);
                     $aux += count($procedimiento) * $titulo_len;
                     if (($lim + $aux) > $limColumna)
@@ -1213,10 +1221,10 @@ class Documentos extends Config{
                 if ($lim > $limColumna) {
                     $nota[$nombre . '_p1'] = "2";
                 } else {
-                    $aux = 3 * $titulo_len;
+                    $aux = 4 * $titulo_len;
                     foreach ($Diagnosticos as $value) {
                         if ($value['tipodiag'] == 1 || $value['tipodiag'] == 2) {
-                            $aux += $titulo_len * 3;
+                            $aux += $titulo_len;
                         }
                     }
                     if (($lim + $aux) > $limColumna)
@@ -1228,11 +1236,11 @@ class Documentos extends Config{
             }
             $nombre = 'nota_pronosticos';
             $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
-            $this->valueTitleLen('PLAN_Y_ORDENES_M', $lim, $titulo_len, $limColumna, $nota, false);
-            $this->valueTitleLen('Dieta', $lim, $titulo_len, $limColumna, $nota, false);
+            $PLAN_Y_ORDENES_M = $this->valueTitleLen('Dieta', $lim, $titulo_len, $limColumna, $nota, false);
             if ($nota['nota_svycuidados'] != 0) {
-                $this->valueTitleLen('nota_svycuidados', $lim, $titulo_len, $limColumna, $nota, false);
+                $PLAN_Y_ORDENES_M = $PLAN_Y_ORDENES_M || $this->valueTitleLen('nota_svycuidados', $lim, $titulo_len, $limColumna, $nota, false);
             }
+            $PLAN_Y_ORDENES_M = $PLAN_Y_ORDENES_M || $toma_signos != 0;
             if ($toma_signos != 0) {
                 $nombre = 'toma_signos';
                 if ($lim > $limColumna) {
@@ -1247,11 +1255,12 @@ class Documentos extends Config{
                 }
             }
             $nombre = 'nota_cgenfermeria';
+            $PLAN_Y_ORDENES_M = $PLAN_Y_ORDENES_M || $nota[$nombre] == '1';
             if ($nota[$nombre] == '1') {
                 if ($lim > $limColumna) {
                     $nota[$nombre . '_p1'] = "2";
                 } else {
-                    $aux = $titulo_len * 10;
+                    $aux = $titulo_len;
                     if (($lim + $aux) > $limColumna)
                         $nota[$nombre . '_p1'] = "2";
                     else
@@ -1260,9 +1269,12 @@ class Documentos extends Config{
                 }
             }
             $nombre = 'nota_cuidadosenfermeria';
-            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $PLAN_Y_ORDENES_M = $PLAN_Y_ORDENES_M || $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
             $nombre = 'nota_solucionesp';
-            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $PLAN_Y_ORDENES_M = $PLAN_Y_ORDENES_M || $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            if ($PLAN_Y_ORDENES_M){
+                $this->valueTitleLen('PLAN_Y_ORDENES_M', $lim, $titulo_len, $limColumna, $nota, false);
+            }
         }
     }
 
@@ -1284,6 +1296,9 @@ class Documentos extends Config{
             if ($firsh) {
                 $nota[$nombre . '_p1'] = "1";
             }
+            return true;
+        }else{
+            return false;
         }
     }
 
@@ -1570,10 +1585,11 @@ class Documentos extends Config{
         $this->valueTitleLen('motivoEgreso', $lim, $titulo_len, $limColumna, $nota, false);
         $this->valueTitleLen('DIAGNÓSTICOS_ENCONTRADOS', $lim, $titulo_len, $limColumna, $nota, false);
         if (!empty($Diagnosticos)) {
-            $aux = 3 * $titulo_len;
+            $nota["Diagnosticos_p1"] == "1";
+            $aux = 4 * $titulo_len;
             foreach ($Diagnosticos as $value) {
                 if ($value['tipodiag'] == 1 || $value['tipodiag'] == 2 || $value['tipodiag'] == 3) {
-                    $aux += $titulo_len * 3;
+                    $aux += $titulo_len;
                 }
             }
             $lim += $aux;
