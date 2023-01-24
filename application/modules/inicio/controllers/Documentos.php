@@ -1178,10 +1178,10 @@ class Documentos extends Config{
         $Diagnosticos = &$sql["Diagnosticos"];
         $toma_signos = &$sql["toma_signos"];
         if ($sql['indicaciones'] == 1) {
-            $this->valueTitleLen('INDICACIONES_Y_ORDENES_MEDICAS', $lim, $titulo_len, $limColumna, $nota, true);
+            $this->valueTitleLen('INDICACIONES_Y_ORDENES_MEDICAS', $lim, $titulo_len, $limColumna, $nota, false);
         } else {
             $nombre = 'nota_problema';
-            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, true);
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
             $nota['lim_1'] = $lim;
             $nombre = 'nota_interrogatorio';
             $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
@@ -1192,7 +1192,7 @@ class Documentos extends Config{
             $nombre = 'nota_auxiliaresd';
             $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
             $nombre = 'nota_procedimientos';
-            if ($nota[$nombre] != '') {
+            if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
                 if ($lim > $limColumna) {
                     $nota[$nombre . '_p1'] = "2";
                 } else {
@@ -1268,7 +1268,7 @@ class Documentos extends Config{
 
     public function valueTextLen(&$nota, $nombre, &$lim, $limColumna, $titulo_len, $limFila, $firsh)
     {
-        if ($nota[$nombre] != '') {
+        if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
             if ($lim > $limColumna) {
                 $nota[$nombre . '_p1'] = "2";
             } else {
@@ -1707,7 +1707,7 @@ class Documentos extends Config{
         $titulo_len = 2;
         $nota = &$sql["nota"];
         $nombre = 'tipo_interrogatorio';
-        if ($nota[$nombre] != '') {
+        if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
             if ($lim > $limColumna) {
                 $nota[$nombre . '_p1'] = "1";
             } else {
@@ -1722,7 +1722,7 @@ class Documentos extends Config{
             }
         }
         $nombre = 'motivo_ingreso';
-        if ($nota[$nombre] != '') {
+        if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
             if ($lim > $limColumna) {
                 $nota[$nombre . '_p1'] = "1";
             } else {
@@ -1743,7 +1743,7 @@ class Documentos extends Config{
             $nota[$nombre . '_p1'] = "1";
         $lim += $titulo_len; //ANTECEDENTES
         $nombre = 'antecedentes_heredofamiliares';
-        if ($nota[$nombre] != '') {
+        if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
             if ($lim > $limColumna) {
                 $nota[$nombre . '_p1'] = "2";
             } else {
@@ -1758,7 +1758,7 @@ class Documentos extends Config{
             }
         }
         $nombre = 'antecedentes_personales_nopatologicos';
-        if ($nota[$nombre] != '') {
+        if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
             if ($lim > $limColumna) {
                 $nota[$nombre . '_p1'] = "2";
             } else {
@@ -1773,7 +1773,7 @@ class Documentos extends Config{
             }
         }
         $nombre = 'antecedentes_personales_patologicos';
-        if ($nota[$nombre] != '') {
+        if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
             if ($lim > $limColumna) {
                 $nota[$nombre . '_p1'] = "2";
             } else {
@@ -1788,7 +1788,7 @@ class Documentos extends Config{
             }
         }
         $nombre = 'antecedentes_ginecoobstetricos';
-        if ($nota[$nombre] != '') {
+        if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
             if ($lim > $limColumna) {
                 $nota[$nombre . '_p1'] = "2";
             } else {
@@ -1809,7 +1809,7 @@ class Documentos extends Config{
             $nota[$nombre . '_p1'] = "1";
         $lim += $titulo_len; //ANTECEDENTES
         $nombre = 'padecimiento_actual';
-        if ($nota[$nombre] != '') {
+        if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
             if ($lim > $limColumna) {
                 $nota[$nombre . '_p1'] = "2";
             } else {
@@ -1824,7 +1824,7 @@ class Documentos extends Config{
             }
         }
         $nombre = 'exploracion_fisica';
-        if ($nota[$nombre] != '') {
+        if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
             if ($lim > $limColumna) {
                 $nota[$nombre . '_p1'] = "2";
             } else {
@@ -1845,7 +1845,7 @@ class Documentos extends Config{
             $nota[$nombre . '_p1'] = "1";
         $lim += $titulo_len; //ANTECEDENTES
         $nombre = 'estudios_laboratorio';
-        if ($nota[$nombre] != '') {
+        if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
             if ($lim > $limColumna) {
                 $nota[$nombre . '_p1'] = "2";
             } else {
@@ -1860,7 +1860,7 @@ class Documentos extends Config{
             }
         }
         $nombre = 'estudios_gabinete';
-        if ($nota[$nombre] != '') {
+        if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
             if ($lim > $limColumna) {
                 $nota[$nombre . '_p1'] = "2";
             } else {
