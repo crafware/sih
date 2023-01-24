@@ -682,11 +682,12 @@ const socket = io(":3001", {
     }
 });
 socket.on("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", function (data) {
-    //console.log(data)
+    console.log(data)
     crearTablaRegistroPacientesAdmisionContinua(data);
 });
 socket.on("updateRegistroPacientesAtencionMedicaAdmisionContinua", function (data) {
-    updateRegistroPacientesAtencionMedicaAdmisionContinua(data);
+    //updateRegistroPacientesAtencionMedicaAdmisionContinua(data);
+    crearTablaRegistroPacientesAdmisionContinua(data)
 });
 socket.emit("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", {});
 
@@ -718,6 +719,8 @@ function TiempoTranscurrido(data) {
 }
 
 function updateRegistroPacientesAtencionMedicaAdmisionContinua(data) {
+    console.log("updateRegistroPacientesAtencionMedicaAdmisionContinua")
+    console.log(data)
     if (data == null) { return 0 }
     noRow += 1;
     var host = window.location.host
@@ -799,7 +802,7 @@ function updateRegistroPacientesAtencionMedicaAdmisionContinua(data) {
         });
     });
 }
-
+var No_pacientes = 0;
 function crearTablaRegistroPacientesAdmisionContinua(data) {
     um_config = data["um_config"]
     var host = window.location.host
@@ -862,11 +865,20 @@ function crearTablaRegistroPacientesAdmisionContinua(data) {
     }
     var table = document.getElementById('tabla1');
     var rowCount = table.rows.length;
+    for (var i=0; No_pacientes-1>i; i++) {
+        table.deleteRow(1);
+    }
     for (r in rows) {
-        var row = table.insertRow(rowCount - 2);
+        var row = table.insertRow(1);
         row.innerHTML = rows[r];
     }
-    table.deleteRow(table.rows.length - 2)
+    No_pacientes = cont;
+    if (table.rows.length > 3){
+        table.deleteRow(table.rows.length - 2)
+    }else{
+        table.insertRow(1)
+        table.deleteRow(2)
+    }
     document.getElementById("noFolio").click();
     document.getElementById("noFolio").click();
     $('.btn-reg-43051').click(function () {
