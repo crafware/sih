@@ -793,7 +793,7 @@ $margenBajo = "55mm";
       <!-- fin zona interconsultas -->
 
     <?php  } /* FIN DEL else para ipimier inoidcaciones o nota medica */ ?>
-    <!--<p><?= print_r($Nota) ?></p>-->
+    <p><?= print_r($Nota) ?></p>
   </div>
   <page_footer>
         <?php 
