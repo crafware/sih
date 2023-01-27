@@ -15,7 +15,7 @@ if ($Nota["Diagnosticos_p1"] != "1") {
 ?>
 <page backtop="80mm" backbottom="30" backleft="46" backright="1mm">
   <page_header>
-    <img src="<?= base_url() ?>assets/doc/DOC430128.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
+    <!-- <img src="<?= base_url() ?>assets/doc/DOC430128.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;"> -->
     <div style="position: absolute;margin-top: 15px">
       <div style="position: absolute;margin-left: 435px;margin-top: 50px;width: 270px;text-transform: uppercase;font-size: 11px;text-align: left;">
         <b>NOMBRE DEL PACIENTE:</b>
@@ -371,7 +371,7 @@ if ($Nota["Diagnosticos_p1"] != "1") {
 
 <page backtop="80mm" backbottom="<?= $margenBajo ?>" backleft="5mm" backright="9mm">
   <page_header>
-    <img src="<?= base_url() ?>assets/doc/DOC4301282.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
+    <!-- <img src="<?= base_url() ?>assets/doc/DOC4301282.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;"> -->
     <div style="position: absolute;margin-top: 15px">
       <div style="position: absolute;margin-left: 435px;margin-top: 50px;width: 270px;text-transform: uppercase;font-size: 11px;text-align: left;">
         <b>NOMBRE DEL PACIENTE:</b>
@@ -826,11 +826,11 @@ if ($Nota["Diagnosticos_p1"] != "1") {
     </page_footer>
 </page>
 <?php
-$html =  ob_get_clean();
-$pdf = new HTML2PDF('P', 'A4', 'en', true, 'UTF-8');
-$pdf->writeHTML($html);
-// $pdf->pdf->IncludeJS("print(true);");
-$pdf->pdf->SetTitle($Nota['notas_tipo']);
-$pdf->Output($Nota['notas_tipo'] . '.pdf');
+// $html =  ob_get_clean();
+// $pdf = new HTML2PDF('P', 'A4', 'en', true, 'UTF-8');
+// $pdf->writeHTML($html);
+// // $pdf->pdf->IncludeJS("print(true);");
+// $pdf->pdf->SetTitle($Nota['notas_tipo']);
+// $pdf->Output($Nota['notas_tipo'] . '.pdf');
 
 ?>

@@ -285,7 +285,7 @@
       
       <!-- Confirmación de Alta Paciente -->
       <div class="panel panel-default panel-y">
-        <div class="panel-heading"><h4>Confirmación de Alta de Paciente</h4></div>
+        <div class="panel-heading"><h4>Estado de Alta de Paciente</h4></div>
         <div class="panel-body">
           <?php if($NotaAlta['prealta']==1){
                   $estado="Pre-alta";  ?>
@@ -294,7 +294,7 @@
                 </div>
           <?php }?>
           <div class="col-md-12">
-            <?php if($_GET['a']=='add' || $NotaAlta['prealta']!='0' && $NotaAlta['proceso']!='1'){?>
+            
                 <div class="col-md-2" id="prealta">
                   <div class="form-group">
                     <label class="md-check">
@@ -302,7 +302,7 @@
                     </label>
                   </div>
                 </div>
-            <?php }?> 
+            
             <?php if($_GET['a']=='add' || $NotaAlta['alta']=='1' || $NotaAlta['alta']=='0'){?>
                 <div class="col-md-2" id="alta">
                   <div class="form-group">
