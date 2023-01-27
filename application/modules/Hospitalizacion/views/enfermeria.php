@@ -37,6 +37,7 @@ function getServerIp(){
     padding: 3px;
 }
 .label {cursor: pointer;}
+.title-bedstado{display:inline-block}
 </style>
 <link href="<?= base_url()?>assets/styles/beds.css" rel="stylesheet" type="text/css" />
 <div class="app-title mb-2">
@@ -55,58 +56,50 @@ function getServerIp(){
     <div class="widget-small primary">
       <div class="info">
        	<div class="form-group">
-              <label for="Ubicacion">Ubicación</label>
-              <select class="form-control" id="selectPiso" name="selectPiso">
-                <option value=" " disabled selected>Seleccinar Area</option>
-                <?php foreach ($Piso as $value) {?>
-                <option value="<?=$value['piso_id']?>"><?=$value['piso_nombre']?></option>
-                <?php }?>
-              </select>
-           </div> 
+          <label for="Ubicacion">Ubicación</label>
+            <select class="form-control" id="selectPiso" name="selectPiso">
+              <option value=" " disabled selected>Seleccionar Area</option>
+              <?php foreach ($Piso as $value) {?>
+              <option value="<?=$value['piso_id']?>"><?=$value['piso_nombre']?></option>
+              <?php }?>
+            </select>
+        </div> 
       </div>
     </div>
   </div>
   <div class="col-md-9">
     <div class="widget-long">
-      <div class="col-md-2 info-camas"> 
+      <div class="col-md-1 info-camas"> 
           <span class="count_top"><i class="fa fa-bed"></i> Total</span>
           <div class="count text-dark" id="camasTotal"></div>
       </div>
       <div class="col-md-2 info-camas">
-        
-          <span class="count_top"><i class="fa fa-bed"></i> Diponibles</span>
-          <div class="count text-success" id="camasDisponibles"></div>
-          <span class="count_bottom"><i class="green">4% </i></span>
-      
+        <div class="bed-status green color-white title-bedstado"><i class="fa fa-bed"></i></div>
+        <div class="title-bedstado">Diponibles</div>
+        <div class="count text-success" id="camasDisponibles"></div>
       </div>
       <div class="col-md-2 info-camas">
-        
-          <span class="count_top"><i class="fa fa-bed"></i> Ocupadas</span>
+          <div class="bed-status blue-700 color-white title-bedstado"><i class="fa fa-bed"></i></div>
+					<div class="bed-status pink-A100 color-white title-bedstado"><i class="fa fa-bed"></i></div>
+          <div class="title-bedstado">Ocupadas</div>
           <div class="count text-primary" id="camasOcupadas"></div>
-          <span class="count_bottom"><i class="green">4% </i></span>
-        
       </div>
       <div class="col-md-2 info-camas">
-        
-          <span class="count_top"><i class="fa fa-bed"></i> Sucias</span>
-          <div class="count text-danger" id="camasSucias"></div>
-          <span class="count_bottom"><i class="green">4% </i></span>
-        
+        <div class="bed-status grey-900 color-white title-bedstado"><i class="fa fa-bed"></i></div>
+        <div class="title-bedstado">Sucias</div>
+        <div class="count text-danger" id="camasSucias"></div>
       </div>
       <div class="col-md-2 info-camas">
-        
-          <span class="count_top"><i class="fa fa-bed"></i> Descompuestas</span>
-          <div class="count text-info" id="camasDescompuestas"></div>
-          <span class="count_bottom"><i class="green">4% </i></span>
-        
-      </div>
+        <div class="bed-status red color-white title-bedstado"><i class="fa fa-bed"></i></div>
+        <div class="title-bedstado">Contaminadas</div>
+        <div class="count text-danger" id="camasContaminadas"></div>
+      </div> 
       <div class="col-md-2 info-camas">
-         <?php 
-              /*$prealtas=count($this->config_mdl->_query("SELECT os_camas.cama_id FROM os_camas, os_areas, os_pisos, os_pisos_camas
-                                            WHERE os_areas.area_id=os_camas.area_id AND os_pisos_camas.cama_id=os_camas.cama_id AND
-                                            os_camas.proceso=1 AND
-                                            os_pisos_camas.piso_id=os_pisos.piso_id AND os_pisos.piso_id=".$Piso));   */
-          ?>
+        <div class="bed-status yellow-600 color-white title-bedstado"><i class="fa fa-bed"></i></div>
+        <div class="title-bedstado">Descompuestas</div>
+        <div class="count text-info" id="camasDescompuestas"></div>
+      </div>
+      <div class="col-md-1 info-camas">
           <span class="count_top"><i class="fa fa-bed"></i> Pre-Altas</span>
           <div class="count text-warning blink_me" id="camasPrealta"></div>
       </div>
