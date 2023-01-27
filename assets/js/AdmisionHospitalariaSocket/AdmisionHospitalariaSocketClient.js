@@ -333,6 +333,16 @@ var estados = [
   undefined,
   "Vestir",
 ]
+var estadoslabel = [
+  undefined,
+  "label-success",
+  undefined,
+  "label-default",
+  "label-danger",
+  "label-warning",
+  undefined,
+  "label-success",
+]
 var estadoCama = {
   "Ocupado":[3,4,5],
   "Reservada":[1],
@@ -342,16 +352,27 @@ var estadoCama = {
   "Limpia":[7]
 }
 function updateButtonsEstados(data){
-  /*console.log(document.getElementById("nombreCama").innerHTML)
-  if(document.getElementById(nombreCama).innerHTML == data["bed"][0]["after"]["triage_id"]){
-    var buttonsEstados = document.getElementsByClassName("buttons-estados");
-    if(buttonsEstados != undefined){
-      var span = buttonsEstados.getElementsByTagName("span")
-      if(span.getAttribute("data-folio") == data["bed"][0]["after"]["triage_id"]){
-        console.log()
+  console.log(document.getElementById("nombreCama").innerHTML)
+  var cama = data["bed"][0]["after"]
+  if(document.getElementById("nombreCama").innerHTML == cama["cama_nombre"]){
+    var cama_estado = cama["cama_estado"]
+    if(cama_estado != data["bed"][0]["before"]["cama_estado"]){
+      var buttonsEstados = document.getElementsByClassName("buttons-estados");
+      console.log(buttonsEstados)
+      if(buttonsEstados != undefined){
+        var innerHTMLEstados = ""
+        console.log(cama_estado)
+        console.log(estadoCama)
+        console.log(estadoCama[cama_estado])
+        for(const e of estadoCama[cama_estado]){
+          console.log(e)
+          innerHTMLEstados += '<span class="label '+estadoslabel[e]+' btnAccion" data-cama="'+cama["cama_id"]+'" data-folio="'+cama["triage_id"]+'" data-accion="'+e+'">'+estados[e]+'</span>'
+        }
+        console.log(innerHTMLEstados)
+        $('.buttons-estados').html(innerHTMLEstados);
       }
     }
-  }*/
+  }
 }
 
 function refreshGeneralData() {
@@ -714,7 +735,7 @@ function activateTooltip() {
       }
     });
   }
-  if ("Enfermería Hospitalización" == $('input[name=area]').val() || $('input[name=area]').val() == 'Dirección Enfermería ' || $('input[name=area]').val() == 'Limpieza e Higiene') {
+  if ("Enfermería Hospitalización" == $('input[name=area]').val() || $('input[name=area]').val() == 'Dirección Enfermería ' || $('input[name=area]').val() == 'Limpieza e Higiene' || $('input[name=area]').val() == 'Conservación') {
     $('body').on('click', '.notificacion-nota-des', function () {
       if (!($(this).attr("data-Notas-Len") != "0" && ($(this).attr("data-cama-status") == "'Descompuesta'"))) {
         getDataNotesTooltip($(this).attr("data-cama-id"), $(this).attr("data-cama-nombre"), 1);
@@ -864,17 +885,13 @@ function showDataNotesTooltip(data) {
   for (var i = 0; i < data["dataTooltip"].length; i++) {
     notas += '<h4>' + (i + 1) + ".- " + data["dataTooltip"][i]["nota"] + '</h4>'
   }
-  bootbox.confirm({
+  bootbox.alert({
     message: '<center><h4>Notas de la cama No.' + data["cama_nombre"] + '</h4></center>' + notas,
     buttons: {
-      confirm: {
+      ok: {
         label: 'Cerrar',
-        className: 'back-imss'
+        className: 'btn-imss-cancel'
       },
-      cancel: {
-        label: 'Cerrar',
-        className: 'back-imss'
-      }
     },
     callback: function (result) {
       /*if(result){

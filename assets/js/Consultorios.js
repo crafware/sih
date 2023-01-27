@@ -131,7 +131,7 @@ $(document).ready(function () {
             buttons: {
                 cancel: {
                     label: 'Cancelar',
-                    className: 'back-imss'
+                    className: 'btn-imss-cancel'
                 }, confirm: {
                     label: 'Agregar a Consultorio',
                     className: 'back-imss'
