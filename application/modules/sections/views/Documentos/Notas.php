@@ -453,7 +453,10 @@
                     </div>  
                     <div class="form-group">   
                       <h5><span class="">Estado de Salud</span></h5>
-                      <div class="col-md-12">
+                      <div class="col-md-12">                 
+                        <label class="md-check">
+                            <input type="radio" name="nota_estadosalud" data-value="<?=$Nota['nota_estadosalud']?>" class="has-value" value="Estable"><i class="red"></i>Estable
+                        </label>&nbsp;&nbsp;&nbsp;
                         <label class="md-check">
                             <input type="radio" name="nota_estadosalud" data-value="<?=$Nota['nota_estadosalud']?>" class="has-value" value="Delicado"><i class="red"></i>Delicado
                         </label>&nbsp;&nbsp;&nbsp;

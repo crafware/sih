@@ -291,7 +291,8 @@ function getServerIp()
         }
 
         function iniciarVideosImagenes() {
-            var videoDiv1 = '<video style="display:none;" muted="muted" id="'//width: 50%;
+            var videoDiv1 = '<video style="display:none; width: 98%; " muted="muted" id="';
+            
             var videoDiv2 = '" src="<?= base_url() ?>assets/multimedia/dashboard_ac/'
             var videoDiv3 = '" width="640" height="480" autoplay controls></video>'
             var divVideos = document.getElementById("divVideos");
@@ -335,7 +336,6 @@ function getServerIp()
                 })
             }
         }
-
     </script>
 </body>
 
