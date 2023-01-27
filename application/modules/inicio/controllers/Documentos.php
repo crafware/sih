@@ -1717,7 +1717,7 @@ class Documentos extends Config{
     public function valueNotaIngresoHosp(&$sql)
     {
         $limFila = 100;
-        $limColumna = 58;
+        $limColumna = 50;
         $lim = 0;
         $aux = 0;
         $titulo_len = 2;
@@ -2219,18 +2219,94 @@ class Documentos extends Config{
     }
 
     public function IndicacionesMedicasEnNota($idNota){
-
-        $sql['indicaciones']= $this->config_mdl->sqlGetDataCondition('um_notas_plan_ordenes',array(
-            'id_nota' => $idNota
+        $sql['nota']=  $this->config_mdl->_get_data_condition('um_notas_ingresos_hospitalario',array(
+            'id_nota'=>  $idNota
         ))[0];
 
-        $sql['infoPaciente']= $this->config_mdl->_query("SELECT * FROM os_triage,paciente_info WHERE
-            os_triage.triage_id=paciente_info.triage_id AND
-            os_triage.triage_id=".$sql['indicaciones']['triage_id'])[0];
+        $Paciente = $sql['nota']['triage_id'];
+
+        $sql['plan']=  $this->config_mdl->_get_data_condition('um_notas_plan_ordenes',array(
+            'id_nota'   => $idNota,
+            'triage_id' =>  $Paciente
+        ))[0];
+
+        $sql['info']=  $this->config_mdl->_get_data_condition('os_triage',array(
+            'triage_id'=>  $Paciente
+        ))[0];
+
+        $sql['DirPaciente']= $this->config_mdl->_get_data_condition('os_triage_directorio',array(
+            'directorio_tipo' => 'Paciente',
+            'triage_id'       => $Paciente
+        ))[0];
         
-        $sql['especialidad']=$this->config_mdl->sqlGetDataCondition('um_especialidades',array(
-            'especialidad_id'=>$sql['ingreso']['id_especialidad']
+        $sql['PINFO']= $this->config_mdl->_get_data_condition('paciente_info',array(
+            'triage_id' => $Paciente
         ))[0];
+
+        $sql['medicoTratante']= $this->config_mdl->_get_data_condition('os_empleados',array(
+            'empleado_id'   =>  $sql['nota']['id_medico_tratante']
+        ),'empleado_nombre,empleado_apellidos,empleado_matricula,empleado_cedula')[0];
+
+        $sql['Servicio']= $this->config_mdl->sqlGetDataCondition('um_especialidades',array(
+            'especialidad_id'   =>  $sql['nota']['id_servicio']
+        ),'especialidad_nombre')[0];
+
+
+        $sql['SignosVitales']= $this->config_mdl->_get_data_condition('os_triage_signosvitales',array(
+            'sv_tipo'   =>  'Triage',
+            'triage_id' =>  $Paciente
+        ))[0];
+        
+        $sql['Prescripcion'] = $this->config_mdl->_query("SELECT *
+          FROM prescripcion INNER JOIN nm_hojafrontal_prescripcion ON
+          prescripcion.prescripcion_id = nm_hojafrontal_prescripcion.prescripcion_id
+          INNER JOIN catalogo_medicamentos
+            ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
+          WHERE triage_id = ".$Paciente);
+        /*
+        Consulta para las prescripciones de cuadro basico
+        antibioticos NPT y Oncologico o antimicrobiano
+        */
+        $sql['Prescripcion_Basico'] = $this->config_mdl->_query("SELECT * FROM catalogo_medicamentos
+                                                                 INNER JOIN prescripcion
+                                                                     ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
+                                                                 INNER JOIN nm_hojafrontal_prescripcion
+                                                                     ON prescripcion.prescripcion_id = nm_hojafrontal_prescripcion.prescripcion_id
+                                                                 WHERE triage_id =$Paciente AND safe = 0;");
+
+        $sql['Prescripcion_NPT'] = $this->config_mdl->_query("SELECT * FROM catalogo_medicamentos
+                                                              INNER JOIN prescripcion
+                                                                ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
+                                                              INNER JOIN prescripcion_npt
+                                                                ON prescripcion.prescripcion_id = prescripcion_npt.prescripcion_id
+                                                              INNER JOIN nm_hojafrontal_prescripcion
+                                                                ON prescripcion.prescripcion_id = nm_hojafrontal_prescripcion.prescripcion_id
+                                                              WHERE triage_id =$Paciente AND safe = 1 AND categoria_safe = 'npt';");
+
+        $sql['Prescripcion_Onco_Anti'] = $this->config_mdl->_query("SELECT * FROM catalogo_medicamentos
+                                                                    INNER JOIN prescripcion
+                                                                        ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
+                                                                    INNER JOIN prescripcion_onco_antimicrobianos
+                                                                        ON prescripcion.prescripcion_id = prescripcion_onco_antimicrobianos.prescripcion_id
+                                                                    INNER JOIN nm_hojafrontal_prescripcion
+                                                                        ON prescripcion.prescripcion_id = nm_hojafrontal_prescripcion.prescripcion_id
+                                                                    WHERE triage_id =$Paciente AND safe = 1;");
+        //fin consultas para la prescripción
+
+        $sql['Interconsultas'] = $this->config_mdl-> _query("SELECT motivo_interconsulta, especialidad_id, especialidad_nombre FROM um_interconsultas_historial
+            INNER JOIN doc_430200 ON um_interconsultas_historial.doc_id = doc_430200.doc_id
+            INNER JOIN um_especialidades  ON doc_430200.doc_servicio_solicitado = um_especialidades.especialidad_id WHERE triage_id = $Paciente");
+        
+        
+        $sql['infoCama'] = $this->config_mdl->_query("SELECT * FROM os_pisos, os_pisos_camas, os_camas WHERE 
+            os_pisos.piso_id = os_pisos_camas.piso_id AND os_pisos_camas.cama_id = os_camas.cama_id AND triage_id=".$Paciente)[0];
+
+        //$sql['infoIngreso']= $this->config_mdl->sqlGetDataCondition('um_ingresos_hospitalario',array(
+        //    'triage_id'=>$Paciente ))[0];
+
+        $sql['residentes']= $this->config_mdl->_get_data_condition('um_notas_residentes',array(
+            'idnota_ingresohosp' => $idNota
+        ));
         
         $this->load->view('Documentos/NotaIndicacionesHosp',$sql);
     }

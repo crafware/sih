@@ -319,6 +319,39 @@ function refreshGraphics(data) {
       refreshGraphicsEnf(data)
     }
   }
+  if ("Enfermería Hospitalización" == $('input[name=area]').val()) {
+    updateButtonsEstados(data);
+  }
+}
+var estados = [
+  undefined,
+  "Recibir paciente",
+  undefined,
+  "Sucia",
+  "Contaminada",
+  "Descompuesta",
+  undefined,
+  "Vestir",
+]
+var estadoCama = {
+  "Ocupado":[3,4,5],
+  "Reservada":[1],
+  "Disponible":[],
+  "Contaminada":[],
+  "Sucia":[],
+  "Limpia":[7]
+}
+function updateButtonsEstados(data){
+  /*console.log(document.getElementById("nombreCama").innerHTML)
+  if(document.getElementById(nombreCama).innerHTML == data["bed"][0]["after"]["triage_id"]){
+    var buttonsEstados = document.getElementsByClassName("buttons-estados");
+    if(buttonsEstados != undefined){
+      var span = buttonsEstados.getElementsByTagName("span")
+      if(span.getAttribute("data-folio") == data["bed"][0]["after"]["triage_id"]){
+        console.log()
+      }
+    }
+  }*/
 }
 
 function refreshGeneralData() {
