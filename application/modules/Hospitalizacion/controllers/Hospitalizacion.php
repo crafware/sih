@@ -230,8 +230,10 @@ class Hospitalizacion extends Config{
         $disponibles= $this->totalCamasEstado($pisoSelect, 'Disponible'); //Esta Vestida
         $ocupadas = $this->totalCamasEstado($pisoSelect, 'Ocupado');
         $sucias= $this->totalCamasEstado($pisoSelect, 'Sucia');   // Esta sucia
-        $descompuestas = $this->totalCamasEstado($pisoSelect, 'Descompuesta');        // Esta descompuesta
-        $prealtas= $this->totalCamasEstado($pisoSelect, 'Prealta'); // Esta descompuesta
+        $descompuestas = $this->totalCamasEstado($pisoSelect, 'Descompuesta'); 
+        $contaminadas = $this->totalCamasEstado($pisoSelect, 'Contaminada');        // Esta descompuesta
+        $prealtas = $this->totalCamasEstado($pisoSelect, 'Prealta'); // Esta descompuesta
+        $limpias = $this->totalCamasEstado($pisoSelect, 'Limpia');
         $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 0");
         $NotasDes = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 1");
         $col = '';
@@ -312,7 +314,9 @@ class Hospitalizacion extends Config{
                 'Ocupadas'      => $ocupadas,
                 'Sucias'        => $sucias,
                 'Descompuestas' => $descompuestas,
-                'Prealtas'      => $prealtas
+                'Contaminadas'  => $contaminadas,
+                'Prealtas'      => $prealtas,
+                'Limpias'       => $limpias
             ));
 
     }

@@ -103,8 +103,11 @@ $(document).ready(function (e) {
                 $('#camasDisponibles').html(data.Disponibles);
                 $('#camasOcupadas').html(data.Ocupadas);
                 $('#camasSucias').html(data.Sucias);
+                $('#camasContaminadas').html(data.Contaminadas);
                 $('#camasDescompuestas').html(data.Descompuestas);
+                $('#camasLimpias').html(data.Limpias);
                 $('#camasPrealta').html(data.Prealtas);
+                console.log(data)
             }, error: function (e) {
                 msj_error_serve();
                 bootbox.hideAll();

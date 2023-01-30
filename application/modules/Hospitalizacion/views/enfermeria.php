@@ -36,6 +36,31 @@ function getServerIp(){
     margin-top: -7px;
     padding: 3px;
 }
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3 {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    outline: 0;
+}
+
+.widget-long .info-camas {
+    padding: 0px 0px 0px 5px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
 .label {cursor: pointer;}
 .title-bedstado{display:inline-block}
 </style>
@@ -70,38 +95,88 @@ function getServerIp(){
   <div class="col-md-9">
     <div class="widget-long">
       <div class="col-md-1 info-camas"> 
-          <span class="count_top"><i class="fa fa-bed"></i> Total</span>
-          <div class="count text-dark" id="camasTotal"></div>
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td><span class="count_top"><i class="fa fa-bed"></i> Total</span></td> <td> </td> 
+          </tr>
+          <tr>
+            <td><div class="count text-dark" id="camasTotal"></div></td> <td></td>
+          </tr>
+        </table>
       </div>
       <div class="col-md-2 info-camas">
-        <div class="bed-status green color-white title-bedstado"><i class="fa fa-bed"></i></div>
-        <div class="title-bedstado">Diponibles</div>
-        <div class="count text-success" id="camasDisponibles"></div>
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td><div class="bed-status green color-white title-bedstado"><i class="fa fa-bed"></i></div></td> <td> <div class="title-bedstado">Diponibles</div></td> 
+          </tr>
+          <tr>
+            <td><div class="count text-success" id="camasDisponibles"></div></td> <td></td>
+          </tr>
+        </table>
       </div>
       <div class="col-md-2 info-camas">
-          <div class="bed-status blue-700 color-white title-bedstado"><i class="fa fa-bed"></i></div>
-					<div class="bed-status pink-A100 color-white title-bedstado"><i class="fa fa-bed"></i></div>
-          <div class="title-bedstado">Ocupadas</div>
-          <div class="count text-primary" id="camasOcupadas"></div>
+          <table cellspacing="0" cellpadding="0" style="border-collapse:collapse">
+          <tr>
+            <td> 
+                <div class="bed-status blue-700 color-white title-bedstado"><i class="fa fa-bed"></i></div>
+					      <div class="bed-status pink-A100 color-white title-bedstado"><i class="fa fa-bed"></i></div>
+            </td> 
+            <td> <div class="title-bedstado">Ocupadas</div></td> 
+          </tr>
+          <tr>
+            <td><div class="count text-primary" id="camasOcupadas"></div></td> <td></td>
+          </tr>
+        </table>
       </div>
       <div class="col-md-2 info-camas">
-        <div class="bed-status grey-900 color-white title-bedstado"><i class="fa fa-bed"></i></div>
-        <div class="title-bedstado">Sucias</div>
-        <div class="count text-danger" id="camasSucias"></div>
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td> <div class="bed-status grey-900 color-white title-bedstado"><i class="fa fa-bed"></i></div></td> <td> <div class="title-bedstado">Sucias</div></td> 
+          </tr>
+          <tr>
+            <td><div class="count text-danger" id="camasSucias"></div></td> <td></td>
+          </tr>
+        </table>
       </div>
       <div class="col-md-2 info-camas">
-        <div class="bed-status red color-white title-bedstado"><i class="fa fa-bed"></i></div>
-        <div class="title-bedstado">Contaminadas</div>
-        <div class="count text-danger" id="camasContaminadas"></div>
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td> <div class="bed-status red color-white title-bedstado"><i class="fa fa-bed"></i></div></td> <td> <div class="title-bedstado">Contaminadas</div></td> 
+          </tr>
+          <tr>
+            <td><div class="count text-danger" id="camasContaminadas"></div></td> <td></td>
+          </tr>
+        </table>
       </div> 
       <div class="col-md-2 info-camas">
-        <div class="bed-status yellow-600 color-white title-bedstado"><i class="fa fa-bed"></i></div>
-        <div class="title-bedstado">Descompuestas</div>
-        <div class="count text-info" id="camasDescompuestas"></div>
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td> <div class="bed-status yellow-600 color-white title-bedstado"><i class="fa fa-bed"></i></div></td> <td> <div class="title-bedstado">Descompuestas</div></td> 
+          </tr>
+          <tr>
+            <td><div class="count text-info" id="camasDescompuestas"></div></td> <td></td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-md-2 info-camas">
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td><div class="bed-status cyan-400  color-white title-bedstado"><i class="fa fa-bed"></i></div></td> <td><div class="title-bedstado">Limpias</div></td> 
+          </tr>
+          <tr>
+            <td><div class="count text-info" id="camasLimpias"></div></td> <td></td>
+          </tr>
+        </table>
       </div>
       <div class="col-md-1 info-camas">
-          <span class="count_top"><i class="fa fa-bed"></i> Pre-Altas</span>
-          <div class="count text-warning blink_me" id="camasPrealta"></div>
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td><span class="count_top"><i class="fa fa-bed"></i> Pre-Altas</span></td> <td> </td> 
+          </tr>
+          <tr>
+            <td><div class="count text-warning blink_me" id="camasPrealta"></div></td> <td></td>
+          </tr>
+        </table>
       </div>
     </div>
   </div> 
