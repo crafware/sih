@@ -1,69 +1,4 @@
 $(document).ready(function () {
-    $('input[name=triage_id]').focus();
-    $('input[name=triage_id]').keyup(function (e) {
-        var triage_id=$(this).val();
-        var input=$(this);
-        if(triage_id.length==11 && triage_id!=''){
-            $.ajax({
-                url: base_url+"Hospitalizacion/AjaxObtenerPaciente",
-                type: 'POST',
-                dataType: 'json',
-                data:{
-                    triage_id:triage_id,
-                    csrf_token:csrf_token
-                },beforeSend: function (xhr) {
-                    msj_loading();
-                },success: function (data, textStatus, jqXHR) {
-                    bootbox.hideAll();
-                    //console.log(data)
-                    if(data.accion=='NO_AM'){
-                        MsjNotificacion('<h5>ERROR, FOLIO </h5>','<center><i class="fa fa-exclamation-triangle fa-5x" style="color:#E62117"></i><br>DATOS DEL PACIENTE NO CAPTURADOS POR ASISTENTE MÉDICA</center>')
-                    }if(data.accion=='NO_EXISTE_EN_HOSP'){
-                        AjaxAgregarIngresoHosp(data.paciente)
-                    }if(data.accion=='NO_ASIGNADO'){
-                        AjaxIngresoServicio(data.paciente)
-                    }if(data.accion=='ASIGNADO'){
-                        PacienteAgregado(data.paciente,data.hosp,data.servicio,data.medico)
-                    }
-                },error: function (jqXHR, textStatus, errorThrown) {
-                    bootbox.hideAll();
-                    MsjError();
-                }
-            })
-            input.val('');
-        }
-    });
-    $('body').on('click', '#ingresoPaciente', function(e){
-        var triage_id = $(this).data("value");
-        $.ajax({
-                url: base_url+"Hospitalizacion/AjaxObtenerPaciente",
-                type: 'POST',
-                dataType: 'json',
-                data:{
-                    triage_id:triage_id,
-                    csrf_token:csrf_token
-                },beforeSend: function (xhr) {
-                    msj_loading();
-                },success: function (data, textStatus, jqXHR) {
-                    bootbox.hideAll();
-                    
-                    if(data.accion=='NO_AM'){
-                        MsjNotificacion('<h5>ERROR, DATOS INCOMPLETOS </h5>','<center><i class="fa fa-exclamation-triangle fa-5x" style="color:#E62117"></i><br>DATOS DEL PACIENTE NO CAPTURADOS POR ASISTENTE MÉDICA</center>')
-                    }if(data.accion=='NO_EXISTE_EN_HOSP'){
-                        AjaxAgregarIngresoHosp(data.paciente)
-                    }if(data.accion=='NO_ASIGNADO'){
-                        AjaxIngresoServicio(data.paciente)
-                    }if(data.accion=='ASIGNADO'){
-                        console.log(data.servicio);
-                        console.log(data.medico);
-                        PacienteAgregado(data)
-                    }
-                },error: function (jqXHR, textStatus, errorThrown) {
-                    bootbox.hideAll();
-                    MsjError();
-                }
-            });
-    });
     function PacienteAgregado(info,hosp,servicio,medico) {
         let fecha_ingreso = new Date(`${hosp.fecha_ingreso} ${hosp.hora_atencion}`);
         let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -198,23 +133,7 @@ $(document).ready(function () {
             }
         });
     }
-    var msj_error_noti=function (msj){
-        Messenger().post({
-            message: msj,
-            type: 'error',
-            showCloseButton: true
-        }); 
-    }
-    window.onload = function() {
-        var reloading = sessionStorage.getItem("reloading");
-        if (reloading) {
-            sessionStorage.removeItem("reloading");
-            $('#tab_1').removeClass('active');
-            $('#li_1').removeClass('active');
-            $('#tab_2').addClass('active');
-            $('#li_2').addClass('active');
-        }
-    }
+
     function updateTables(data){
         $tab_2= document.getElementById("tab_2");
         document.getElementById(data["value"]['triage_id']).remove();
@@ -243,6 +162,169 @@ $(document).ready(function () {
             return 'indigo';
         }
     }
+    function AjaxDestino(info) {
+        bootbox.confirm({
+            title:'<h5>NUEVO DESTINO</h5>',
+            message:'<div class="row">'+
+                        '<div class="col-md-12">'+
+                            '<div class="form-group">'+
+                                '<input type="text" name="destino_nombre" value="'+info.destino_nombre+'" class="form-control" placeholder="Nombre del destino">'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'
+            ,size:'small',
+            buttons:{
+                confirm:{
+                    label:'Aceptar',
+                    className:'back-imss'
+                },cancel:{
+                    label:'Cancelar',
+                    className:'back-imss'
+                }
+            },callback:function (response) {
+                if(response==true){
+                    var destino_nombre=$('body input[name=destino_nombre]').val();
+                    if(destino_nombre!=''){
+                        $.ajax({
+                            url: base_url+"Consultorios/AjaxDestinos",
+                            type: 'POST',
+                            dataType: 'json',
+                            data:{
+                                destino_id:info.destino_id,
+                                destino_nombre:destino_nombre,
+                                destino_accion:info.destino_accion,
+                                csrf_token:csrf_token
+                            },beforeSend: function (xhr) {
+                                msj_loading();
+                            },success: function (data, textStatus, jqXHR) {
+                                if(data.accion=='1'){
+                                    msj_success_noti('Dato Guardados');
+                                    ActionWindowsReload();
+                                }
+                            },error: function (e) {
+                                bootbox.hideAll();
+                                MsjError();
+                                console.log(e);
+                            }
+                        })        
+                    }else{
+                        msj_error_noti('Campor Requerido');
+                    }
+                }
+            }
+            
+        })
+    }
+
+    function passDate(fecha) {
+        $.ajax({
+            url: base_url+"Hospitalizacion/BuscarPacientesPendientes",
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                'fecha_ingreso':fecha,
+                'csrf_token':csrf_token
+            },beforeSend: function (xhr) {
+                msj_loading();
+            },success: function (data, textStatus, jqXHR) { 
+                bootbox.hideAll();
+                
+               console.log(data)
+                
+            },error: function (e) {
+                bootbox.hideAll();
+                //MsjError();
+                ReportarError(window.location.pathname,e.responseText);
+            }
+        })
+        
+    }
+    const fecha = $('#fecha').val();
+    console.log(fecha);
+    //passDate(fecha);
+    $('input[name=triage_id]').focus();
+    $('input[name=triage_id]').keyup(function (e) {
+        var triage_id=$(this).val();
+        var input=$(this);
+        if(triage_id.length==11 && triage_id!=''){
+            $.ajax({
+                url: base_url+"Hospitalizacion/AjaxObtenerPaciente",
+                type: 'POST',
+                dataType: 'json',
+                data:{
+                    triage_id:triage_id,
+                    csrf_token:csrf_token
+                },beforeSend: function (xhr) {
+                    msj_loading();
+                },success: function (data, textStatus, jqXHR) {
+                    bootbox.hideAll();
+                    //console.log(data)
+                    if(data.accion=='NO_AM'){
+                        MsjNotificacion('<h5>ERROR, FOLIO </h5>','<center><i class="fa fa-exclamation-triangle fa-5x" style="color:#E62117"></i><br>DATOS DEL PACIENTE NO CAPTURADOS POR ASISTENTE MÉDICA</center>')
+                    }if(data.accion=='NO_EXISTE_EN_HOSP'){
+                        AjaxAgregarIngresoHosp(data.paciente)
+                    }if(data.accion=='NO_ASIGNADO'){
+                        AjaxIngresoServicio(data.paciente)
+                    }if(data.accion=='ASIGNADO'){
+                        PacienteAgregado(data.paciente,data.hosp,data.servicio,data.medico)
+                    }
+                },error: function (jqXHR, textStatus, errorThrown) {
+                    bootbox.hideAll();
+                    MsjError();
+                }
+            })
+            input.val('');
+        }
+    });
+    $('body').on('click', '#ingresoPaciente', function(e){
+        var triage_id = $(this).data("value");
+        $.ajax({
+                url: base_url+"Hospitalizacion/AjaxObtenerPaciente",
+                type: 'POST',
+                dataType: 'json',
+                data:{
+                    triage_id:triage_id,
+                    csrf_token:csrf_token
+                },beforeSend: function (xhr) {
+                    msj_loading();
+                },success: function (data, textStatus, jqXHR) {
+                    bootbox.hideAll();
+                    
+                    if(data.accion=='NO_AM'){
+                        MsjNotificacion('<h5>ERROR, DATOS INCOMPLETOS </h5>','<center><i class="fa fa-exclamation-triangle fa-5x" style="color:#E62117"></i><br>DATOS DEL PACIENTE NO CAPTURADOS POR ASISTENTE MÉDICA</center>')
+                    }if(data.accion=='NO_EXISTE_EN_HOSP'){
+                        AjaxAgregarIngresoHosp(data.paciente)
+                    }if(data.accion=='NO_ASIGNADO'){
+                        AjaxIngresoServicio(data.paciente)
+                    }if(data.accion=='ASIGNADO'){
+                        console.log(data.servicio);
+                        console.log(data.medico);
+                        PacienteAgregado(data)
+                    }
+                },error: function (jqXHR, textStatus, errorThrown) {
+                    bootbox.hideAll();
+                    MsjError();
+                }
+            });
+    });
+    var msj_error_noti=function (msj){
+        Messenger().post({
+            message: msj,
+            type: 'error',
+            showCloseButton: true
+        }); 
+    }
+    window.onload = function() {
+        var reloading = sessionStorage.getItem("reloading");
+        if (reloading) {
+            sessionStorage.removeItem("reloading");
+            $('#tab_1').removeClass('active');
+            $('#li_1').removeClass('active');
+            $('#tab_2').addClass('active');
+            $('#li_2').addClass('active');
+        }
+    }
+    
     /*
     Boton para abrir ventana modal. La funcion imprime el formulario para indicar el servicio y el diagnostico de
     la interconsulta
@@ -314,6 +396,7 @@ $(document).ready(function () {
             });
         }
     });
+
     $('body').on('click','.alta-paciente-servicio',function (e){
         e.preventDefault();
         var idp=$(this);
@@ -340,33 +423,55 @@ $(document).ready(function () {
                 }
             })
         }
-    })    
-    $('body').on('click','.salida-paciente-observacion',function (e){
-        e.preventDefault();
-        var el=$(this);
-        if(confirm('¿REPORTAR SALIDA DEL PACIENTE DE CONSULTORIOS A OBSERVACIÓN?')){
-                $.ajax({
-                url: base_url+"Consultorios/AjaxSalidaObservacion",
-                type: 'POST',
-                dataType: 'json',
-                data:{
-                    'csrf_token':csrf_token,
-                    'triage_id':el.attr('data-id')
-                },beforeSend: function (xhr) {
-                    msj_loading();
-                },success: function (data, textStatus, jqXHR) {
-                    bootbox.hideAll();
-                    if(data.accion=='1'){
-                        ActionWindowsReload();
-                    }
-                },error: function (e) {
-                    msj_error_serve();
-                    ReportarError(window.location.pathname,e.responseText);
-                    bootbox.hideAll();
+    });   
+    $('body').on('click','.borrar-paciente-ingreso',function (e){
+       // e.preventDefault();
+       let folio = $(this).attr('data-id');
+        bootbox.confirm({
+            message: '<div class="row" style="margin-top:-10px">'+
+                        '<div class="col-md-12 ">'+
+                            '¿Desea borra de la lista de ingresos pendientes?'+
+                        '</div>'+
+                    '</div>',
+            size: 'small',
+            buttons: {
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-danger'
+                },confirm: {
+                    label: 'Aceptar',
+                    className: 'btn-success'
                 }
-            });
-        }
-    });    
+            },callback: function (result) {
+                if(result==true){
+                    console.log(folio)
+                    $.ajax({
+                        url: base_url+"Hospitalizacion/BorraPacienteIngreso",
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            'triage_id':folio,
+                            'csrf_token':csrf_token
+                        },beforeSend: function (xhr) {
+                            msj_loading();
+                        },success: function (data, textStatus, jqXHR) { 
+                            bootbox.hideAll();
+                            if(data.accion==1){
+                                ActionWindowsReload();
+                            }
+                           // updateTables(data);
+                            
+                        },error: function (e) {
+                            bootbox.hideAll();
+                            MsjError();
+                            ReportarError(window.location.pathname,e.responseText);
+                        }
+                    })
+                }
+            }
+        });
+    }); 
+
     $('body').on('click','.abandono-consultorio',function (e) {
         if(confirm('¿DAR DE ALTA PACIENTE, POR NO PRESENTARSE A CONSULTORIO?')){
             $.ajax({
@@ -388,150 +493,18 @@ $(document).ready(function () {
                 }
             })
         }
-    })
-    /*INDICADORES*/
-    $('.dd-mm-yyyy-ce').datepicker({
-        autoclose: true,
-        format: 'dd/mm/yyyy',
-        todayHighlight: true,
-        placement: 'bottom'
-    });
-    $('#fechaProductividad').datepicker({
-        autoclose: true,
-        format: 'dd-mm-yyyy',
-        todayHighlight: true,
-        placement: 'bottom'
-    });
-    $('.clockpicker-ce').clockpicker({
-        placement: 'bottom',
-        autoclose: true
-    });
-    $('.btn-indicador-ce').click(function () {
-        $.ajax({
-            url: base_url+"Consultorios/AjaxIndicadores",
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                selectTurno: $('select[name=Turno]').val(),
-                inputFechaInicio:$('input[name=inputFechaInicio]').val(),
-                csrf_token:csrf_token
-            },beforeSend: function (xhr) {
-                msj_loading();
-            },success: function (data, textStatus, jqXHR) {
-                console.log(data)
-                bootbox.hideAll();
-                $('.TOTAL_PACIENTES_CONSULTORIOS_DOC').find('span').html(data.TOTAL_DOCS+' PACIENTES');
-                $('.GENERAR_LECHAGA_CONSULTORIOS')
-                        .attr({'data-inputfecha': $('input[name=inputFechaInicio]').val(), 'data-turno':$('select[name=Turno]').val()}).removeClass('hide');
-                
-            },error: function (e) {
-                bootbox.hideAll();
-                MsjError();
-                console.log(e)
-            }      
-        })
-    })
-    $('.GENERAR_LECHAGA_CONSULTORIOS').click(function (e) {
-        AbrirDocumento(base_url+'Inicio/Documentos/LechugaConsultorios?inputFechaInicio='+$(this).attr('data-inputfecha')+'&turno='+$(this).attr('data-turno'),'_blank');
-    });
-    /*Destinos*/
-    $('.btn-add-dest').click(function (e) {
-        e.preventDefault();
-        AjaxDestino({
-            destino_id:0,
-            destino_nombre:'',
-            destino_accion:'add'
-        })
-    })
-    function AjaxDestino(info) {
-        bootbox.confirm({
-            title:'<h5>NUEVO DESTINO</h5>',
-            message:'<div class="row">'+
-                        '<div class="col-md-12">'+
-                            '<div class="form-group">'+
-                                '<input type="text" name="destino_nombre" value="'+info.destino_nombre+'" class="form-control" placeholder="Nombre del destino">'+
-                            '</div>'+
-                        '</div>'+
-                    '</div>'
-            ,size:'small',
-            buttons:{
-                confirm:{
-                    label:'Aceptar',
-                    className:'back-imss'
-                },cancel:{
-                    label:'Cancelar',
-                    className:'back-imss'
-                }
-            },callback:function (response) {
-                if(response==true){
-                    var destino_nombre=$('body input[name=destino_nombre]').val();
-                    if(destino_nombre!=''){
-                        $.ajax({
-                            url: base_url+"Consultorios/AjaxDestinos",
-                            type: 'POST',
-                            dataType: 'json',
-                            data:{
-                                destino_id:info.destino_id,
-                                destino_nombre:destino_nombre,
-                                destino_accion:info.destino_accion,
-                                csrf_token:csrf_token
-                            },beforeSend: function (xhr) {
-                                msj_loading();
-                            },success: function (data, textStatus, jqXHR) {
-                                if(data.accion=='1'){
-                                    msj_success_noti('Dato Guardados');
-                                    ActionWindowsReload();
-                                }
-                            },error: function (e) {
-                                bootbox.hideAll();
-                                MsjError();
-                                console.log(e);
-                            }
-                        })        
-                    }else{
-                        msj_error_noti('Campor Requerido');
-                    }
-                }
-            }
-            
-        })
-    }
-    $('body').on('click','.destino-eliminar',function () {
-        var destino_id=$(this).attr('data-id');
-        if(confirm('¿ELIMINAR REGISTRO?')){
-            $.ajax({
-                url: base_url+"Consultorios/AjaxDestinosEliminar",
-                type: 'POST',
-                dataType: 'json',
-                data:{
-                    destino_id:destino_id,
-                    csrf_token:csrf_token
-                },beforeSend: function (xhr) {
-                    msj_loading();
-                },success: function (data, textStatus, jqXHR) {
-                    bootbox.hideAll();
-                    if(data.accion=='1'){
-                        msj_success_noti('Registro eliminado');
-                    }
-                },error: function (e) {
-                    bootbox.hideAll();
-                    MsjError();
-                    console.log(e)
-                }
-            });
-        }
-    });
-    
-    $("#Turno").change(function(event) {
-    if($(this)[0].selectedIndex==0) {
-        $(this).prop('required',true);
-        
-      }
-      else {
-        $(this).prop('required',false);
-
-      }
     });
 
+    $('#fecha').datepicker({
+        startDate: 0,
+        language: 'es',
+        format: "dd-mm-yyyy",
+        autoclose: true,
+        setDate: new Date(),
+        todayBtn: 'linked'
+    }).on('changeDate', function(e){
+        let fecha=$('#fecha').val();
+        passDate(fecha);
+    });
     
 })
