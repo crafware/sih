@@ -70,9 +70,9 @@ io.on("connection", (socket) => {
   socket.on("getDataPacientesAreasCriticas", (data => {
     getDataPacientesAreasCriticas(data["area"], socket);
   }))
-  socket.on("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", (data => {
+  /*socket.on("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", (data => {
     getAsistentemedicaTablaRegistroPacientesAdmisionContinua(socket);
-  }))
+  }))*/
   //Update dates
   socket.on("setDataNotesEstado", (data => {
     setDataNotesEstado(data, socket);
@@ -287,7 +287,7 @@ function getDataPacientesAreasCriticas(area, socket) {
 }
 
 
-function getAsistentemedicaTablaRegistroPacientesAdmisionContinua(socket) {
+/*function getAsistentemedicaTablaRegistroPacientesAdmisionContinua(socket) {
   var data = {}
   pool.getConnection((err, connection,) => {
     if (err) throw err;
@@ -449,7 +449,7 @@ function guardarRegistroPacientesAtencionMedicaAdmisionContinua(row, connection)
       console.log(err)
     }
   })
-}
+}*/
 
 /*function updateRegistroPacientesAtencionMedicaAdmisionContinua() {
   pool.getConnection((err, connection,) => {
@@ -1220,7 +1220,7 @@ const program = async () => {
       } if (event.table == "paciente_info") {
         getDataRegistroPicIndicioEmbarazo(event.affectedRows)
       } if (event.table == "os_asistentesmedicas") {
-        updateRegistroPacientesAtencionMedicaAdmisionContinua(event)
+        //updateRegistroPacientesAtencionMedicaAdmisionContinua(event)
       } if (event.table == "um_consultas_dashboard") {
         io.sockets.emit("realTimeUpdateDashboard", event.affectedRows[0]["after"]);
       }
