@@ -177,11 +177,9 @@ function getServerIp()
 		left: calc(0);
 	}
 
-
 	/* ------------------------- */
 	/* Mediaqueries */
 	/* ------------------------- */
-
 
 </style>
 <div class="box-row">
@@ -192,7 +190,7 @@ function getServerIp()
 				<div class="col-md-12">
 					<div class="panel panel-default" style="margin-top: 10px">
 						<div class="panel-heading p teal-900 back-imss">
-							<span style="font-size: 15px;font-weight: 500;text-transform: uppercase">PACIENTES EN ÁREA DE UCI</span>			
+							<span style="font-size: 15px;font-weight: 500;text-transform: uppercase">PACIENTES EN ÁREA DE <?= $this->UMAE_AREA ?></span>			
 							<span style="font-size: 15px;font-weight: 500;">Menú inicial</span>
 						</div>
 						<div class="panel-body b-b b-light">
@@ -334,7 +332,7 @@ function getServerIp()
 		</div>
 	</div>
 </div>
-<input type="hidden" name="area" value="<?= $this->UMAE_AREA ?>">
+<input type="hidden" id="area" name="area" value="<?= $this->UMAE_AREA ?>">
 </div>
 <?= modules::run('Sections/Menu/footer'); ?>
 <script src="<?= base_url() ?>assets/libs/bootstrap-popper/popper.min.js"></script>

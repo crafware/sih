@@ -70,9 +70,9 @@ io.on("connection", (socket) => {
   socket.on("getDataPacientesAreasCriticas", (data => {
     getDataPacientesAreasCriticas(data["area"], socket);
   }))
-  socket.on("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", (data => {
+  /*socket.on("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", (data => {
     getAsistentemedicaTablaRegistroPacientesAdmisionContinua(socket);
-  }))
+  }))*/
   //Update dates
   socket.on("setDataNotesEstado", (data => {
     setDataNotesEstado(data, socket);
@@ -148,7 +148,6 @@ function usuarioJefeDashboard(data, socket) {
               if (err) console.log(err);
               var oneYearData = row;
               connection.query("SELECT * FROM um_consultas_dashboard WHERE I_D_Servicio = " + empleado_servicio + " and I_D_Fecha = '" + fecha1 + "'", (err, row,) => {
-
                 /*console.log("oneYearData")
                 console.log(oneYearData)
                 console.log(sql)*/
@@ -262,32 +261,69 @@ function getDataTriage(bed, floor) {
   return end;
 }
 areasCriticasDB = {
-  "UCI": { 'db': "um_pacientes_uci", 'areaId': "6" },
-  "UTR": { 'db': "um_pacientes_utr", 'areaId': "6" },
-  "UTMO": { 'db': "um_pacientes_utmo", 'areaId': "6" }
+  "UCI": { 'db': "um_pacientes_uci", 'areaId': "6", "area":"uci"},
+  "UTR": { 'db': "um_pacientes_utr", 'areaId': "7", "area":"utr" },
+  "UTMO": { 'db': "um_pacientes_utmo", 'areaId': "8", "area":"utmo" }
 }
 
 function getDataPacientesAreasCriticas(area, socket) {
-  pool.getConnection((err, connection,) => {
-    if (err)
-      throw err;
-    connection.query('SELECT * FROM ' + areasCriticasDB[area]["db"] + ", os_triage, doc_43051,paciente_info WHERE " +
-      "os_triage.triage_id = " + areasCriticasDB[area]["db"] + ".triage_id AND " +
-      "os_triage.triage_id = paciente_info.triage_id AND " +
-      "os_triage.triage_id = doc_43051.triage_id AND " +
-      areasCriticasDB[area]["db"] + ".fecha_egreso_uci IS NULL", (err, rows,) => {
-        if (!err) {
-          getDataPacientesAreasCriticasCamas(area, socket, rows)
-        } else {
-          console.log(err);
-        }
-      })
-      connection.release(); // return the connection to pool
-  })
+  if(area != ""){
+    pool.getConnection((err, connection,) => {
+      if (err)
+        throw err;
+      connection.query('SELECT * FROM ' + areasCriticasDB[area]["db"] + ", os_triage, doc_43051,paciente_info WHERE " +
+        "os_triage.triage_id = " + areasCriticasDB[area]["db"] + ".triage_id AND " +
+        "os_triage.triage_id = paciente_info.triage_id AND " +
+        "os_triage.triage_id = doc_43051.triage_id AND " +
+        areasCriticasDB[area]["db"] + ".fecha_egreso_"+areasCriticasDB[area]["area"]+" IS NULL ORDER BY paciente_"+areasCriticasDB[area]["area"]+"_id" , (err, rows,) => {
+          if (!err) {
+            getDataPacientesAreasCriticasCamas(area, socket, rows)
+          } else {
+            console.log(err);
+          }
+        })
+        connection.release(); // return the connection to pool
+    })
+  }
 }
 
+areasCriticasID_area = {
+  6: { 'db': "um_pacientes_uci", 'areaId': "6", "area":"UCI"},
+  7: { 'db': "um_pacientes_utr", 'areaId': "7", "area":"UTR" },
+  8: { 'db': "um_pacientes_utmo", 'areaId': "8", "area":"UTMO" }
+}
 
-function getAsistentemedicaTablaRegistroPacientesAdmisionContinua(socket) {
+function getDataPacientesAreasCriticasArea(event){
+  var event_table = event.table;
+  var area_nombre = ""
+  if(event_table === "um_pacientes_uci"){
+    area_nombre = "UCI"
+  }else if(event_table === "um_pacientes_utr"){
+    area_nombre = "UTR"
+  }else if(event_table === "um_pacientes_utmo"){
+    area_nombre = "UTMO"
+  }else if(event_table === "os_camas"){
+    var area_id = event.affectedRows[0]["after"]["area_id"]
+    area_nombre = areasCriticasID_area[area_id]["area"]
+  }else if(event_table === "os_triage"){
+    pool.getConnection((err, connection,) => {
+      if (err) throw err;
+      connection.query("SELECT * FROM os_camas WHERE triage_id = "+ event.affectedRows[0]["after"]["triage_id"] , (err, rows) => {
+        if (!err) {
+          if(rows[0] != undefined){
+            if(areasCriticasID_area[rows[0]["area_id"]] != undefined){
+              area_nombre = areasCriticasID_area[rows[0]["area_id"]]["area"]
+            }
+          }
+        }
+      });
+      connection.release(); // return the connection to pool      
+    });
+  }
+  return area_nombre
+}
+
+/*function getAsistentemedicaTablaRegistroPacientesAdmisionContinua(socket) {
   var data = {}
   pool.getConnection((err, connection,) => {
     if (err) throw err;
@@ -449,7 +485,7 @@ function guardarRegistroPacientesAtencionMedicaAdmisionContinua(row, connection)
       console.log(err)
     }
   })
-}
+}*/
 
 /*function updateRegistroPacientesAtencionMedicaAdmisionContinua() {
   pool.getConnection((err, connection,) => {
@@ -508,7 +544,11 @@ function getDataPacientesAreasCriticasCamas(area, socket, rowsPacientes) {
   pool.getConnection((err, connection,) => {
     if (err)
       throw err;
-    connection.query('SELECT * FROM  os_camas WHERE os_camas.area_id = ' + areasCriticasDB[area]["areaId"], (err, rows,) => {
+    var sql = 'SELECT * FROM  os_camas'
+    if(area == "UCI"){
+      sql = 'SELECT * FROM  os_camas WHERE os_camas.area_id = ' + areasCriticasDB[area]["areaId"]
+    }
+    connection.query(sql, (err, rows,) => {
       if (!err) {
         try {
           var data = { "dataPacientes": rowsPacientes, "area": area, "camas": rows }
@@ -1179,7 +1219,7 @@ function actualizarDashboard_ac(event) {
 //Detect mysql events
 const MySQLEvents = require('@rodrigogs/mysql-events');
 const { pathToFileURL } = require("url");
-const getDataPacientesAreasCriticasTablas = ["um_pacientes_uci", "os_camas", "os_triage"]
+const getDataPacientesAreasCriticasTablas = ["um_pacientes_uci", "um_pacientes_utr", "um_pacientes_utmo", "os_camas", "os_triage"]
 
 const program = async () => {
   const connection = mysql.createPool({
@@ -1210,7 +1250,8 @@ const program = async () => {
           }
         }
       } if (getDataPacientesAreasCriticasTablas.find(element => element.trim() === event.table)) {
-        getDataPacientesAreasCriticas("UCI", "")
+        var area = getDataPacientesAreasCriticasArea(event)
+        getDataPacientesAreasCriticas(area, "")
       } if (event.table == "os_camas_notas") {
         getDataCamasNotas(event.affectedRows)
       } if (event.table == "doc_43051") {
@@ -1220,7 +1261,7 @@ const program = async () => {
       } if (event.table == "paciente_info") {
         getDataRegistroPicIndicioEmbarazo(event.affectedRows)
       } if (event.table == "os_asistentesmedicas") {
-        updateRegistroPacientesAtencionMedicaAdmisionContinua(event)
+        //updateRegistroPacientesAtencionMedicaAdmisionContinua(event)
       } if (event.table == "um_consultas_dashboard") {
         io.sockets.emit("realTimeUpdateDashboard", event.affectedRows[0]["after"]);
       }

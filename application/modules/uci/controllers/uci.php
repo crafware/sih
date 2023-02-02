@@ -57,11 +57,15 @@ class Uci extends Config
             return $_SERVER['SERVER_ADDR'];
         }
     }
-
     public function AjaxVisorCamasUCI_UTR_UTMO()
     {
+        $UCI_UTR_UTMO_id = array(
+            "UCI" => 6,
+            "UTR" => 7,
+            "UTMO"=> 8
+        );
         $area = $_GET['area'];
-        $value = $this->config_mdl->_query("SELECT * FROM os_pisos WHERE os_pisos.area_id = " . $area . ";")[0];
+        $value = $this->config_mdl->_query("SELECT * FROM os_pisos WHERE os_pisos.area_id = " . $UCI_UTR_UTMO_id[$area] . ";")[0];
         $Col = '';
         $Col .= '<div class=""> <div id="bead-map" >';
         $Camas = $this->config_mdl->_query("SELECT * FROM os_camas, os_areas, os_pisos, os_pisos_camas, os_pisos_sc WHERE 
@@ -69,8 +73,8 @@ class Uci extends Config
             os_pisos_camas.cama_id  =os_camas.cama_id AND
             os_pisos_camas.piso_id  =os_pisos.piso_id AND 
             os_pisos_sc.cama_id     =os_camas.cama_id AND 
-            os_camas.area_id        = 6               AND
-            os_pisos.piso_id        =" . $value['piso_id']);
+            os_camas.area_id        =".$UCI_UTR_UTMO_id[$area]." AND
+            os_pisos.piso_id        =".$value['piso_id']);
         $Disponibles = $this->TotalCamasEstatusPisos($value['piso_id'], 'Disponible'); //Esta Vestida
         $Ocupadas = $this->TotalCamasEstatusPisos($value['piso_id'], 'Ocupado');
         $TotalPiso = $this->TotalPorPiso($value['piso_id']);
@@ -120,7 +124,7 @@ class Uci extends Config
                 $tiempoIntervalo .= $tiempoOcupado->format('%a Dias');
                 $ExpedienteLink = '<li><a onclick="openExpedient('.$info43051['triage_id'].')"  href="" target="_blank"><i class="fa fa-share-square-o icono-accion"></i>Ver expediente</a></li>';
 
-                if ($this->UMAE_AREA === 'UCI') {
+                if ($this->UMAE_AREA === 'UCI' || $this->UMAE_AREA === 'UTR' || $this->UMAE_AREA === 'UTMO') {
                     $Expediente = '<li><a class = "abrirExpediente" data-folio = '.$info43051['triage_id'].'  target="_blank"><i class="fa fa-share-square-o icono-accion"></i>Ver expediente</a></li>';
 
                     $acciones = '<ul class="list-inline list-menu">
@@ -424,7 +428,7 @@ class Uci extends Config
         if (!empty($sql)) {
             foreach ($sql as $value) {
                 $nss = ($value['nss'] != ' ') ? $value['nss'] : $value['pum_nss_armado'];
-                if ($this->UMAE_AREA == 'UCI') {
+                if ($this->UMAE_AREA == 'UCI' || $this->UMAE_AREA == 'UTR' || $this->UMAE_AREA == 'UTMO') {
                     $tr .= '<tr>
                         <td>' . $value['triage_id'] . '</td>
                         <td>' . date("d-m-Y", strtotime($value['fecha_ingreso'])) . '</td>
@@ -472,17 +476,18 @@ class Uci extends Config
 
     public function AjaxGetPacienteUCI()
     {
+        $uci = strtolower($_POST['area']);
         $sqlConsultorio = $this->config_mdl->_query("SELECT * FROM doc_43051, os_triage WHERE 
                                                     os_triage.triage_id = doc_43051.triage_id AND
                                                     os_triage.triage_id =" . $this->input->post('triage_id'));
         if (!empty($sqlConsultorio)) {
-            $sqlPacienteUCI = $this->config_mdl->_query("SELECT * FROM um_pacientes_uci WHERE 
-                                                    triage_id =" . $this->input->post('triage_id') . " AND fecha_egreso_uci IS NULL");
+            $sqlPacienteUCI = $this->config_mdl->_query("SELECT * FROM um_pacientes_".$uci." WHERE 
+                                                    triage_id =" . $this->input->post('triage_id') . " AND fecha_egreso_".$uci." IS NULL");
             if (empty($sqlPacienteUCI)) {
-                $Interconsulta  = $this->config_mdl->_insert('um_pacientes_uci', array(
+                $this->config_mdl->_insert('um_pacientes_'.$uci, array(
                     'id_doc43051'       => $sqlConsultorio[0]["id"],
                     "triage_id"         => $sqlConsultorio[0]["triage_id"],
-                    "fecha_ingreso_uci" => date("Y-m-d H:i")
+                    "fecha_ingreso_".$uci => date("Y-m-d H:i")
                 ));
                 $this->setOutput(array('accion' => 'ASIGNADO'));
             } else {
@@ -494,21 +499,22 @@ class Uci extends Config
     }
 
     public function AjaxDarDeAltaPacienteUCI()
-    {
+    {   
+        $uci= strtolower($_POST['area']);
         $triage_id = $this->input->post('triage_id');
         $sqlConsultorio = $this->config_mdl->_query("SELECT * FROM doc_43051, os_triage WHERE 
                                                     os_triage.triage_id = doc_43051.triage_id AND
                                                     os_triage.triage_id =" . $triage_id);
         if (!empty($sqlConsultorio)) {
-            $sqlPacienteUCI = $this->config_mdl->_query("SELECT TIMESTAMPDIFF( DAY, fecha_ingreso_uci, now()) AS dias_estancia_uci, paciente_uci_id
-                                                          FROM  um_pacientes_uci 
-                                                        WHERE  triage_id = " . $triage_id . " AND fecha_egreso_uci IS NULL");
+            $sqlPacienteUCI = $this->config_mdl->_query("SELECT TIMESTAMPDIFF( DAY, fecha_ingreso_".$uci.", now()) AS dias_estancia_".$uci.", paciente_".$uci."_id
+                                                          FROM  um_pacientes_".$uci." 
+                                                        WHERE  triage_id = " . $triage_id . " AND fecha_egreso_".$uci." IS NULL");
             if (!empty($sqlPacienteUCI)) {
-                $this->config_mdl->_update_data('um_pacientes_uci', array(
-                    "dias_estancia_uci" => $sqlPacienteUCI[0]["dias_estancia_uci"],
-                    "fecha_egreso_uci"  => date("Y-m-d H:i")
+                $this->config_mdl->_update_data('um_pacientes_'.$uci, array(
+                    "dias_estancia_".$uci => $sqlPacienteUCI[0]["dias_estancia_".$uci],
+                    "fecha_egreso_".$uci  => date("Y-m-d H:i")
                 ), array(
-                    'paciente_uci_id' => $sqlPacienteUCI[0]["paciente_uci_id"],
+                    'paciente_'.$uci.'_id' => $sqlPacienteUCI[0]["paciente_".$uci."_id"],
                 ));
                 $this->setOutput(array('accion' => 'ALTA_HECHA', "dias_estancia_uci" => $sqlPacienteUCI,"fecha_egreso_uci"  => date("Y-m-d H:i")));
             } else {
@@ -551,8 +557,8 @@ class Uci extends Config
             os_camas.triage_id=um_notas_ingresos_hospitalario.triage_id AND
             um_notas_ingresos_hospitalario.triage_id=" . $paciente . " ORDER BY fecha_elabora DESC");
         }
-        if ($_GET['tipo'] == 'UCI') {
-            $sql['PacientesUCI'] = $this->config_mdl->_get_data_condition('um_pacientes_uci', array(
+        if ($_GET['tipo'] == 'UCI' || $_GET['tipo'] == 'UTR' || $_GET['tipo'] == 'UTMO') {
+            $sql['PacientesUCI'] = $this->config_mdl->_get_data_condition('um_pacientes_'.strtolower($_GET['tipo']), array(
                 'triage_id' => $paciente
             ));
         }
@@ -655,7 +661,7 @@ class Uci extends Config
     }
     public function getPacienteUCI(){
         $triage_id  = $_POST["triage_id"];
-        $paciente   = $this->config_mdl->_query('SELECT * FROM um_pacientes_uci WHERE fecha_egreso_uci IS NULL AND triage_id ='.$triage_id);
+        $paciente   = $this->config_mdl->_query('SELECT * FROM um_pacientes_'.strtolower($_GET['tipo']).' WHERE fecha_egreso_'.strtolower($_GET['tipo']).' IS NULL AND triage_id ='.$triage_id);
         if (empty($paciente)) {
             $this->setOutput(array('accion' => 'NOT_EXIST', 'paciente' => $paciente, 'triage_id' => $triage_id));
         }else{

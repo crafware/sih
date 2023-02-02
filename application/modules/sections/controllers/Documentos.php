@@ -961,7 +961,7 @@ class Documentos extends Config
                 $this->config_mdl->_insert('nm_hojafrontal_prescripcion', $FrontalPrescripcion);
             } /*Fin proceso prescripción*/
 
-            $Dignostico_hf = $this->config_mdl->_query("SELECT * FROM diagnostico_hoja_frontal WHERE hf_id ='{$this->input->post('hf_id')}' ");
+            //$Dignostico_hf = $this->config_mdl->_query("SELECT * FROM diagnostico_hoja_frontal WHERE hf_id ='{$this->input->post('hf_id')}' ");
             $this->config_mdl->_delete_data('diagnostico_hoja_frontal', array('hf_id' => $this->input->post('hf_id')));
 
             foreach ($sqlCheckDiagnosticos as $value) {
@@ -1827,11 +1827,9 @@ class Documentos extends Config
 
 
             for ($x = 0; $x < count($this->input->post('nota_interconsulta')); $x++) {
-                $existencia_interconsuta = $this->config_mdl->_query(
-                    "SELECT doc_id
-              FROM doc_430200
-              WHERE doc_servicio_solicitado = " . $this->input->post("nota_interconsulta[$x]")
-                );
+                /*$existencia_interconsuta = $this->config_mdl->_query("SELECT doc_id FROM doc_430200
+                                WHERE doc_servicio_solicitado = " . $this->input->post("nota_interconsulta[$x]")
+                );*/
 
                 $this->config_mdl->_update_data('os_consultorios_especialidad', array(
                     'ce_status' => 'Interconsulta',
@@ -2918,9 +2916,7 @@ class Documentos extends Config
                     $prealta = 0;
                     $alta = 1;
                     $altacancelada=0;
-                    $doc_43051 = $this->config_mdl->_get_data_condition('doc_43051', array(
-                        'triage_id' => $this->input->post('triage_id')
-                    ))[0];
+                    //$doc_43051 = $this->config_mdl->_get_data_condition('doc_43051', array('triage_id' => $this->input->post('triage_id')))[0];
                     break;
             case 3: // Cancelar Alta
                     $proceso = 3;
@@ -2973,7 +2969,7 @@ class Documentos extends Config
 
         $dataAlta = array(
             'proceso'        => $proceso,
-            'fecha_alta'     => $f,
+            'fecha_alta'     => date('Y-m-d'),
             'fecha_hora_alta'=> $fecha_hora_alta,
             'comentarios'    => $this->input->post('comentarios'),
             'prealta'        => $prealta,
@@ -3207,16 +3203,17 @@ class Documentos extends Config
     public function AjaxGuardaNotaIngresoHosp()
     {
         $idNotaIngreso = null;
-        $ingresoHosp = $this->config_mdl->_get_data_condition('um_ingresos_hospitalario', array(
+        $procedimientos = "";
+        /*$ingresoHosp = $this->config_mdl->_get_data_condition('um_ingresos_hospitalario', array(
             'triage_id' =>  $this->input->post('triage_id')
-        ))[0];
+        ))[0];*/
 
         $sqlCheckDiagnosticos = $this->config_mdl->sqlGetDataCondition('paciente_diagnosticos', array(
             'triage_id' => $this->input->post('triage_id')
         ));
-        $sqlCheckNotaIngreso = $this->config_mdl->sqlGetDataCondition('um_notas_ingresos_hospitalario', array(
+        /*$sqlCheckNotaIngreso = $this->config_mdl->sqlGetDataCondition('um_notas_ingresos_hospitalario', array(
             'triage_id' => $this->input->post('triage_id')
-        ), 'id_nota');
+        ), 'id_nota');*/
 
 
         foreach ($this->input->post('procedimientos') as $procedimientos_select) {
@@ -3777,7 +3774,7 @@ class Documentos extends Config
 
 
             /* -------------------------------------ACTUALIZACION DE DIAGNOSTICOS ---------------------------------*/
-            $Dignostico_hf = $this->config_mdl->_query("SELECT * FROM diagnostico_hoja_frontal WHERE id_nota ='{$this->input->post('id_nota')}' ");
+            //$Dignostico_hf = $this->config_mdl->_query("SELECT * FROM diagnostico_hoja_frontal WHERE id_nota ='{$this->input->post('id_nota')}' ");
             $this->config_mdl->_delete_data('diagnostico_hoja_frontal', array('id_nota' => $this->input->post('id_nota')));
 
             foreach ($sqlCheckDiagnosticos as $value) {

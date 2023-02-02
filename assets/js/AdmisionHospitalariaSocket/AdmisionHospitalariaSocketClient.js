@@ -157,7 +157,7 @@ function findPA() {
   }
   return n_camas;
 }
-var dropdownToggle = ["Admisión Hospitalaria", "UCI", "División de Calidad"]
+var dropdownToggle = ["Admisión Hospitalaria", "UCI", "UTMO","UTR","División de Calidad"]
 function refreshGraphics(data) {
   var floors = document.getElementsByClassName("container-fluid col-lg-12 col-md-12 col-sm-12 col-xs-12");
   for (const floor of floors) {
@@ -935,7 +935,7 @@ function showPacientesAreasCriticas(data, camas) {
     '<th onclick="sortTable(2)" style="width: 30%" align="center">Paciente</th>' +
     '<th onclick="sortTable(3)" align="center">NSS </th>' +
     '<th onclick="sortTable(4)" align="center">Ingreso hospitalario</th>' +
-    '<th onclick="sortTable(5)" align="center">Ingreso UCI</th>' +
+    '<th onclick="sortTable(5)" align="center">Ingreso '+$('input[name=area]').val()+'</th>' +
     '<th onclick="sortTable(6)" style="width: 15%; text-align:center">Cama</th>' +
     '<th onclick="sortTable(7)" align="center">Tiempo instancia</th>' +
     '<th style="width: 15%">Acciones</th>' +
@@ -948,7 +948,7 @@ function showPacientesAreasCriticas(data, camas) {
     } else {
       d = d[2] + "-" + d[1] + "-" + d[0]
     }
-    var dAC = new Date(data[i]['fecha_ingreso_uci']);
+    var dAC = new Date(data[i]['fecha_ingreso_'+ $('input[name=area]').val().toLowerCase()]);
     var fechaInicio = dAC.getTime();
     var fechaFin = new Date().getTime();
     var tiempoInstancia = parseInt((fechaFin - fechaInicio) / (1000 * 60 * 60 * 24));
@@ -976,7 +976,7 @@ function showPacientesAreasCriticas(data, camas) {
       '<td>' + tiempoInstancia + ' días</td>' +
       '<td>' +
       '<div>' +
-      '<a href="http://' + window.location.host + '/Sections/Documentos/Expediente/' + data[i]['triage_id'] + '/?tipo=Hospitalizacion"  target="_blank">' +
+      '<a href="' + base_url + '/Sections/Documentos/Expediente/' + data[i]['triage_id'] + '/?tipo=Hospitalizacion"  target="_blank">' +
       '<i class="fa fa-share-square-o icono-accion tip" title="VER EXPEDIENTE" data-toggle="tooltip"></i>' +
       '</a>' +
       "&nbsp;" +

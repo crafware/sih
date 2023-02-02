@@ -687,6 +687,7 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
                     </div>
         <?php }} ?>
     </page_footer>
+    <!--<p><?= __DIR__?></p>-->
 </page>
 
 <?php
@@ -696,4 +697,10 @@ $pdf->writeHTML($html);
 // $pdf->pdf->IncludeJS("print(true);");
 $pdf->pdf->SetTitle('NOTA DE INGRESO ');
 $pdf->Output($Nota['notas_tipo'] . '.pdf');
+/*
+require __DIR__.'/vendor/autoload.php';
+use spipu\Html2Pdf\Html2Pdf;
+$html2pdf = new Html2Pdf();
+$html2pdf->writeHTML('<h1>HelloWorld</h1>This is my first test');
+$html2pdf->output();*/
 ?>
