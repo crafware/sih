@@ -99,7 +99,7 @@
                               <a <?php if (empty($HojasFrontales)) { ?>href="<?= base_url() ?>Sections/Documentos/HojaInicialAbierto?hf=0&TipoNota=Nota Inicial&a=add&folio=<?= $this->uri->segment(4) ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener" <?php } ?>><b>Generar "Nota Inicial"</b></a>
                             </li>
                         <?php 
-                        }else if($this->UMAE_AREA == 'Médico Hospitalización' || $this->UMAE_AREA == 'UCI') { ?>
+                        }else if($this->UMAE_AREA == 'Médico Hospitalización' || $this->UMAE_AREA == 'UCI'|| $this->UMAE_AREA == 'UTR'|| $this->UMAE_AREA == 'UTMO') { ?>
                           <li class="<?= !empty($NotaIngresoPorServicio)  ? 'disabled' : '' ?>">
                             <a <?php if (empty($NotaIngresoPorServicio)) { ?>href="<?= base_url() ?>Sections/Documentos/NotaIngresoHospitalario?idnota=0&TipoNota=Nota Inicial&a=add&folio=<?= $this->uri->segment(4) ?>&via=<?= $this->UMAE_AREA ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener" <?php } ?>><b>Generar "Nota de Ingreso"</b></a>
                           </li>

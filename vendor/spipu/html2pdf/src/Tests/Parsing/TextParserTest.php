@@ -1,0 +1,43 @@
+<?php
+/**
+ * Html2Pdf Library - Tests
+ *
+ * HTML => PDF converter
+ * distributed under the OSL-3.0 License
+ *
+ * @package   Html2pdf
+ * @author    Laurent MINGUET <webmaster@html2pdf.fr>
+ * @copyright 2017 Laurent MINGUET
+ */
+
+namespace Spipu\Html2Pdf\Tests\Parsing;
+
+if (HTML2PDF_PHPUNIT_VERSION === 9) {
+    require_once __DIR__ . '/../CrossVersionCompatibility/PhpUnit9/TextParserTestCase.php';
+} else {
+    require_once __DIR__ . '/../CrossVersionCompatibility/PhpUnit5/TextParserTestCase.php';
+}
+
+/**
+ * Class TextParserTest
+ */
+class TextParserTest extends \Spipu\Html2Pdf\Tests\CrossVersionCompatibility\TextParserTestCase
+{
+    /**
+     * Test if it works
+     */
+    public function testOk()
+    {
+        $result = $this->parser->prepareTxt('hello  world', false);
+        $this->assertSame('hello  world', $result);
+
+        $result = $this->parser->prepareTxt('hello  world', true);
+        $this->assertSame('hello world', $result);
+
+        $result = $this->parser->prepareTxt('hello 10&euro; world');
+        $this->assertSame('hello 10€ world', $result);
+
+        $result = $this->parser->prepareTxt('hello &lt; world');
+        $this->assertSame('hello < world', $result);
+    }
+}
