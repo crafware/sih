@@ -20,9 +20,11 @@
           <b>SERVICIO: <?= $especialidad_nombre['especialidad_nombre'] ?></b>
         </div>
       <?php } ?>
-      <div style="position: absolute;margin-left: 700px;margin-top: 105px;width: 470px;text-transform: uppercase;font-size: 11px;">
-        <b>NUMERO DE CAMAS AUTORIZADAS: <?= $data["numero_camas"] ?></b>
-      </div>
+      <?php if ($numero_camas != null) { ?>
+        <div style="position: absolute;margin-left: 700px;margin-top: 105px;width: 470px;text-transform: uppercase;font-size: 11px;">
+          <b>NUMERO DE CAMAS AUTORIZADAS: <?= $data["numero_camas"] ?></b>
+        </div>
+      <?php } ?>
       <div style="position: absolute;margin-left: 0px;margin-top: 125px;width: 770px;text-transform: uppercase;font-size: 11px;">
         <b>FECHA: <?= $data["hoy"] ?> DE LAS 0:00 HORAS A LAS 24:00 HORAS</b>
       </div>
@@ -283,15 +285,17 @@
           </tr>
         </table>
       </div>
-      <div style="position: absolute;margin-left: 700px;margin-top: 680px;width: 100px;font-size: 9px;">
-        <table>
-          <tr>
-            <td class="page_footer_tr">
-              <p>NUMERO DE CAMAS VACIAS <?= $data["camas_vacias"] ?></p>
-            </td>
-          </tr>
-        </table>
-      </div>
+      <?php if($data["camas_vacias"] != null){ ?>
+        <div style="position: absolute;margin-left: 700px;margin-top: 680px;width: 100px;font-size: 9px;">
+          <table>
+            <tr>
+              <td class="page_footer_tr">
+                <p>NUMERO DE CAMAS VACIAS <?= $data["camas_vacias"] ?></p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      <?php } ?>
       <div style="position: absolute;margin-left: 700px;margin-top: 720px;width: 300px;font-size: 12px;">
         <p>---------------------------------------------------------</p>
         <p>NOMBRE Y FIRMA DE LA JEFE DE PISO</p>

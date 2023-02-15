@@ -2610,10 +2610,10 @@ class Documentos extends Config{
                     $sql["egresos"][$i]["Cam"] = end($Cam)["cama_log_tipo"];
                 }
             }
-            //$camas = $this->config_mdl->_query("SELECT * FROM os_camas WHERE area_id = " .  $piso_id);
-            $sql["data"]["numero_camas"] = "No aplica"; 
-            $sql["data"]["pacientes_actuales"] = "No aplica";
-            $sql["data"]["camas_vacias"] = "No aplica";
+            $camas = $this->config_mdl->_query("SELECT * FROM os_camas WHERE id_servicio_trat = " .  $especialidad_id);
+            $sql["data"]["numero_camas"] = null;
+            $sql["data"]["pacientes_actuales"] = count($camas);
+            $sql["data"]["camas_vacias"] = "";
 
         }
         $sql["data"]["hoy"] = date('d/m/Y');
