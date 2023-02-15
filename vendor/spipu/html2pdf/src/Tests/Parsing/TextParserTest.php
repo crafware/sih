@@ -12,17 +12,23 @@
 
 namespace Spipu\Html2Pdf\Tests\Parsing;
 
-if (HTML2PDF_PHPUNIT_VERSION === 9) {
-    require_once __DIR__ . '/../CrossVersionCompatibility/PhpUnit9/TextParserTestCase.php';
-} else {
-    require_once __DIR__ . '/../CrossVersionCompatibility/PhpUnit5/TextParserTestCase.php';
-}
+use Spipu\Html2Pdf\Parsing\TextParser;
 
 /**
  * Class TextParserTest
  */
-class TextParserTest extends \Spipu\Html2Pdf\Tests\CrossVersionCompatibility\TextParserTestCase
+class TextParserTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var TextParser
+     */
+    private $parser;
+
+    protected function setUp()
+    {
+        $this->parser = new TextParser();
+    }
+
     /**
      * Test if it works
      */

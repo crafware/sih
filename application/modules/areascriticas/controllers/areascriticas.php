@@ -404,16 +404,42 @@ class Areascriticas extends Config
 
         $tr = "";
         if ($inputSelect == 'POR_NUMERO') {
-            $sql = $this->config_mdl->_query("SELECT os_triage.triage_id, doc_43051.fecha_ingreso, CONCAT_WS(' ',triage_nombre_ap,triage_nombre_am,triage_nombre) AS nombre_paciente, CONCAT_WS(' ',pum_nss,pum_nss_agregado) AS nss, pum_nss_armado FROM os_triage, paciente_info, doc_43051 WHERE
-                                            paciente_info.triage_id = os_triage.triage_id AND
-                                            doc_43051.triage_id     = os_triage.triage_id AND
-                                            paciente_info.triage_id = '" . $inputSearch . "'");
+            $sql = $this->config_mdl->_query("SELECT
+                                                    os_triage.triage_id,
+                                                    doc_43051.fecha_ingreso,
+                                                    CONCAT_WS( ' ', triage_nombre_ap, triage_nombre_am, triage_nombre ) AS nombre_paciente,
+                                                    CONCAT_WS( ' ', pum_nss, pum_nss_agregado ) AS nss,
+                                                    pum_nss_armado 
+                                                FROM
+                                                    os_triage
+                                                    JOIN paciente_info ON paciente_info.triage_id = os_triage.triage_id,
+                                                    doc_43051
+                                                WHERE
+                                                    doc_43051.triage_id = os_triage.triage_id 
+                                                    AND paciente_info.triage_id = '" . $inputSearch . "'");
         } else if ($inputSelect == 'POR_NOMBRE') {
-            $sql =  $this->config_mdl->_query("SELECT os_triage.triage_id, paciente_info.triage_id, doc_43051.fecha_ingreso,CONCAT_WS(' ',TRIM(os_triage.triage_nombre_ap),TRIM(os_triage.triage_nombre_am),TRIM(os_triage.triage_nombre)) AS nombre_paciente, CONCAT_WS(' ',pum_nss,pum_nss_agregado) AS nss, pum_nss_armado FROM os_triage, paciente_info , doc_43051
-                                            WHERE doc_43051.triage_id  = os_triage.triage_id
-                                            HAVING os_triage.triage_id = paciente_info.triage_id AND nombre_paciente LIKE '%$inputSearch%' LIMIT 200");
+            $sql =  $this->config_mdl->_query("SELECT
+                                                    os_triage.triage_id,
+                                                    paciente_info.triage_id,
+                                                    doc_43051.fecha_ingreso,
+                                                    CONCAT_WS(
+                                                        ' ',
+                                                        TRIM( os_triage.triage_nombre_ap ),
+                                                        TRIM( os_triage.triage_nombre_am ),
+                                                    TRIM( os_triage.triage_nombre )) AS nombre_paciente,
+                                                    CONCAT_WS( ' ', pum_nss, pum_nss_agregado ) AS nss,
+                                                    pum_nss_armado 
+                                                FROM
+                                                    os_triage
+                                                    JOIN paciente_info ON paciente_info.triage_id = os_triage.triage_id,
+                                                    doc_43051 
+                                                WHERE
+                                                    doc_43051.triage_id = os_triage.triage_id 
+                                                HAVING
+                                                    nombre_paciente LIKE'%$inputSearch%'  LIMIT 100");
         }else if ($inputSelect == 'POR_NSS') {
-            $sql = $this->config_mdl->_query("SELECT os_triage.triage_id, doc_43051.fecha_ingreso, CONCAT_WS(' ',triage_nombre_ap,triage_nombre_am,triage_nombre) AS nombre_paciente, CONCAT_WS(' ',pum_nss,pum_nss_agregado) AS nss, pum_nss_armado FROM os_triage, paciente_info, doc_43051 WHERE
+            $sql = $this->config_mdl->_query("SELECT os_triage.triage_id, doc_43051.fecha_ingreso, CONCAT_WS(' ',triage_nombre_ap,triage_nombre_am,triage_nombre) AS nombre_paciente, CONCAT_WS(' ',pum_nss,pum_nss_agregado) AS nss, pum_nss_armado 
+                                            FROM os_triage, paciente_info, doc_43051 WHERE
                                             paciente_info.triage_id = os_triage.triage_id AND
                                             doc_43051.triage_id     = os_triage.triage_id AND
                                             paciente_info.pum_nss   = '" . $inputSearch . "'");
@@ -661,7 +687,7 @@ class Areascriticas extends Config
     }
     public function getPacienteUCI(){
         $triage_id  = $_POST["triage_id"];
-        $paciente   = $this->config_mdl->_query('SELECT * FROM um_pacientes_'.strtolower($_GET['tipo']).' WHERE fecha_egreso_'.strtolower($_GET['tipo']).' IS NULL AND triage_id ='.$triage_id);
+        $paciente   = $this->config_mdl->_query('SELECT * FROM um_pacientes_'.strtolower($_POST['area']).' WHERE fecha_egreso_'.strtolower($_POST['area']).' IS NULL AND triage_id ='.$triage_id);
         if (empty($paciente)) {
             $this->setOutput(array('accion' => 'NOT_EXIST', 'paciente' => $paciente, 'triage_id' => $triage_id));
         }else{

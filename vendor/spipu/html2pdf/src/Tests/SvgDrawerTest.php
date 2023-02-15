@@ -2,23 +2,35 @@
 
 namespace Spipu\Html2Pdf\Tests;
 
-if (HTML2PDF_PHPUNIT_VERSION === 9) {
-    require_once 'CrossVersionCompatibility/PhpUnit9/SvgDrawerTestCase.php';
-} else {
-    require_once 'CrossVersionCompatibility/PhpUnit5/SvgDrawerTestCase.php';
-}
+use Spipu\Html2Pdf\CssConverter;
+use Spipu\Html2Pdf\SvgDrawer;
 
 /**
- * Class SvgDrawerTest
+ * Class Html2PdfTest
  */
-class SvgDrawerTest extends \Spipu\Html2Pdf\Tests\CrossVersionCompatibility\SvgDrawerTestCase
+class SvgDrawerTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var SvgDrawer
+     */
+    private $svgDrawer;
+
+    public function setUp()
+    {
+        $myPdf = $this->createMock('Spipu\Html2Pdf\MyPdf');
+
+        $cssConverter = new CssConverter();
+
+        $this->svgDrawer = new SvgDrawer($myPdf, $cssConverter);
+    }
+
+    /**
      * Test IsDrawing Exception
+     *
+     * @expectedException \Spipu\Html2Pdf\Exception\HtmlParsingException
      */
     public function testIsDrawingException()
     {
-        $this->expectException(\Spipu\Html2Pdf\Exception\HtmlParsingException::class);
         $properties = [
             'x' => 0,
             'y' => 0,

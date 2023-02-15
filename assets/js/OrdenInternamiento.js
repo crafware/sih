@@ -71,7 +71,7 @@
                         buttons: {
                             cancel: {
                                 label: 'Cancelar',
-                                className: 'back-imss'
+                                className: 'btn-imss-cancel'
                             },confirm: {
                                 label: 'Confirmar',
                                 className: 'back-imss'
@@ -178,7 +178,7 @@
                         buttons: {
                             cancel: {
                                 label: 'Cancelar',
-                                className: 'back-imss'
+                                className: 'btn-imss-cancel'
                             }, confirm: {
                                 label: 'Confirmar',
                                 className: 'back-imss'
@@ -355,7 +355,7 @@
                         buttons: {
                             cancel: {
                                 label: 'Cancelar',
-                                className: 'back-imss'
+                                className: 'btn-imss-cancel'
                             }, confirm: {
                                 label: 'Confirmar',
                                 className: 'back-imss'

@@ -38,7 +38,7 @@ $(document).ready(function() {
                                     className:'back-imss'
                                 },cancel:{
                                     label:'Cancelar',
-                                    className:'back-imss'
+                                    className:'btn-imss-cancel'
                                 }
                             },callback:function (res) {
                                 if(res==true){

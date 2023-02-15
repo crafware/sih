@@ -18,15 +18,15 @@ class Hospitalizacion extends Config{
         $this->VerificarSession();
     }
     public function index() {
-        
-        $this->load->view('index',$sql);
+        $this->load->view('index');
     }
     public function DivisionDeCalidad() {
         $sql['Piso'] = $this->config_mdl->_get_data('os_camas');    
         $this->load->view('DivisionDeCalidad', $sql);
     }
     public function DireccionEnfermeria() {
-        $sql['Piso'] = $this->config_mdl->_get_data('os_camas');    
+        $sql['Piso'] = $this->config_mdl->_get_data('os_camas');
+        $sql['Especialidades'] = $this->config_mdl->_get_data('um_especialidades');
         $this->load->view('DireccionEnfermeria', $sql);
     }
     
@@ -36,7 +36,7 @@ class Hospitalizacion extends Config{
     }
 
     public function Limpiezaehigiene(){
-        $this->load->view('Limpiezaehigiene', $sql);
+        $this->load->view('Limpiezaehigiene');
     }
 
     public function Pacientes() {
@@ -197,7 +197,7 @@ class Hospitalizacion extends Config{
             'triage_id'=>  $this->input->post('triage_id')
         ));
         
-        $this->AccesosUsuarios(array('acceso_tipo'=>'Alta de Consultorio','triage_id'=>$this->input->post('triage_id'),'areas_id'=>$ce['ce_id']));
+        $this->AccesosUsuarios(array('acceso_tipo'=>'Alta de Consultorio','triage_id'=>$this->input->post('triage_id')));
         $this->setOutput(array('accion'=>'1'));
     }
 
@@ -412,8 +412,11 @@ class Hospitalizacion extends Config{
             $status = 'Ingreso';
             $botones = '<span class="label label-success btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="1">Recibir paciente</span>';
         }elseif($cama['cama_estado'] == 'Ocupado'){
-            $botones = '<span class="label label-default btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="3">Sucia</span>
+            /*$botones = '<span class="label label-default btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="3">Sucia</span>
                         <span class="label label-danger btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="4">Contaminada</span>
+                        <span class="label label-warning btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="5">Descompuesta</span>';
+            */
+            $botones = '<span class="label label-danger btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="4">Contaminada</span>
                         <span class="label label-warning btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="5">Descompuesta</span>';
             $status = 'Ocupada';
         }elseif($cama['cama_estado'] == 'Limpia') {
@@ -422,8 +425,11 @@ class Hospitalizacion extends Config{
             }else {$botones = '<span class="label label-success btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="2">Ocupado</span>';}
             $status = 'Limpia';
         }elseif($cama['cama_estado'] == 'Reparada') {
-            $botones = '<span class="label label-default btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="3">Sucia</span>
+            /*$botones = '<span class="label label-default btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="3">Sucia</span>
                         <span class="label label-success btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="7">Vestida o Ocupada</span>';
+            */
+            $botones = '<span class="label label-success btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="7">Vestida o Ocupada</span>';
+       
         }
 
         if($pacienteInfo[0]['triage_paciente_sexo']=='HOMBRE'){
@@ -493,8 +499,8 @@ class Hospitalizacion extends Config{
                     $this->RegistroEstadosCamas($accion,$cama_id,$triage_id,$estado,$descripcion);
                     /* Hace cambio de botones */
                     $botones = '<span class="label label-default sucia" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'">Sucia</span>
-                        <span class="label label-danger contaminada" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'">Contaminada</span>
-                        <span class="label label-warning descompuesta" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'">Descompuesta</span>';
+                                <span class="label label-danger contaminada" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'">Contaminada</span>
+                                <span class="label label-warning descompuesta" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'">Descompuesta</span>';
 
                     $this->config_mdl->_update_data('doc_43051', array(
                                         'estado_cama'               => 'Asignada',
@@ -543,24 +549,28 @@ class Hospitalizacion extends Config{
                     $this->config_mdl->_update_data('os_camas_notas', array(
                         'estado'        => "1"), array(
                         'cama_id'       => $cama_id));
+                    $this->config_mdl->_update_data('os_camas', array(
+                        'proceso'        => "0"), array(
+                        'cama_id'       => $cama_id));
                 break;
             case 7: 
                     $cama=$this->config_mdl->sqlGetDataCondition('os_camas',array(
                         'cama_id' => $cama_id))[0];
-                    if(($cama['proceso'] == '2' && $cama['cama_estado'] =='Limpia') || $cama['cama_estado']=='Limpia'){
-                          $estado = 'Disponible';
-                           $this->config_mdl->_update_data('um_reporte_egresos_hospital', array(
-                                        'fecha_h_cama_vestida' => date('Y-m-d H:i')), array(
-                                        'idcama'         => $cama_id));
-                           $this->config_mdl->_update_data('os_camas', array(
-                                        'triage_id'       => Null,
-                                        'cama_estado'     => $estado,
-                                        'proceso'         => 0,
-                                        'cama_genero'     => 'Sin Especificar',
-                                        'cama_ingreso_f'  => '',
-                                        'cama_ingreso_h'  => '',
-                                        'cama_fh_estatus' => date('Y-m-d H:i')), array(
-                                        'cama_id'         => $this->input->post('cama_id')));
+                        //if(($cama['proceso'] == '2' && $cama['cama_estado'] =='Limpia')){
+                        if($cama['cama_estado'] =='Limpia'){
+                            $estado = 'Disponible';
+                            $this->config_mdl->_update_data('um_reporte_egresos_hospital', array(
+                                        'fecha_h_cama_vestida'  => date('Y-m-d H:i')), array(
+                                        'idcama'                => $cama_id));
+                            $this->config_mdl->_update_data('os_camas', array(
+                                        'triage_id'             => Null,
+                                        'cama_estado'           => $estado,
+                                        'proceso'               => 0,
+                                        'cama_genero'           => 'Sin Especificar',
+                                        'cama_ingreso_f'        => '',
+                                        'cama_ingreso_h'        => '',
+                                        'cama_fh_estatus'       => date('Y-m-d H:i')), array(
+                                        'cama_id'               => $this->input->post('cama_id')));
                     $descripcion = 'Enfermeria cambia a vestida';       
 
                     }else {

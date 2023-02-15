@@ -38,7 +38,7 @@ $(document).ready(function () {
                                     className:'back-imss'
                                 },cancel:{
                                     label:'Cancelar',
-                                    className:'back-imss'
+                                    className:'btn-imss-cancel'
                                 }
                             },callback:function (res) {
                                 if(res==true){
@@ -373,7 +373,7 @@ $(document).ready(function () {
                         buttons: {
                             cancel:{
                                label:'Cancelar',
-                               className:'back-imss'
+                               className:'btn-imss-cancel'
                             },confirm: {
                                 label: "Aceptar",
                                 className: "back-imss"
@@ -798,7 +798,7 @@ $(document).ready(function () {
                             buttons:{
                                 cancel:{
                                     label:'Cancelar',
-                                    className:'btn-danger'
+                                    className:'btn-imss-cancel'
                                 },confirm:{
                                     label:'Guardar e Imprimir',
                                     className:'back-imss'
@@ -874,7 +874,7 @@ $(document).ready(function () {
                         buttons: {
                             Cancelar:{
                                label:'Cancelar',
-                               className:'back-imss',
+                               className:'btn-imss-cancel',
                                callback:function () {}
                             },Aceptar: {
                                 label: "Solicitar Interconsulta",

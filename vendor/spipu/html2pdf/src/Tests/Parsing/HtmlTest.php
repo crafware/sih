@@ -12,17 +12,33 @@
 
 namespace Spipu\Html2Pdf\Tests\Parsing;
 
-if (HTML2PDF_PHPUNIT_VERSION === 9) {
-    require_once __DIR__ . '/../CrossVersionCompatibility/PhpUnit9/HtmlTestCase.php';
-} else {
-    require_once __DIR__ . '/../CrossVersionCompatibility/PhpUnit5/HtmlTestCase.php';
-}
+use Spipu\Html2Pdf\Parsing\Html;
 
 /**
  * Class HtmlTest
  */
-class HtmlTest extends \Spipu\Html2Pdf\Tests\CrossVersionCompatibility\HtmlTestCase
+class HtmlTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Html
+     */
+    private $object;
+
+    protected function setUp()
+    {
+        $textParser = $this->getMockBuilder('Spipu\Html2Pdf\Parsing\TextParser')
+            ->disableOriginalConstructor()
+            ->setMethods(['prepareTxt'])
+            ->getMock();
+
+        $textParser
+            ->expects($this->any())
+            ->method('prepareTxt')
+            ->will($this->returnCallback([$this, 'mockPrepareTxt']));
+
+        $this->object = new Html($textParser);
+    }
+
     /**
      * mock of prepareTxt method
      *
