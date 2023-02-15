@@ -40,25 +40,10 @@ class Hospitalizacion extends Config{
     }
 
     public function Pacientes() {
-        //$Atributos='os_triage.triage_id, fecha_ingreso, hora_atencion, triage_nombre, triage_nombre_ap, id_servicio, estado, pum_nss, pum_nss_agregado';
+        $hoy = date('Y-m-d');
+        //$fecha_de_ingreso = date('Y-m-d', strtotime( $fecha));
         $Atributos='os_triage.triage_id, fecha_ingreso, hora_atencion, triage_nombre, triage_nombre_ap, triage_nombre_am, id_servicio, estado, pum_nss, pum_nss_agregado';
-        if($this->UMAE_AREA == 'Médico COVID') {
-            
-            $sql['Gestion']=$this->config_mdl->_query("SELECT $Atributos
-            FROM
-                um_ingresos_hospitalario,
-                um_ingresos_hospitalario_llamada,
-                os_triage,
-                paciente_info
-            WHERE
-                um_ingresos_hospitalario.id = um_ingresos_hospitalario_llamada.id_ingreso
-            AND um_ingresos_hospitalario.triage_id = os_triage.triage_id
-            AND um_ingresos_hospitalario.estado != 'Salida'
-            AND os_triage.triage_id = paciente_info.triage_id
-            ORDER BY
-                um_ingresos_hospitalario_llamada.id DESC LIMIT 100");
-        }else { 
-            $sql['Gestion']=$this->config_mdl->_query("SELECT $Atributos
+        $sql['Gestion']=$this->config_mdl->_query("SELECT $Atributos
             FROM um_ingresos_hospitalario,
                  um_ingresos_hospitalario_llamada, 
                  os_triage, 
@@ -68,12 +53,7 @@ class Hospitalizacion extends Config{
                     um_ingresos_hospitalario.estado!='Salida' AND
                     os_triage.triage_id=paciente_info.triage_id AND 
                     um_ingresos_hospitalario.id_servicio=".Modules::run('Config/ObtenerEspecialidadID',array('Usuario'=>$this->UMAE_USER))." ORDER BY fecha_ingreso DESC LIMIT 100");
-        }
-        /*
-        $sql['PINFO']= $this->config_mdl->_get_data_condition('paciente_info',array(
-            'triage_id'=>$paciente
-        ))[0];
-        */
+
         $sqlMedico= $this->config_mdl->sqlGetDataCondition('os_empleados',array(
             'empleado_id'=> $this->UMAE_USER
         ));
@@ -86,6 +66,7 @@ class Hospitalizacion extends Config{
             WHERE
                 doc_43051.triage_id = os_triage.triage_id AND
                 doc_43051.estado_ingreso_med = 'Esperando' AND
+                fecha_ingreso = '$hoy' AND
                 doc_43051.ingreso_servicio ='".$especialidad['especialidad_id']."' ORDER BY id DESC LIMIT 70");
         
         $this->load->view('pacientes', $sql);
@@ -115,7 +96,7 @@ class Hospitalizacion extends Config{
         
     }
 
-    /* Funion para agregar paceinte al servicio en area Hospitalización */
+    /* Funcion para agregar paciente al servicio en area Hospitalización */
      public function AjaxAgregarIngreso() {
         $triage_id = $this->input->post('triage_id');
         if($triage_id == NULL){
@@ -712,5 +693,20 @@ class Hospitalizacion extends Config{
             $tr .= '<tr> <td colspan="5" class="text-center mayus-bold"><i class="fa fa-frown-o fa-3x" style="color:#256659"></i><br>No se encontro ningún registro</td><tr>';
             $this->setOutput(array('accion' => '1', 'tr' => $tr, 'sql' => $sql, "area" => $this->UMAE_AREA, "inputSearch" => $_POST['inputSearch'] ));
         }
+    }
+    public function BorraPacienteIngreso(){
+        $data=array(
+            'estado_ingreso_med' => 'Borrado'
+         );
+        $this->config_mdl->_update_data('doc_43051',$data,array(
+            'triage_id'=>  $this->input->post('triage_id')
+        ));
+        
+        //$this->AccesosUsuarios(array('acceso_tipo'=>'Borrado','triage_id'=>$this->input->post('triage_id'),'areas_id'=>'Hospitalización'));
+        $this->setOutput(array('accion'=>'1'));
+    }
+
+    public function BuscarPacientesPendientes (){
+        
     }
 }
