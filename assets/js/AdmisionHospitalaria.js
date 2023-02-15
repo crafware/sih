@@ -327,6 +327,7 @@ $(document).ready(function () {
     }
 
     function ModalAltaPaciente(cama_id,folio){
+        console.log(cama_id)
         $.ajax({ 
             url: base_url+"AdmisionHospitalaria/ProcesoDeAlta",
             dataType: 'json',
@@ -363,7 +364,7 @@ $(document).ready(function () {
                         buttons: {
                             cancel: {
                                 label: 'Cancelar',
-                                className: 'red'
+                                className: 'btn-imss-cancel'
                             },confirm: {
                                 label: 'Confirmar',
                                 className: 'back-imss'
@@ -431,7 +432,7 @@ $(document).ready(function () {
                             buttons: {
                                 cancel: {
                                     label: 'Cancelar',
-                                    className: 'red'
+                                    className: 'btn-imss-cancel'
                                 },confirm: {
                                     label: 'Confirmar',
                                     className: 'back-imss'
@@ -664,10 +665,10 @@ $(document).ready(function () {
             buttons:{
                 confirm:{
                     label:'Eliminar',
-                    className:'btn-imss-cancel'
+                    className:'back-imss'
                 },cancel:{
                     label:'Cancelar',
-                    className:'back-imss'
+                    className:'btn-imss-cancel'
                 }
             },callback:function (res) {
                 if(res==true){
@@ -697,10 +698,10 @@ $(document).ready(function () {
             buttons:{
                 confirm:{
                     label:'Liberar',
-                    className:'btn-imss-cancel'
+                    className:'back-imss'
                 },cancel:{
                     label:'Cancelar',
-                    className:'back-imss'
+                    className:'btn-imss-cancel'
                 }
             },callback:function (res) {
                 if(res==true){

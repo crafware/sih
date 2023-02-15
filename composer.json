@@ -4,7 +4,8 @@
 	"license": "MIT",
 	"require": {
 		"php": ">=5.2.4",
-		"spipu/html2pdf": "^5.2"
+		"spipu/html2pdf": "^5.2",
+		"mpdf/mpdf": "^8.1"
 	},
 	"require-dev": {
 		"mikey179/vfsstream": "1.1.*"

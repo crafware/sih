@@ -47,7 +47,7 @@ $(document).ready(function () {
 
                 cancel: {
                     label: 'Cancelar',
-                    className: 'red'
+                    className: 'btn-imss-cancel'
                 }
             },
             callback: function (res) {
@@ -124,7 +124,7 @@ $(document).ready(function () {
                         buttons: {
                             cancel: {
                                 label: 'Cancelar',
-                                className: 'red'
+                                className: 'btn-imss-cancel'
                             }, confirm: {
                                 label: 'Confirmar',
                                 className: 'back-imss'

@@ -2,8 +2,6 @@
 
 namespace Spipu\Html2Pdf\Tests;
 
-use Spipu\Html2Pdf\Tag\AbstractTag;
-
 /**
  * Class Html2PdfTest
  */
@@ -11,7 +9,10 @@ class Html2PdfTest extends AbstractTest
 {
     public function testExtensionTag()
     {
-        $tag = new testTag();
+        $tag = $this->createMock('Spipu\Html2Pdf\Tag\TagInterface');
+        $tag->expects($this->any())->method('getName')->willReturn('test_tag');
+        $tag->expects($this->exactly(4))->method('open');
+        $tag->expects($this->exactly(2))->method('close');
 
         $extension = $this->createMock('Spipu\Html2Pdf\Extension\ExtensionInterface');
         $extension->expects($this->any())->method('getName')->willReturn('test');
@@ -21,8 +22,6 @@ class Html2PdfTest extends AbstractTest
 
         $object->addExtension($extension);
         $object->writeHTML('<div><test_tag>Hello</test_tag></div>');
-
-        $this->assertTrue(true);
     }
 
     public function testSecurityGood()
@@ -32,32 +31,15 @@ class Html2PdfTest extends AbstractTest
         $object->writeHTML('<div><img src="https://www.spipu.net/res/logo_spipu.gif" alt="" /></div>');
         $object->writeHTML('<div><img src="/temp/test.jpg" alt="" /></div>');
         $object->writeHTML('<div><img src="c:/temp/test.jpg" alt="" /></div>');
-
-        // Ensures we assert something
-        $this->assertTrue(true);
     }
 
+    /**
+     * @expectedException \Spipu\Html2Pdf\Exception\HtmlParsingException
+     * @expectedExceptionMessage Unauthorized path scheme
+     */
     public function testSecurityKo()
     {
-        $this->expectException(\Spipu\Html2Pdf\Exception\HtmlParsingException::class);
-        $this->expectExceptionMessage('Unauthorized path scheme', \Spipu\Html2Pdf\Exception\HtmlParsingException::class);
         $object = $this->getObject();
         $object->writeHTML('<div><img src="phar://test.com/php.phar" alt="" /></div>');
-    }
-}
-
-class testTag extends AbstractTag
-{
-    public function getName()
-    {
-        return 'test_tag';
-    }
-
-    public function open($properties)
-    {
-    }
-
-    public function close($properties)
-    {
     }
 }

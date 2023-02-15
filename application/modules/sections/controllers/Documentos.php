@@ -1010,7 +1010,8 @@ class Documentos extends Config
         //-----------------solicitud_laboratorio------------
         /** Comprueba si no se ha ingresado Un diagnostico entonce manda a mensaje a Jquery que no debe de haber un diagnsotico de ingreso
          */
-        $os_camas = $this->config_mdl->_query("SELECT * FROM os_camas WHERE area_id = 1 AND triage_id =".$this->input->post('triage_id').";");
+        //$os_camas = $this->config_mdl->_query("SELECT * FROM os_camas WHERE area_id = 1 AND triage_id =".$this->input->post('triage_id').";");
+        $os_camas = $this->config_mdl->_query("SELECT * FROM os_camas WHERE triage_id =".$this->input->post('triage_id').";");
         if(!empty($os_camas) && $this->input->post('hf_estadosalud') != null){
             $estado_salud = array("estado_salud" => $this->input->post('hf_estadosalud'));
             $this->config_mdl->_update_data('os_camas', $estado_salud, array( 'triage_id'=>  $this->input->post('triage_id')));
@@ -2230,15 +2231,13 @@ class Documentos extends Config
 
         //-----------------actualisacion de estado_salud en os_camas-------//
 
-        $os_camas = $this->config_mdl->_query("SELECT * FROM os_camas WHERE  area_id = 1 AND triage_id =".$this->input->post('triage_id').";");
+        $os_camas = $this->config_mdl->_query("SELECT * FROM os_camas WHERE triage_id =".$this->input->post('triage_id').";");
         if(!empty($os_camas) && $this->input->post('nota_estadosalud') != null){
             $estado_salud = array("estado_salud" => $this->input->post('nota_estadosalud'));
             $this->config_mdl->_update_data('os_camas', $estado_salud, array( 'triage_id'=> $this->input->post('triage_id')));
         }
 
         $this->setOutput(array('accion' => '1', 'notas_id' => $id_nota));
-
-
         //-----------------solicitud_laboratorio_nota_evolución------------//
 
         if ($last_id_notas && $this->input->post('accion') == 'add') {

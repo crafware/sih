@@ -191,10 +191,10 @@ $(document).ready(function (){
                         buttons:{
                             cancel:{
                                 label:'Cancelar',
-                                className:'back-imss'
+                                className:'btn-imss-cancel'
                             },confirm:{
                                 label:'Eliminar Historial',
-                                className:'btn-imss-cancel'
+                                className:'back-imss'
                             }
                         },callback:function (res) {
                             if(res==true){

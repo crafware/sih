@@ -1278,7 +1278,52 @@ class Documentos extends Config{
         }
     }
 
-    public function valueTextLen(&$nota, $nombre, &$lim, $limColumna, $titulo_len, $limFila, $firsh)
+    public function valueTextArrayLen(&$nota,$keys, $nombre, &$lim, $limColumna, $titulo_len, $limFila, $first){
+        $aux = true;
+        for($i = 0; $i< count($nota[$nombre]); $i++){
+            $nota[$nombre . '_p1'][$i] = [];
+            if($aux){
+                for($j = 0; $j< count($keys); $j++){
+                    //$nota[$nombre . '_p1'][$i][$keys[$j]] = $nota[$nombre][$i][$keys[$j]];
+                    //$aux = $aux && $this->valueTextLen($nota[$nombre][$i][$keys[$j]], $keys[$j], $lim, $limColumna, $titulo_len, $limFila, $first);
+
+                    $text = $nota[$nombre][$i][$keys[$j]];
+                    $notaAux = &$nota[$nombre . '_p1'][$i][$keys[$j]."_p1"];
+                    if (strlen(rtrim($text," ")) != 0 && $text != null) {
+                        if ($lim > $limColumna) {
+                            $notaAux = "2";
+                            $aux = false;
+                        } else {
+                            $aux = $titulo_len;
+                            $aux += substr($text, "\n");
+                            $aux += ceil(strlen($text) / $limFila) + 1;
+                            if (($lim + $aux) > $limColumna){
+                                $notaAux = "2";
+                                $aux = false;
+                            }
+                            else
+                                $notaAux = "1";
+                            $lim += $aux;
+                        }
+                        if ($first) {
+                            $notaAux = "1";
+                        }
+                    }
+                }
+            }else{
+                for($j = 0; $j< count($keys); $j++){
+                    $this->valueTextLen($nota[$nombre][$i], $keys[$j], $lim, $limColumna, $titulo_len, $limFila, false);
+                }
+            }
+        }
+        if(count($nota[$nombre . '_p1']) > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function valueTextLen(&$nota, $nombre, &$lim, $limColumna, $titulo_len, $limFila, $first)
     {
         if (strlen(rtrim($nota[$nombre]," ")) != 0 && $nota[$nombre] != null) {
             if ($lim > $limColumna) {
@@ -1293,7 +1338,7 @@ class Documentos extends Config{
                     $nota[$nombre . '_p1'] = "1";
                 $lim += $aux;
             }
-            if ($firsh) {
+            if ($first) {
                 $nota[$nombre . '_p1'] = "1";
             }
             return true;
@@ -1714,8 +1759,7 @@ class Documentos extends Config{
         $this->load->view('documentos/NotaIngresoHosp',$sql);
     }
 
-    public function valueNotaIngresoHosp(&$sql)
-    {
+    public function valueNotaIngresoHosp(&$sql){
         $limFila = 100;
         $limColumna = 50;
         $lim = 0;
@@ -1890,7 +1934,155 @@ class Documentos extends Config{
                 $lim += $aux;
             }
         }
+        
+        $Diagnosticos = &$sql["Diagnosticos"];
+        $toma_signos = &$sql["toma_signos"];
+        $this->valueTitleLen('IMPRESION_DIAGNOSTICA', $lim, $titulo_len, $limColumna, $Diagnosticos, false);
+        $keys = array("cie10_clave", "cie10_nombre", "complemento");
+        $nombre = "Diagnosticos";
+        return 0;
+        $this->valueTextArrayLen($sql, $keys, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        
+        /*$this->valueTitleLen('Diagnostico_de_Ingreso', $lim, $titulo_len, $limColumna, $Diagnosticos, false);
+        $nombre = 'cie10_clave';
+        $this->valueTextLen($Diagnosticos, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        
+        
+        $limFila = 100;
+        $limColumna = 40;
+        $lim = 0;
+        $titulo_len = 2;
+        $nota = &$sql["Nota"];
+        
+        if ($sql['indicaciones'] == 1) {
+            
+        } else {
+            $nombre = 'nota_problema';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $nota['lim_1'] = $lim;
+            $nombre = 'nota_interrogatorio';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $nota['lim_2'] = $lim;
+            $nombre = 'nota_exploracionf';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $nota['lim_3'] = $lim;
+            $nombre = 'nota_auxiliaresd';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+
+
+
+        
+        <p style="font-weight: bold;margin-bottom: 1px">IMPRESIÓN DIAGNÓSTICA</p>
+        <p style="margin-bottom: 1px">Diagnóstico de Ingreso</p>
+        <p class="contenido"><?= $Diagnosticos[0]['cie10_clave'] ?> - <?= $Diagnosticos[0]['cie10_nombre'] ?></p>
+        <p class="contenido"><?= ($Diagnosticos[0]['complemento'] == 'S/C') ? '' : $Diagnosticos[0]['complemento']; ?></p>
+
+        <?php if (count($Diagnosticos) > 1) { ?>
+            <h5 style="margin-bottom: -6px">Diagnosticos Secundarios</h5>
+            <?php for ($x = 1; $x < count($Diagnosticos); $x++) { ?>
+                <p class="contenido"><?= $Diagnosticos[$x]['cie10_clave'] ?> - <?= $Diagnosticos[$x]['cie10_nombre'] ?></p>
+                <p class="contenido"><?= ($Diagnosticos[$x]['complemento'] === 'S/C') ? '' : $Diagnosticos[$x]['complemento']; ?></p>
+            <?php } ?>
+        <?php } ?>
+        <?php if ($nota['comentario'] != '') { ?>
+            <p style="margin-bottom: 1px">Comentario</p>
+            <p class="contenido"><?= $nota['comentario'] ?></p>
+        <?php } ?>
+        <?php if ($nota['pronostico'] != '') { ?>
+            <p style="font-weight: bold;margin-bottom: 1px">PRONÓSTICO</p>
+            <p class="contenido"><?= $nota['pronostico'] ?></p>
+        <?php } ?>
+
+        <?php if ($nota['procedimientos'] != '') { ?>
+            <h5 style="margin-bottom: -6px">PROCEDIMIENTOS REALIZADOS</h5>
+            <?php $procedimiento = explode(',', $nota['procedimientos']);
+            foreach ($procedimiento as $value_p => $procedimiento_id) {
+                $nombreProcedimiento = $this->config_mdl->_get_data_condition('um_procedimientos', array('procedimiento_id' => $procedimiento_id))[0];
+            ?>
+                <p class="contenido"><?= $nombreProcedimiento['nombre'] ?></p>
+
+            <?php } ?>
+
+        <?php } ?>
+
+        <p style="font-weight: bold;margin-bottom: 1px">PLAN Y ORDENES MÉDICAS</p>
+        <!--<p><?= print_r($nota) ?></p>-->
+        <?php if ($plan['dieta'] == '0') {
+            $nutricion = 'Ayuno';
+        } else if ($plan['dieta'] == '1') {
+            $nutricion = 'IB - Normal';
+        } else if ($plan['dieta'] == '2') {
+        } else if ($plan['dieta'] == '3') {
+            $nutricion = 'IIB - Astringente';
+        } else if ($plan['dieta'] == '4') {
+            $nutricion = 'III - Diabetica';
+        } else if ($plan['dieta'] == '5') {
+            $nutricion = 'IV - Hiposodica';
+        } else if ($plan['dieta'] == '6') {
+            $nutricion = 'V - Hipograsa';
+        } else if ($plan['dieta'] == '7') {
+            $nutricion = 'VI - Liquida clara';
+        } else if ($plan['dieta'] == '8') {
+            $nutricion = 'VIA - Liquida general';
+        } else if ($plan['dieta'] == '9') {
+            $nutricion = 'VIB - Licuada por sonda';
+        } else if ($plan['dieta'] == '10') {
+            $nutricion = 'VIB - Licuada por sonda artesanal';
+        } else if ($plan['dieta'] == '11') {
+            $nutricion = 'VII - Papilla';
+        } else if ($plan['dieta'] == '12') {
+            $nutricion = 'VIII - Epecial';
+        } else {
+            $nutricion = $plan['dieta'];
+        }
+        ?>
+        <!-- DIETA -->
+        <p class="contenido"><b>Dieta:</b> <?= $nutricion ?> <?= $plan['dieta_indicaciones'] ?></p>
+
+        <?php
+        if ($plan['toma_signos_vitales'] == '1') {
+            $toma_signos = 'Por turno';
+        } else if ($plan['toma_signos_vitales'] == '2') {
+            $toma_signos = 'Cada 4 horas';
+        } else {
+            $toma_signos = $plan['toma_signos_vitales'];
+        }
+        ?>
+        <!-- SIGNBOS VITALES -->
+        <p class="contenido"><b>Toma de Signos Vitales:</b> <?= $toma_signos ?></p>
+
+        <?php if ($plan['cuidados_genfermeria'] == '1') { ?>
+            <!-- CUIDADOS GENERALES DE ENFERMERIA -->
+            <p class="contenido"><b>Cuidados Generales:</b><br>
+                <label style="margin-left:20px;">a. Estado neurológico</label><br>
+                <label style="margin-left:20px;">b. Cama Con barandales</label><br>
+                <label style="margin-left:20px;">c. Calificación del dolor</label><br>
+                <label style="margin-left:20px;">d. Calificación de riesgo de caida</label><br>
+                <label style="margin-left:20px;">e. Control de liquidos por turno</label><br>
+                <label style="margin-left:20px;">f. Vigilar riesgo de ulceras por presión</label><br>
+                <label style="margin-left:20px;">g. Aseo bucal</label><br>
+                <label style="margin-left:20px;">h. Lavado de manos</label>
+            </p>
+        <?php } ?>
+        <!-- CUIDADOS ESPECIFICOS DE ENFERMERIA -->
+        <?php if ($plan['cuidados_eenfermeria'] != '') { ?>
+            <p style="font-weight: bold;margin-bottom: 1px">Cuidados Especificos de Enfermeria:</p>
+            <p class="contenido"><?= $plan['cuidados_eenfermeria'] ?></p>
+        <?php } ?>
+        <!-- SOLUCIONES PARANTERALES -->
+        <?php if ($plan['soluciones_parenterales'] != '') { ?>
+            <p class="contenido"><b>Soluciones Parenterales:</b>
+                <?= $plan['soluciones_parenterales'] ?></p>
+        <?php } ?>
+
+        <!-- Alergia a medicamentos -->
+        <!-- <?php echo (count($AlergiaMedicamentos) > 0) ? '<h5 style="margin-bottom: -6px">ALERGIA A MEDICAMENTOS</h5>' : ''; ?>
+            <?php for ($x = 0; $x < count($AlergiaMedicamentos); $x++) { ?>
+              <?= ($x + 1) . ") " . $AlergiaMedicamentos[$x]['medicamento'] ?><br>
+            <?php } ?> -->
+        <!-- Fin alergia a medicamentos -->*/
     }
+
     public function GenerarNotaProcedimientos($Nota) {
 
         $sql['notaProcedimientos']= $this->config_mdl->_query("SELECT * FROM doc_notas, um_notas_procedimientos WHERE
@@ -2309,5 +2501,155 @@ class Documentos extends Config{
         ));
         
         $this->load->view('Documentos/NotaIndicacionesHosp',$sql);
+    }
+    public function reporteEstadoSaludPiso(){
+        $piso_id = $_GET["piso_id"];
+        $especialidad_id = $_GET["especialidad_id"];
+        $sql = array();
+        $sql["data"] = array(); 
+        if($piso_id != NULL){
+            $sql["ingresos"] = $this->config_mdl->_query("SELECT
+                                                        os_camas.cama_nombre,
+                                                        os_camas.triage_id,
+                                                        CONCAT( os_triage.triage_nombre_ap, ' ', os_triage.triage_nombre_am, ' ', os_triage.triage_nombre ) nombre,
+                                                        um_especialidades.especialidad_nombre,
+                                                        doc_43051.hora_ingreso,
+                                                        doc_43051.fecha_ingreso,
+                                                        doc_43051.tipo_ingreso
+                                                    FROM
+                                                        os_camas
+                                                        LEFT JOIN um_especialidades ON um_especialidades.especialidad_id = os_camas.id_servicio_trat
+                                                        LEFT JOIN os_triage         ON os_triage.triage_id = os_camas.triage_id
+                                                        LEFT JOIN doc_43051         ON doc_43051.triage_id = os_camas.triage_id 
+                                                    WHERE
+                                                        fecha_ingreso = DATE_FORMAT( now(), '%Y-%m-%d' ) 
+                                                        AND os_camas.area_id = ".$piso_id);
+            for($i = 0;$i<count($sql["ingresos"]);$i++){
+                $Cam = $this->config_mdl->_query("SELECT * FROM os_camas_log WHERE cama_log_tipo LIKE 'Cam%' AND triage_id = " . $sql["ingresos"][$i]["triage_id"]);
+                if ($Cam[0] != null){
+                    $sql["ingresos"][$i]["Cam"] = end($Cam)["cama_log_tipo"];
+                }
+            }
+            $sql["piso"]    = $this->config_mdl->_query("SELECT * FROM os_pisos WHERE area_id = ".$piso_id)[0];
+            $sql["egresos"] = $this->config_mdl->_query("SELECT
+                                                        os_camas.cama_nombre,
+                                                        os_camas.triage_id,
+                                                        CONCAT( os_triage.triage_nombre_ap, ' ', os_triage.triage_nombre_am, ' ', os_triage.triage_nombre ) paciente_nombre,
+                                                        um_especialidades.especialidad_nombre,
+                                                        um_motivo_egreso.nombre,
+                                                        um_reporte_egresos_hospital.tipo_ingreso,
+                                                        um_reporte_egresos_hospital.fecha_h_alta_medico,
+                                                        doc_43051.hora_egreso
+                                                    FROM
+                                                        um_reporte_egresos_hospital
+                                                        LEFT JOIN os_camas 	    	ON os_camas.cama_id = um_reporte_egresos_hospital.idcama
+                                                        LEFT JOIN os_triage 		ON os_triage.triage_id = um_reporte_egresos_hospital.idfolio 
+                                                        LEFT JOIN um_especialidades ON um_especialidades.especialidad_id = um_reporte_egresos_hospital.idservicio
+                                                        LEFT JOIN um_motivo_egreso 	ON um_motivo_egreso.id = um_reporte_egresos_hospital.motivoalta
+                                                        LEFT JOIN doc_43051         ON doc_43051.triage_id = os_triage.triage_id
+                                                    WHERE
+                                                        fecha_alta = DATE_FORMAT(now(),'%d-%m-%Y')
+                                                        AND os_camas.area_id =".$piso_id);
+            for($i = 0;$i<count($sql["egresos"]);$i++){
+                $Cam = $this->config_mdl->_query("SELECT * FROM os_camas_log WHERE cama_log_tipo LIKE 'Cam%' AND triage_id = " . $sql["egresos"][$i]["triage_id"]);
+                if ($Cam[0] != null){
+                    $sql["egresos"][$i]["Cam"] = end($Cam)["cama_log_tipo"];
+                }
+            }
+            $camas = $this->config_mdl->_query("SELECT * FROM os_camas WHERE area_id = " .  $piso_id);
+            $sql["data"]["numero_camas"] = count($camas); 
+            $n = 0;
+            foreach($camas as $c)
+                if($c["triage_id"] > 0)
+                    $n += 1;
+            $sql["data"]["pacientes_actuales"] = $n;
+            $sql["data"]["camas_vacias"] = count($camas) - $n; 
+        }else if ($especialidad_id){
+            $sql["especialidad_nombre"] = $this->config_mdl->_query("SELECT especialidad_nombre FROM um_especialidades WHERE especialidad_id = ".$especialidad_id)[0];
+            $sql["ingresos"] = $this->config_mdl->_query("SELECT
+                                                        os_camas.cama_nombre,
+                                                        os_camas.triage_id,
+                                                        CONCAT( os_triage.triage_nombre_ap, ' ', os_triage.triage_nombre_am, ' ', os_triage.triage_nombre ) nombre,
+                                                        doc_43051.hora_ingreso,
+                                                        doc_43051.fecha_ingreso,
+                                                        doc_43051.tipo_ingreso
+                                                    FROM
+                                                        os_camas
+                                                        LEFT JOIN os_triage         ON os_triage.triage_id = os_camas.triage_id
+                                                        LEFT JOIN doc_43051         ON doc_43051.triage_id = os_camas.triage_id 
+                                                    WHERE
+                                                        fecha_ingreso = DATE_FORMAT( now(), '%Y-%m-%d' ) 
+                                                        AND os_camas.id_servicio_trat = ".$especialidad_id);
+            for($i = 0;$i<count($sql["ingresos"]);$i++){
+                $Cam = $this->config_mdl->_query("SELECT * FROM os_camas_log WHERE cama_log_tipo LIKE 'Cam%' AND triage_id = " . $sql["ingresos"][$i]["triage_id"]);
+                if ($Cam[0] != null){
+                    $sql["ingresos"][$i]["Cam"] = end($Cam)["cama_log_tipo"];
+                }
+            }
+            //$sql["piso"]    = $this->config_mdl->_query("SELECT * FROM os_pisos WHERE area_id = ".$piso_id)[0];
+            $sql["egresos"] = $this->config_mdl->_query("SELECT
+                                                        os_camas.cama_nombre,
+                                                        os_camas.triage_id,
+                                                        CONCAT( os_triage.triage_nombre_ap, ' ', os_triage.triage_nombre_am, ' ', os_triage.triage_nombre ) paciente_nombre,
+                                                        um_motivo_egreso.nombre,
+                                                        um_reporte_egresos_hospital.tipo_ingreso,
+                                                        um_reporte_egresos_hospital.fecha_h_alta_medico,
+                                                        doc_43051.hora_egreso
+                                                    FROM
+                                                        um_reporte_egresos_hospital
+                                                        LEFT JOIN os_camas 	    	ON os_camas.cama_id = um_reporte_egresos_hospital.idcama
+                                                        LEFT JOIN os_triage 		ON os_triage.triage_id = um_reporte_egresos_hospital.idfolio 
+                                                        LEFT JOIN um_motivo_egreso 	ON um_motivo_egreso.id = um_reporte_egresos_hospital.motivoalta
+                                                        LEFT JOIN doc_43051         ON doc_43051.triage_id = os_triage.triage_id
+                                                    WHERE
+                                                        fecha_alta = DATE_FORMAT(now(),'%d-%m-%Y')
+                                                        AND os_camas.id_servicio_trat = ".$especialidad_id);
+            for($i = 0;$i<count($sql["egresos"]);$i++){
+                $Cam = $this->config_mdl->_query("SELECT * FROM os_camas_log WHERE cama_log_tipo LIKE 'Cam%' AND triage_id = " . $sql["egresos"][$i]["triage_id"]);
+                if ($Cam[0] != null){
+                    $sql["egresos"][$i]["Cam"] = end($Cam)["cama_log_tipo"];
+                }
+            }
+            //$camas = $this->config_mdl->_query("SELECT * FROM os_camas WHERE area_id = " .  $piso_id);
+            $sql["data"]["numero_camas"] = "No aplica"; 
+            $sql["data"]["pacientes_actuales"] = "No aplica";
+            $sql["data"]["camas_vacias"] = "No aplica";
+
+        }
+        $sql["data"]["hoy"] = date('d/m/Y');
+        $sql["data"]["pacientes_Ing_Egr_dia"] = count($sql["egresos"]) + count($sql["ingresos"]);
+        $this->load->view('Documentos/ReporteEstadoSaludPiso',$sql);
+    }
+    public function reporteEstadoSaludPisoAC(){
+        $piso_id = $_GET["piso_id"];
+        $sql["ingresos"] = $this->config_mdl->_query("SELECT
+                                                    os_camas.cama_nombre,
+                                                    CONCAT(os_triage.triage_nombre_ap,' ',os_triage.triage_nombre_am,' ',os_triage.triage_nombre) nombre,
+                                                    um_especialidades.especialidad_nombre,
+                                                    os_camas.estado_salud,
+                                                    CONCAT( empleado_nombre, ' ', empleado_apellidos ) medico
+                                                FROM
+                                                    os_camas
+                                                    LEFT JOIN um_especialidades ON um_especialidades.especialidad_id = os_camas.id_servicio_trat 
+                                                    LEFT JOIN os_empleados      ON os_camas.id_medico_trat = os_empleados.empleado_id 
+                                                    LEFT JOIN os_triage         ON os_triage.triage_id = os_camas.triage_id 
+                                                WHERE
+                                                    area_id = ".$piso_id);
+        $sql["piso"] = $this->config_mdl->_query("SELECT * FROM os_pisos WHERE area_id = ".$piso_id)[0];
+        $sql["egresos"] = $this->config_mdl->_query("SELECT
+                                                    os_camas.cama_nombre,
+                                                    CONCAT( os_triage.triage_nombre_ap, ' ', os_triage.triage_nombre_am, ' ', os_triage.triage_nombre ) nombre,
+                                                    um_especialidades.especialidad_nombre,
+                                                    um_motivo_egreso.nombre
+                                                FROM
+                                                    um_reporte_egresos_hospital
+                                                    LEFT JOIN os_camas 	    	ON os_camas.cama_id = um_reporte_egresos_hospital.idcama
+                                                    LEFT JOIN os_triage 		ON os_triage.triage_id = um_reporte_egresos_hospital.idfolio 
+                                                    LEFT JOIN um_especialidades ON um_especialidades.especialidad_id = um_reporte_egresos_hospital.idservicio
+                                                    LEFT JOIN um_motivo_egreso 	ON um_motivo_egreso.id = um_reporte_egresos_hospital.motivoalta
+                                                WHERE
+                                                    fecha_alta = DATE_FORMAT(now(),'%d-%m-%Y')
+                                                    AND os_camas.area_id =".$piso_id);
+        $this->load->view('Documentos/ReporteEstadoSaludPiso',$sql);
     }
 }

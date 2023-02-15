@@ -14,7 +14,7 @@ $(document).ready(function () {
                 },
                 cancel: {
                     label: 'No',
-                    className: 'back-imss'
+                    className: 'btn-imss-cancel'
                 }
             },
             callback: function (result) {
@@ -59,7 +59,7 @@ $(document).ready(function () {
                 },
                 cancel: {
                     label: 'No',
-                    className: 'back-imss'
+                    className: 'btn-imss-cancel'
                 }
             },
             callback: function (result) {
@@ -242,7 +242,7 @@ $(document).ready(function () {
                 },
                 cancel: {
                     label: 'No',
-                    className: 'back-imss'
+                    className: 'btn-imss-cancel'
                 }
             },
             callback: function (result) {
