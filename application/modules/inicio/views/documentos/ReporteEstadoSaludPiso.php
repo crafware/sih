@@ -6,7 +6,7 @@
       <div style="position: absolute;margin-left: 370px;margin-top: 0px;width: 670px;text-transform: uppercase;font-size: 11px;text-align: left;">
         <h4>INSTITUTO MEXICANO DEL SEGURO SOCIAL</h4>
       </div>
-      <div style="position: absolute;margin-left: 460px;margin-top: 20px;width: 600px;text-transform: uppercase;font-size: 14px;">
+      <div style="position: absolute;margin-left: 485px;margin-top: 20px;width: 600px;text-transform: uppercase;font-size: 14px;">
         <h4>CENSO DIARIO</h4>
       </div>
       <div style="position: absolute;margin-left: 0px;margin-top: 105px;width: 470px;text-transform: uppercase;font-size: 11px;">
@@ -27,6 +27,9 @@
       <?php } ?>
       <div style="position: absolute;margin-left: 0px;margin-top: 125px;width: 770px;text-transform: uppercase;font-size: 11px;">
         <b>FECHA: <?= $data["hoy"] ?> DE LAS 0:00 HORAS A LAS 24:00 HORAS</b>
+      </div>
+      <div style="position: absolute;margin-left: 950px;margin-top: 125px;width: 770px;text-transform: uppercase;font-size: 11px;">
+        <b>TURNO: <?= Modules::run('Config/ObtenerTurno') ?></b>
       </div>
     </div>
   </page_header>
@@ -99,57 +102,39 @@
   <div style="position: absolute;margin-left: -20px;margin-top: 0px;width: 770px;font-size: 10px;">
     <table style="table-layout: fixed;width: 880px;">
       <tr>
-        <th style="border-top:1px solid blac; border-bottom:1px solid blac; border-left:1px solid blac; border-collapse: collapse; width:3%">
-          <p></p>
-        </th>
-        <th style="border-top:1px solid blac; border-bottom:1px solid blac; border-collapse: collapse; width:3%">
-          <p></p>
-        </th>
-        <th style="border-top:1px solid blac; border-bottom:1px solid blac; border-collapse: collapse;  width:30%">
+        <th colspan="4" style="border: 1px solid black;border-collapse: collapse;">
           <p>I N G R E S O S</p>
         </th>
-        <th style="border-top:1px solid blac; border-bottom:1px solid blac; border-right:1px solid blac; border-collapse: collapse;  width:20%">
-          <p></p>
-        </th>
-        <th class="page_footer_tr" style="width:2%;border-right:1px solid blac;"></th>
-        <th style="border-top:1px solid blac; border-bottom:1px solid blac; border-left:1px solid blac; border-collapse: collapse; width:3%">
-          <p></p>
-        </th>
-        <th style="border-top:1px solid blac; border-bottom:1px solid blac; border-collapse: collapse; width:3%">
-          <p></p>
-        </th>
-        <th style="border-top:1px solid blac; border-bottom:1px solid blac; border-collapse: collapse;  width:30%">
+        <th style="border-right: solid;"></th>
+        <th colspan="4" style="border: 1px solid black;border-collapse: collapse;">
           <p>E G R E S O S</p>
-        </th>
-        <th style="border-top:1px solid blac; border-bottom:1px solid blac; border-right:1px solid blac; border-collapse: collapse;  width:20%">
-          <p></p>
         </th>
       </tr>
       <tr>
-        <td>
+        <td style="width:3%">
           <p>HORA</p>
         </td>
-        <td>
+        <td style="width:3%">
           <p>CAMA</p>
         </td>
-        <td>
+        <td style="width:30%">
           <p>NOMBRE</p>
         </td>
-        <td>
+        <td style="width:20%">
           <p>OBSERVACIONES</p>
         </td>
-        <td class="page_footer_tr" style="border-right:1px solid blac;">
+        <td class="page_footer_tr" style="border-right:1px solid blac;width:2%;">
         </td>
-        <td>
+        <td style="width:3%">
           <p>HORA</p>
         </td>
-        <td>
+        <td style="width:3%">
           <p>CAMA</p>
         </td>
-        <td>
+        <td style="width:30%">
           <p>NOMBRE</p>
         </td>
-        <td>
+        <td style="width:20%">
           <p>OBSERVACIONES</p>
         </td>
       </tr>
@@ -296,7 +281,8 @@
           </table>
         </div>
       <?php } ?>
-      <div style="position: absolute;margin-left: 700px;margin-top: 720px;width: 300px;font-size: 12px;">
+      <div style="position: absolute;margin-left: 700px;margin-top: 707px;width: 300px;font-size: 12px;">
+        <P><?= $empleado["empleado_apellidos"]?> <?= $empleado["empleado_nombre"]?></P>
         <p>---------------------------------------------------------</p>
         <p>NOMBRE Y FIRMA DE LA JEFE DE PISO</p>
       </div>

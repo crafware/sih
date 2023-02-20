@@ -371,9 +371,18 @@ figure .mapa {
 	</div>
 	<input type="hidden" name="area" value="<?= $this->UMAE_AREA?>">
 </div>
-
-
  <?= modules::run('Sections/Menu/footer'); ?>
+ <script>
+ var Especialidades = <?= json_encode($Especialidades) ?>;
+		var inputOptions = [{ text: '', value: ''}];
+		for(var i = 0;i < Especialidades.length; i++){
+			var aux = {
+				text: 	Especialidades[i]["especialidad_nombre"],
+				value:	Especialidades[i]["especialidad_id"]
+			}
+			inputOptions.push(aux)
+		}
+</script>
 <script src="<?=  base_url()?>assets/libs/bootstrap-popper/popper.min.js"></script>
 <script src="<?= base_url('assets/js/AdmisionHospitalaria.js?'). md5(microtime())?>" type="text/javascript"></script>
 <script src="<?= "http://".getServerIp().':3001/socket.io/socket.io.js'?>" type="text/javascript"></script>

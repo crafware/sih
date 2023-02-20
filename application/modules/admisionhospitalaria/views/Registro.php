@@ -3,7 +3,10 @@
   input{
     text-transform:uppercase;
   }
-</style>
+  input[data-readonly] {
+    pointer-events: none;
+  }
+</style> 
 <!-- vista de registro de paceintes en Admision Hospitalaria -->
 <div class="col-md-12 col-centered">
   <div class="box-inner padding">      
@@ -344,7 +347,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group">
-              <label style="font-weight: bold">Médico Tratanteeeeee</label>
+              <label style="font-weight: bold">Médico Tratante</label>
               <select name="ingreso_medico" id="divMedicos" class="form-control" data-value="<?=$Doc43051['ingreso_medico']?>" required>
                   <!-- Se llena las opciones de manera dinamica desde ajax y controlador -->
                 <option value='' disabled selected>Seleccionar</option>
@@ -405,7 +408,8 @@
           <div class="col-md-4">
             <div class="form-group">
               <label for=""><b><span><i class="fa fa-clock"></i></span>Hora de Ingreso</b></label>
-                <input class="form-control clockpicker hr_ingreso" name="hr_ingreso" placeholder="hr:min" value="<?=$Doc43051['hora_ingreso']?>" required>
+                <input class="form-control clockpicker readonly" name="hr_ingreso" placeholder="hr:min" value="<?=$Doc43051['hora_ingreso']?>"data-inputmask="'mask': '99:99'" required>
+                <p id = "error_hora"></p>
             </div>
           </div>
           <div class="col-md-4">
@@ -448,6 +452,13 @@
 <script src="<?= base_url('assets/js/Asistentemedica_hosp.js?'). md5(microtime())?>" type="text/javascript"></script>
 
 <script>
+  
+  function checkIfInputHasVal(){
+      if($("#formAfterRederict").val==""){
+            //alert("formAfterRederict should have a value");
+            return false;
+      }
+    }
   function checkResponsable(){
     console.log("<?=$DirPaciente["responsable"]['triage_id']?>");
     DR1 = document.getElementById("DR1");
@@ -488,12 +499,15 @@
    $(".dateIngreso").datepicker({
         language: "es",
         autoclose: true
-    });
-   $(".hr_ingreso").clockpicker({
-        placement: "top",
-        autoclose: true
-    });
-  
+  });
+  $(".hr_ingreso").clockpicker({
+      placement: "top",
+      autoclose: true
+  });
+  $(".readonly").on('keydown paste focus mousedown', function(e){
+      if(e.keyCode != 9) // ignore tab
+          e.preventDefault();
+  });
   $('.especialidad').change(function(){
       var especialidad_id = $("select[name=ingreso_servicio]").val();
       $.ajax({
@@ -515,7 +529,12 @@
     });
   //$('#aisgnarCama').click()
 
-   $('.registro43051').submit(function (e){    
+   $('.registro43051').submit(function (e){
+      //var hr_ingreso = document.getElementsByClassName("hr_ingreso")[0].val();
+      /*if(hr_ingreso.include("_")){
+        //document.getElementById("error_hora").innerTe = 'Hora de ingreso incompleta';
+        return 0
+      }*/
         e.preventDefault();
         $.ajax({
             url: base_url+"AdmisionHospitalaria/Ajaxregistro43051",
