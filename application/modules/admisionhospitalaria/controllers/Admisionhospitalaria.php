@@ -2612,12 +2612,12 @@ class Admisionhospitalaria extends Config{
         if(!empty($servicio_egreso)){
           $salidaServicio = $servicio_egreso;
           $salidaMedico = $this->input->post('medico_egreso');
-          $motivoEgreso = $this->input->post('motivo_egreso');
+          $motivoAlta = $this->input->post('motivo_egreso');
           $proceso      = 2;
         }else {
           $salidaServicio = $notaAlta['empleado_servicio_id'];
           $salidaMedico   = $notaAlta['notas_medicotratante'];
-          $motivoalta     = $notaAlta['motivo_egreso'];
+          $motivoAlta     = $notaAlta['motivo_egreso'];
           $fecha_prealta  = $notaAlta['fecha_nota'];
           $fecha_h_prealta= $notaAlta['fecha_nota'].' '.$notaAlta['hora_nota'];
           $fecha_h_alta_medico= $notaAlta['fecha_hora_alta'];

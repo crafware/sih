@@ -20,7 +20,7 @@ socket.on("getDataRequest", function (data) {
 });
 var dropdownToggleForbidden = ["Limpieza e Higiene", "Conservación"]
 var AreasSemaforo = ["Limpieza e Higiene", "Enfermería Hospitalización", "Conservación"]
-var AreasOctionsLimpiezaEHigiene = ["Limpieza e Higiene", "Enfermería Hospitalización"]
+var AreasOctionsLimpiezaEHigiene = ["Limpieza e Higiene", "Enfermería Hospitalización", "Dirección Enfermería "]
 
 socket.on("getDataTooltip", function (data) {
   if (data["dataTooltip"].length > 0) {
@@ -229,7 +229,7 @@ function refreshGraphics(data) {
             var camas_Ocupadas = findBed(colorCamaEstado['HOMBRE']) + findBed(colorCamaEstado['MUJER'])
             var camas_Reservadas = findBed(colorCamaEstado['Reservada'])
             var camas_Contaminadas = findBed(colorCamaEstado['Contaminada'])
-            var porcentaje_o = (1 - (camas_Disponibles / camas_totales)) * 100;
+            var porcentaje_o = (camas_Ocupadas / camas_totales) * 100;
             var aux = ""
             //Limpieza hugiene
             aux = document.getElementsByClassName("ocupadas")[0];
@@ -267,6 +267,7 @@ function refreshGraphics(data) {
             if (aux) { aux.innerText = camas_Contaminadas + ContaminadasT; }
             aux = document.getElementsByClassName("camas-reparadas")[0];
             if (aux) { aux.innerText = camas_Reparadas + ReparadasT; }
+            console.log(1)
             if (0 != document.getElementsByClassName("dropdown-toggle").length) {
               if (dropdownToggle.find(element => element.trim() === document.getElementsByClassName("dropdown-toggle")[0].textContent.trim())) {
                 if (data["triage"].length == 0) {
@@ -277,6 +278,14 @@ function refreshGraphics(data) {
                 return 0;
               }
             }
+            console.log(2)
+            if ($('input[name=area]').val() === "Dirección Enfermería ") {
+              console.log(3)                
+              delecteOctions(cama_no);
+              createOctionsDireccionEnfermeria(cama_no, data);
+              createOctionsLimpiezaEHigiene(cama_no, data);
+            }
+            console.log(5)
             if (dropdownToggle.find(element => element.trim() === $('input[name=area]').val())) {
               if (data["triage"].length == 0) {
                 delecteOctions(cama_no);
@@ -289,7 +298,7 @@ function refreshGraphics(data) {
             }
             if (AreasSemaforo.find(element => element.trim() === $('input[name=area]').val()) || $('input[name=area]').val() == 'Dirección Enfermería ') {
               var cama_no = bed.getElementsByClassName("cama-no")[0];
-              if (AreasOctionsLimpiezaEHigiene.find(element => element.trim() === $('input[name=area]').val())) {
+              if (AreasOctionsLimpiezaEHigiene.find(element => element.trim() === $('input[name=area]').val()) ) {
                 delecteOctions(cama_no);
                 createOctionsLimpiezaEHigiene(cama_no, data);
               }
@@ -344,7 +353,8 @@ var estadoslabel = [
   "label-success",
 ]
 var estadoCama = {
-  "Ocupado":[3,4,5],
+  //"Ocupado":[3,4,5],
+  "Ocupado":[4,5],
   "Reservada":[1],
   "Disponible":[],
   "Contaminada":[],
@@ -361,9 +371,6 @@ function updateButtonsEstados(data){
       console.log(buttonsEstados)
       if(buttonsEstados != undefined){
         var innerHTMLEstados = ""
-        console.log(cama_estado)
-        console.log(estadoCama)
-        console.log(estadoCama[cama_estado])
         for(const e of estadoCama[cama_estado]){
           console.log(e)
           innerHTMLEstados += '<span class="label '+estadoslabel[e]+' btnAccion" data-cama="'+cama["cama_id"]+'" data-folio="'+cama["triage_id"]+'" data-accion="'+e+'">'+estados[e]+'</span>'
@@ -394,7 +401,7 @@ function refreshGeneralData() {
   var camas_Ocupadas = findBed(colorCamaEstado['HOMBRE']) + findBed(colorCamaEstado['MUJER'])
   var camas_Reservadas = findBed(colorCamaEstado['Reservada'])
   var camas_Contaminadas = findBed(colorCamaEstado['Contaminada'])
-  var porcentaje_o = (1 - (camas_Disponibles / camas_totales)) * 100;
+  var porcentaje_o = (camas_Ocupadas / camas_totales) * 100;
   var aux = ""
   //Limpieza hugiene
   aux = document.getElementsByClassName("ocupadas")[0];
@@ -509,37 +516,45 @@ function refreshGraphicsEnf(data) {
 }
 
 function createOctionsDireccionEnfermeria(cama_no, data) {
-  var cama_estado1 = data["bed"][0]["before"]["cama_estado"]
-  var cama_estado2 = data["bed"][0]["after"]["cama_estado"]
-  if ((cama_estado1 != 'Limpia') && (cama_estado2 == 'Limpia')) {
-    var sqlPaciente = data["triage"]
+  if(cama_no == undefined){return 0}
+  console.log("createOctionsDireccionEnfermeria")
+  var cama_estado = data["bed"][0]["after"]["cama_estado"]
+  console.log(data)
+  if (cama_estado == 'Reservada') {
     var valor = data["bed"][0]["after"];
     var nombreCama = '<li><h5 class="text-center link-acciones bold">Cama ' + valor['cama_nombre'] + '</h5></li>';
-    var CambiarCama = '<li><a href="#" class="cambiar-cama-paciente" data-id="' + sqlPaciente[0]['triage_id'] + '" data-area="' + valor['area_id'] + '" data-cama="' + valor['cama_nombre'] + '" data-cama-id="' + valor['cama_id'] + '" data-sexo="' + valor['cama_genero'] + '"><i class="fa fa-bed icono-accion"></i> Cambiar Cama</a></li>';
-    var Imprimir43051 = '<li><a href="#" class="generar43051" data-triage="' + sqlPaciente[0]['triage_id'] + '" data-cama="' + valor['cama_id'] + '"><i class="fa fa-print icono-accion"></i> Generar 43051</a></li>';
-    //var CancelarIngreso   = '<li><a href="#" class="cancelar43051" data_triage="'       + sqlPaciente[0]['triage_id'] + '" data-cama="'+valor['cama_id']+'"><i class="fa fa-ban icono-accion"></i> Cancelar Ingreso</a></li>';
-    //var LiberarCama       = '<li><a href="#" class="liberar43051" data-triage="'        + sqlPaciente[0]['triage_id'] + '" data-cama="'+valor['cama_id']+'"><i class="fa fa-share-square-o icono-accion"></i> Liberar Cama</a></li>'; 
-    var AltaPaciente = '<li><a class="alta-paciente" data-area="' + valor['area_id'] + '" data-cama="' + valor['cama_id'] + '" data-triage="' + sqlPaciente[0]['triage_id'] + '"><i class="fa fa-id-badge icono-accion"></i> Alta Paciente</a></li>';
+    var OcuparCama = '<li><a href="#" class="ocuparCama" data-triage="' + valor['triage_id'] + '" data-cama="' + valor['cama_id'] + '" data-camanombre="' + valor['cama_nombre'] + '"><i class="fa fa-bed icono-accion"></i>  Ocupar cama</a></li>';
     var str = '<ul class="list-inline list-menu">' +
       '<li class="dropdown">' +
       '<a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">' +
       '<i class="fa fa-bed"></i>' +
       '</a>' +
-      '<ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' + nombreCama + ' ' + CambiarCama + ' ' + Imprimir43051 + ' ' + AltaPaciente + '</ul>' +
+      '<ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' + nombreCama + ' ' + OcuparCama + '</ul>' +
       '</li>' +
       '</ul>';
-  } else if (cama_estado == 'Reservada') {
-    var sqlPaciente = data["triage"]
+  } else {
+    return 0;
+  }
+  var h6 = cama_no.getElementsByTagName("h6")[0].outerHTML
+  var div = cama_no.getElementsByClassName("tooltip")[0].outerHTML
+
+  cama_no.innerHTML = str + h6 + div
+}
+
+function createOctionsUCI(cama_no, data) {
+  if(cama_no == undefined){return 0}
+  var cama_estado = data["bed"][0]["after"]["cama_estado"]
+  if (cama_estado == 'Ocupado' || cama_estado == 'Ocupado') {
     var valor = data["bed"][0]["after"];
     var nombreCama = '<li><h5 class="text-center link-acciones bold">Cama ' + valor['cama_nombre'] + '</h5></li>';
-    var Imprimir43051 = '<li><a href="#" class="generar43051" data-triage="' + sqlPaciente[0]['triage_id'] + '" data-cama="' + valor['cama_id'] + '"><i class="fa fa-print icono-accion"></i> Generar 43051</a></li>';
-    var LiberarCama = '<li><a href="#" class="liberar43051" data-triage="' + sqlPaciente[0]['triage_id'] + '" data-cama="' + valor['cama_id'] + '"><i class="fa fa-share-square-o icono-accion"></i> Liberar Cama</a></li>';
+    var Expediente = '<li><a class = "abrirExpediente" data = ' + valor['triage_id'] + '  href=""  data1 = "http://' + window.location.host + '/Sections/Documentos/Expediente/' + valor['triage_id'] + '/?tipo=Hospitalizacion"  target="_blank"><i class="fa fa-share-square-o icono-accion"></i>Ver expediente</a></li>';
+
     var str = '<ul class="list-inline list-menu">' +
       '<li class="dropdown">' +
       '<a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">' +
       '<i class="fa fa-bed"></i>' +
       '</a>' +
-      '<ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' + nombreCama + ' ' + Imprimir43051 + '  ' + LiberarCama + '</ul>' +
+      '<ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' + nombreCama + ' ' + AltaPaciente + ' ' + Expediente + '</ul>' +
       '</li>' +
       '</ul>';
   } else {
@@ -552,6 +567,7 @@ function createOctionsDireccionEnfermeria(cama_no, data) {
 }
 
 function createOctions(cama_no, data) {
+  if(cama_no == undefined){return 0}
   var cama_estado = data["bed"][0]["after"]["cama_estado"]
   if (cama_estado == 'Ocupado') {
     var sqlPaciente = data["triage"]
@@ -576,36 +592,13 @@ function createOctions(cama_no, data) {
     var nombreCama = '<li><h5 class="text-center link-acciones bold">Cama ' + valor['cama_nombre'] + '</h5></li>';
     var Imprimir43051 = '<li><a href="#" class="generar43051" data-triage="' + sqlPaciente[0]['triage_id'] + '" data-cama="' + valor['cama_id'] + '"><i class="fa fa-print icono-accion"></i> Generar 43051</a></li>';
     var LiberarCama = '<li><a href="#" class="liberar43051" data-triage="' + sqlPaciente[0]['triage_id'] + '" data-cama="' + valor['cama_id'] + '"><i class="fa fa-share-square-o icono-accion"></i> Liberar Cama</a></li>';
+    var OcuparCama ='<li><a href="#" class="ocuparCama" data-triage="' + sqlPaciente[0]['triage_id'] + '" data-cama="' + valor['cama_id'] + '"data-camanombre=' + valor['cama_nombre'] + '><i class="fa fa-bed icono-accion"></i>  Ocupar cama</a></li>'
     var str = '<ul class="list-inline list-menu">' +
       '<li class="dropdown">' +
       '<a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">' +
       '<i class="fa fa-bed"></i>' +
       '</a>' +
-      '<ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' + nombreCama + ' ' + Imprimir43051 + '  ' + LiberarCama + '</ul>' +
-      '</li>' +
-      '</ul>';
-  } else {
-    return 0;
-  }
-  var h6 = cama_no.getElementsByTagName("h6")[0].outerHTML
-  var div = cama_no.getElementsByClassName("tooltip")[0].outerHTML
-
-  cama_no.innerHTML = str + h6 + div
-}
-
-function createOctionsUCI(cama_no, data) {
-  var cama_estado = data["bed"][0]["after"]["cama_estado"]
-  if (cama_estado == 'Ocupado' || cama_estado == 'Ocupado') {
-    var valor = data["bed"][0]["after"];
-    var nombreCama = '<li><h5 class="text-center link-acciones bold">Cama ' + valor['cama_nombre'] + '</h5></li>';
-    var Expediente = '<li><a class = "abrirExpediente" data = ' + valor['triage_id'] + '  href=""  data1 = "http://' + window.location.host + '/Sections/Documentos/Expediente/' + valor['triage_id'] + '/?tipo=Hospitalizacion"  target="_blank"><i class="fa fa-share-square-o icono-accion"></i>Ver expediente</a></li>';
-
-    var str = '<ul class="list-inline list-menu">' +
-      '<li class="dropdown">' +
-      '<a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">' +
-      '<i class="fa fa-bed"></i>' +
-      '</a>' +
-      '<ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' + nombreCama + ' ' + AltaPaciente + ' ' + Expediente + '</ul>' +
+      '<ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' + nombreCama + ' ' + Imprimir43051 + '  ' + LiberarCama +'  ' + OcuparCama + '</ul>' +
       '</li>' +
       '</ul>';
   } else {
@@ -618,6 +611,7 @@ function createOctionsUCI(cama_no, data) {
 }
 
 function createOctionsDivisionDeCalidad(cama_no, data) {
+  if(cama_no == undefined){return 0}
   var cama_estado = data["bed"][0]["after"]["cama_estado"]
   if (cama_estado == 'Ocupado' || cama_estado == 'Reservada') {
     var valor = data["bed"][0]["after"];
@@ -641,6 +635,8 @@ function createOctionsDivisionDeCalidad(cama_no, data) {
 }
 
 function createOctionsLimpiezaEHigiene(cama_no, data) {
+  if(cama_no == undefined){return 0}
+  console.log("createOctionsLimpiezaEHigiene")
   var cama_estado = data["bed"][0]["after"]["cama_estado"]
   if (cama_estado == 'Sucia' || cama_estado == 'Contaminada') {
     var valor = data["bed"][0]["after"];
@@ -676,11 +672,15 @@ function delay(time) {
 }
 
 function delecteOctions(cama_no) {
-  var i = document.createElement("i")
-  i.classList.add('fa', 'fa-bed')
-  var istr = i.outerHTML
-  if (cama_no.getElementsByTagName("h6").length != 0) {
-    cama_no.innerHTML = istr + cama_no.getElementsByTagName("h6")[0].outerHTML + cama_no.getElementsByClassName("tooltip")[0].outerHTML
+  if(cama_no != undefined){
+    var i = document.createElement("i")
+    i.classList.add('fa', 'fa-bed')
+    var istr    = i.outerHTML
+    var h6      = cama_no.getElementsByTagName("h6")
+    var tooltip = cama_no.getElementsByClassName("tooltip")
+    if(h6[0] != undefined && tooltip[0] != undefined ){
+      cama_no.innerHTML = istr + h6[0].outerHTML + tooltip[0].outerHTML
+    }
   }
 }
 
@@ -926,7 +926,6 @@ function updateNotesNotification(nota_id, n) {
 }
 
 function showPacientesAreasCriticas(data, camas) {
-  console.log(camas)
   var tabla = '<div class="row">' +
     '<div class="col-md-12" style="margin-top: 0px">' +
     '<table id="tablaPacientes" class="table footable table-bordered table-hover table-no-padding" data-limit-navigation="10" data-filter="#filter" data-page-size="10">' +
@@ -949,17 +948,10 @@ function showPacientesAreasCriticas(data, camas) {
     } else {
       d = d[2] + "-" + d[1] + "-" + d[0]
     }
-    console.log("++++++++++++++++++++++++")
-    console.log(d)
-    console.log(data[i]['fecha_ingreso_'+ $('input[name=area]').val().toLowerCase()])
     var dAC = new Date(data[i]['fecha_ingreso_'+ $('input[name=area]').val().toLowerCase()]);
-    console.log(dAC)
     var fechaInicio = dAC.getTime();
-    console.log(fechaInicio)
     var fechaFin = new Date().getTime();
-    console.log(fechaFin)
     var tiempoInstancia = parseInt((fechaFin - fechaInicio) / (1000 * 60 * 60 * 24));
-    console.log(tiempoInstancia)
     tabla += '<tr>' +
       '<td>' + String(i + 1).padStart(2, 0) + '</td>' +
       '<td>' + data[i]['triage_id'] + '</td>' +
@@ -969,7 +961,6 @@ function showPacientesAreasCriticas(data, camas) {
       '<td>' + String(dAC.getDate()).padStart(2, 0) + "-" + String(dAC.getMonth() + 1).padStart(2, 0) + "-" + String(dAC.getFullYear()).padStart(2, 0) + " " + String(dAC.getHours()).padStart(2, 0) + ":" + String(dAC.getMinutes()).padStart(2, 0) + '</td>' +
       "<td>"
     var cama = "";
-    console.log(data[i]['triage_id'])
     for (var j = 0; j < camas.length; j++) {
       if (parseInt(camas[j]["triage_id"]) == parseInt(data[i]['triage_id'])) {
         cama = camas[j]["cama_nombre"];
@@ -981,13 +972,11 @@ function showPacientesAreasCriticas(data, camas) {
     } else {
       tabla += cama;
     }
-
-    console.log(tiempoInstancia)
     tabla += '</td>' +
       '<td>' + tiempoInstancia + ' días</td>' +
       '<td>' +
       '<div>' +
-      '<a href='+ base_url + 'Sections/Documentos/Expediente/' + data[i]['triage_id'] + '/?tipo=Hospitalizacion"  target="_blank">' +
+      '<a href="' + base_url + 'Sections/Documentos/Expediente/' + data[i]['triage_id'] + '/?tipo=Hospitalizacion"  target="_blank">' +
       '<i class="fa fa-share-square-o icono-accion tip" title="VER EXPEDIENTE" data-toggle="tooltip"></i>' +
       '</a>' +
       "&nbsp;" +

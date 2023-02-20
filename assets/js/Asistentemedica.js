@@ -55,6 +55,7 @@ $(document).ready(function () {
     // $('select[name=pia_procedencia_espontanea]').val($('select[name=pia_procedencia_espontanea]').data('value'));
     $('select[name=pia_tipo_atencion]').val($('select[name=pia_tipo_atencion]').data('value'));
     $('select[name=pia_vigencia]').val($('select[name=pia_vigencia]').data('value'));
+    
     $('.solicitud-paciente').submit(function (e) {
         var urlAsistenteMedica;
         //console.log($('input[name=AsistenteMedicaTipo]').val())
@@ -91,6 +92,7 @@ $(document).ready(function () {
             }
         })
     });
+
     $('.solicitud-paciente-taod').submit(function (e) {
         e.preventDefault();
         AbrirDocumentoMultiple(base_url + 'inicio/documentos/HojaFrontalCE/' + $('input[name=triage_id]').val(), 'HojaFrontal', 100);
@@ -99,6 +101,7 @@ $(document).ready(function () {
         }
         ActionCloseWindows();
     });
+    
     $('select[name=pia_lugar_accidente]').change(function (e) {
         if ($('input[name=CONFIG_AM_INTERACCION_LT]').val() == 'Si') {
             if ($(this).val() == 'TRABAJO') {
@@ -664,32 +667,6 @@ function init_InputMask() {
     if (typeof ($.fn.inputmask) === 'undefined') { return; }
     $(":input").inputmask();
 }
-//-----------------------------//
-//-----------------------------//
-//-----------SOCKET------------//
-//-----------------------------//
-//-----------------------------//
-
-var um_config = []
-var noRow = 0
-
-const socket = io(":3001", {
-    cors: {
-        "force new connection": true,
-        "reconnectionAttempts": "Infinity",
-        "timeout": 10000,
-        "transports": ["websocket"]
-    }
-});
-socket.on("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", function (data) {
-    console.log(data)
-    crearTablaRegistroPacientesAdmisionContinua(data);
-});
-socket.on("updateRegistroPacientesAtencionMedicaAdmisionContinua", function (data) {
-    //updateRegistroPacientesAtencionMedicaAdmisionContinua(data);
-    crearTablaRegistroPacientesAdmisionContinua(data)
-});
-socket.emit("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", {});
 
 function ColorClasificacion(data) {
     switch (data['triage_color']) {

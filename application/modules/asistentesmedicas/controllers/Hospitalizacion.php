@@ -29,9 +29,7 @@ class Hospitalizacion extends Config{
         $sql['info']=  $this->config_mdl->_get_data_condition('os_triage',array(
            'triage_id'=>  $Paciente
         ));
-        $sql['solicitud']= $this->config_mdl->_get_data_condition('os_asistentesmedicas',array(
-           'triage_id'=> $Paciente
-        ));
+        
         $sql['empleado']= $this->config_mdl->_get_data_condition('os_empleados',array(
            'empleado_id'=> $this->UMAE_USER
         ));
@@ -179,11 +177,11 @@ class Hospitalizacion extends Config{
             unset($data_43051['tipo_ingreso']);
             unset($data_43051['fecha_registro']);  
             unset($data_43051['hora_registro']);
-            unset($data_43051['fecha_ingreso']);
-            unset($data_43051['hora_ingreso']);
+            //unset($data_43051['fecha_ingreso']);
+            //unset($data_43051['hora_ingreso']);
             unset($data_43051['fecha_asisgnacion']);
             unset($data_43051['estado_ingreso_med']);
-            unset($data_43051['id_empleado_registra']);
+            //unset($data_43051['id_empleado_registra']);
 
             $this->config_mdl->_update_data('doc_43051', $data_43051, array('triage_id'=> $this->input->post('triage_id') ));
             $this->config_mdl->_update_data('os_triage_empresa',$os_triage_empresa,array('triage_id'=> $this->input->post('triage_id') ));

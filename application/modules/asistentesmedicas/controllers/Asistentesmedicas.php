@@ -17,20 +17,27 @@ class Asistentesmedicas extends Config{
     }
     public function index() {  
         
-        /*$hoy = date('Y-m-d');*/
-        $sql['Gestion']= []; /*$this->config_mdl->_query("SELECT os_triage.triage_id,
-            os_triage.triage_nombre, os_triage.triage_nombre_ap, os_triage.triage_nombre_am,os_triage.triage_color,
-            os_triage.triage_fecha_clasifica, os_triage.triage_hora_clasifica, os_triage.triage_via_registro,
-            os_asistentesmedicas.asistentesmedicas_fecha, os_asistentesmedicas.asistentesmedicas_hora,
-            paciente_info.pic_mt
-            FROM os_triage, os_accesos, os_asistentesmedicas, paciente_info
-            WHERE
-            os_accesos.acceso_tipo='Asistente Médica' AND
-            os_accesos.triage_id=os_triage.triage_id AND
-            os_accesos.areas_id=os_asistentesmedicas.asistentesmedicas_id AND
-            os_asistentesmedicas.asistentesmedicas_fecha= '$hoy' AND
-            paciente_info.triage_id=os_triage.triage_id
-            ORDER BY os_accesos.acceso_id    LIMIT 150");*/
+        $hoy = date('Y-m-d');
+        $sql['Gestion']= $this->config_mdl->_query("SELECT os_triage.triage_id,
+                                                     os_triage.triage_nombre,
+                                                     os_triage.triage_nombre_ap,
+                                                     os_triage.triage_nombre_am,
+                                                     os_triage.triage_color,
+                                                     os_triage.triage_fecha_clasifica,
+                                                     os_triage.triage_hora_clasifica,
+                                                     os_triage.triage_via_registro,
+                                                     paciente_info.pic_mt,
+                                                     paciente_info.pum_nss,
+                                                     os_asistentesmedicas.asistentesmedicas_hora
+                                                    FROM
+                                                        os_triage,
+                                                        paciente_info,
+                                                        os_asistentesmedicas
+                                                    WHERE
+                                                    os_triage.triage_id = paciente_info.triage_id AND
+                                                    os_asistentesmedicas.triage_id = os_triage.triage_id AND
+                                                    os_asistentesmedicas.asistentesmedicas_fecha = '$hoy'
+                                                    LIMIT 111");
         $this->load->view('index',$sql);
     }
     public function BuscarPaciente() {

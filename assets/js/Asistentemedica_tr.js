@@ -95,7 +95,9 @@ $(document).ready(function (e) {
                     // if($('select[name=pia_lugar_accidente]').val()=='TRABAJO'){
                     //     AbrirDocumentoMultiple(base_url+'inicio/documentos/ST7/'+$('input[name=triage_id]').val(),'ST7',800);
                     // }
-                    ActionCloseWindowsReload();
+                    //ActionCloseWindowsReload();
+                    ActionCloseWindows();
+                    AbrirDocumentoMultiple(base_url+'inicio/Documentos/DOC43051/'+$('input[name=triage_id]').val(),'430-51',100);
                 }
             },error: function (e) {
                 msj_error_serve();

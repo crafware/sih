@@ -70,9 +70,9 @@ io.on("connection", (socket) => {
   socket.on("getDataPacientesAreasCriticas", (data => {
     getDataPacientesAreasCriticas(data["area"], socket);
   }))
-  socket.on("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", (data => {
+  /*socket.on("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", (data => {
     getAsistentemedicaTablaRegistroPacientesAdmisionContinua(socket);
-  }))
+  }))*/
   //Update dates
   socket.on("setDataNotesEstado", (data => {
     setDataNotesEstado(data, socket);
@@ -98,14 +98,14 @@ const fs = require("fs")
 function getDataDashboard_ac(socket) {
   var pathList = __dirname.split("\\").slice(1, -2)
   var directoryPath = ""
-  for(var i = 0; i<pathList.length; i++){
+  for (var i = 0; i < pathList.length; i++) {
     directoryPath += "/" + pathList[i]
   }
   directoryPath += "/multimedia/dashboard_ac"
   var videosName = []
   var ImagenName = []
   var ls = fs.readdirSync(directoryPath)
-  for(var i = 0;i<ls.length;i++){
+  for (var i = 0; i < ls.length; i++) {
     const file = path.join(directoryPath, ls[i])
     var name = file.split("\\").at(-1)
     if (name.indexOf("mp4") != -1)
@@ -121,7 +121,7 @@ function getDataDashboard_ac(socket) {
       "os_camas.area_id = 1", (err, row) => {
         if (err) throw err;
         connection.release();
-        var data ={}
+        var data = {}
         data["row"] = row;
         data["videosName"] = videosName
         data["ImagenName"] = ImagenName
@@ -148,7 +148,6 @@ function usuarioJefeDashboard(data, socket) {
               if (err) console.log(err);
               var oneYearData = row;
               connection.query("SELECT * FROM um_consultas_dashboard WHERE I_D_Servicio = " + empleado_servicio + " and I_D_Fecha = '" + fecha1 + "'", (err, row,) => {
-                connection.release();
                 /*console.log("oneYearData")
                 console.log(oneYearData)
                 console.log(sql)*/
@@ -174,6 +173,7 @@ function usuarioJefeDashboard(data, socket) {
       } else {
         console.log(err)
       }
+      connection.release();
     })
   })
 }
@@ -189,7 +189,6 @@ function setDataNotesEstado(data) {
       throw err;
     console.log('connected as id ' + connection.threadId);
     connection.query('UPDATE os_camas_notas SET estado = 1 where cama_id = ' + cama_id + " and tipo_nota = " + tipo_nota, (err, rows,) => {
-      connection.release(); // return the connection to pool
       if (!err) {
         try {
           io.sockets.emit("setDataNotesEstado", { "cama_id": cama_id, "cama_nombre": cama_nombre, "error": false });
@@ -201,6 +200,7 @@ function setDataNotesEstado(data) {
       } else {
         console.log(err);
       }
+      connection.release(); // return the connection to pool
     });
   });
 }
@@ -214,7 +214,6 @@ function getData(bed) {
       throw err;
     console.log('connected as id ' + connection.threadId);
     connection.query('SELECT * FROM os_pisos where area_id = ' + area_id, (err, rows,) => {
-      connection.release(); // return the connection to pool
       if (!err) {
         /*console.log("rows-------------------------");
         console.log(bed);*/
@@ -233,6 +232,7 @@ function getData(bed) {
         console.log(err);
       }
     });
+    connection.release(); // return the connection to pool
   });
   return end;
 }
@@ -246,7 +246,6 @@ function getDataTriage(bed, floor) {
       throw err;
     console.log('connected as id ' + connection.threadId);
     connection.query('SELECT * FROM os_triage where triage_id = ' + triage_id, (err, rows,) => {
-      connection.release(); // return the connection to pool
       if (!err) {
         try {
           io.sockets.emit("getDataBed", { "bed": bed, "floor": floor, "triage": rows });
@@ -257,35 +256,190 @@ function getDataTriage(bed, floor) {
         console.log(err);
       }
     });
+    connection.release(); // return the connection to pool
   });
   return end;
 }
 areasCriticasDB = {
-  "UCI": { 'db': "um_pacientes_uci", 'areaId': "6" },
-  "UTR": { 'db': "um_pacientes_utr", 'areaId': "6" },
-  "UTMO": { 'db': "um_pacientes_utmo", 'areaId': "6" }
+  "UCI": { 'db': "um_pacientes_uci", 'areaId': "6", "area":"uci"},
+  "UTR": { 'db': "um_pacientes_utr", 'areaId': "7", "area":"utr" },
+  "UTMO": { 'db': "um_pacientes_utmo", 'areaId': "8", "area":"utmo" }
 }
 
 function getDataPacientesAreasCriticas(area, socket) {
-  pool.getConnection((err, connection,) => {
-    if (err)
-      throw err;
-    connection.query('SELECT * FROM ' + areasCriticasDB[area]["db"] + ", os_triage, doc_43051,paciente_info WHERE " +
-      "os_triage.triage_id = " + areasCriticasDB[area]["db"] + ".triage_id AND " +
-      "os_triage.triage_id = paciente_info.triage_id AND " +
-      "os_triage.triage_id = doc_43051.triage_id AND " +
-      areasCriticasDB[area]["db"] + ".fecha_egreso_uci IS NULL", (err, rows,) => {
-        connection.release();
+  if(area != ""){
+    pool.getConnection((err, connection,) => {
+      if (err)
+        throw err;
+      connection.query('SELECT * FROM ' + areasCriticasDB[area]["db"] + ", os_triage, doc_43051,paciente_info WHERE " +
+        "os_triage.triage_id = " + areasCriticasDB[area]["db"] + ".triage_id AND " +
+        "os_triage.triage_id = paciente_info.triage_id AND " +
+        "os_triage.triage_id = doc_43051.triage_id AND " +
+        areasCriticasDB[area]["db"] + ".fecha_egreso_"+areasCriticasDB[area]["area"]+" IS NULL ORDER BY paciente_"+areasCriticasDB[area]["area"]+"_id" , (err, rows,) => {
+          if (!err) {
+            getDataPacientesAreasCriticasCamas(area, socket, rows)
+          } else {
+            console.log(err);
+          }
+        })
+        connection.release(); // return the connection to pool
+    })
+  }
+}
+
+areasCriticasID_area = {
+  6: { 'db': "um_pacientes_uci", 'areaId': "6", "area":"UCI"},
+  7: { 'db': "um_pacientes_utr", 'areaId': "7", "area":"UTR" },
+  8: { 'db': "um_pacientes_utmo", 'areaId': "8", "area":"UTMO" }
+}
+
+function getDataPacientesAreasCriticasArea(event){
+  var event_table = event.table;
+  var area_nombre = ""
+  if(event_table === "um_pacientes_uci"){
+    area_nombre = "UCI"
+  }else if(event_table === "um_pacientes_utr"){
+    area_nombre = "UTR"
+  }else if(event_table === "um_pacientes_utmo"){
+    area_nombre = "UTMO"
+  }else if(event_table === "os_camas"){
+    var area_id = event.affectedRows[0]["after"]["area_id"]
+    area_nombre = areasCriticasID_area[area_id]["area"]
+  }else if(event_table === "os_triage"){
+    pool.getConnection((err, connection,) => {
+      if (err) throw err;
+      connection.query("SELECT * FROM os_camas WHERE triage_id = "+ event.affectedRows[0]["after"]["triage_id"] , (err, rows) => {
         if (!err) {
-          getDataPacientesAreasCriticasCamas(area, socket, rows)
-        } else {
-          console.log(err);
+          if(rows[0] != undefined){
+            if(areasCriticasID_area[rows[0]["area_id"]] != undefined){
+              area_nombre = areasCriticasID_area[rows[0]["area_id"]]["area"]
+            }
+          }
         }
+      });
+      connection.release(); // return the connection to pool      
+    });
+  }
+  return area_nombre
+}
+
+/*function getAsistentemedicaTablaRegistroPacientesAdmisionContinua(socket) {
+  var data = {}
+  pool.getConnection((err, connection,) => {
+    if (err) throw err;
+    connection.query("SELECT * FROM os_asistentesmedicas_tabla_registro_pacientes", (err, rows) => {
+      data["table_data"] = rows
+      if (!err) {
+        connection.query("SELECT * FROM um_config", (err, rows) => {
+          data["um_config"] = rows
+          io.sockets.to(socket.id).emit("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", data);
+        });
+      }
+    });
+    connection.release(); // return the connection to pool
+  });
+}
+
+function updateRegistroPacientesAtencionMedicaAdmisionContinua(event) {
+  var e = event.affectedRows[0]
+  pool.getConnection((err, connection,) => {
+    if (err) throw err;
+    console.log(e)
+    console.log(e["after"]["triage_id"] != undefined && e["after"]["triage_id"] != null)
+    console.log(e["after"]["triage_id"] != undefined)
+
+    if (e["after"]["triage_id"] != undefined && e["after"]["triage_id"] != null) {
+      console.log(e["after"]["triage_id"])
+      connection.query("SELECT os_triage.triage_id,os_triage.triage_nombre, os_triage.triage_nombre_ap, os_triage.triage_nombre_am, " +
+        "os_triage.triage_color,os_triage.triage_fecha_clasifica, os_triage.triage_hora_clasifica, os_triage.triage_via_registro, " +
+        "os_asistentesmedicas.asistentesmedicas_fecha, os_asistentesmedicas.asistentesmedicas_hora,paciente_info.pic_mt,paciente_info.pia_lugar_accidente " +
+        "FROM os_triage, os_accesos, os_asistentesmedicas, paciente_info WHERE os_accesos.acceso_tipo='Asistente Médica' " +
+        "AND os_accesos.triage_id = os_triage.triage_id AND os_accesos.areas_id = os_asistentesmedicas.asistentesmedicas_id " +
+        "AND paciente_info.triage_id=os_triage.triage_id AND os_triage.triage_id = " + e["after"]["triage_id"] + " ORDER BY os_accesos.acceso_id LIMIT 150", (err, rows) => {
+          console.log(rows)
+          if (!err) {
+            var row = rows[0]
+            if (row != null) {
+              if (e["before"]["triage_id"] != undefined && e["before"]["triage_id"] != null) {
+                connection.query("SELECT * FROM os_asistentesmedicas_tabla_registro_pacientes WHERE triage_id = " + e["after"]["triage_id"], (err, rows) => {
+                  if (!err) {
+                    if (rows[0] != null) {
+                      //data["table_data"] = rows
+                      connection.query("UPDATE os_asistentesmedicas_tabla_registro_pacientes SET " +
+                        " triage_id = " + row.triage_id +
+                        " triage_nombre = '" + row.triage_nombre + "'" +
+                        " triage_nombre_ap = '" + row.triage_nombre_ap + "'" +
+                        " triage_nombre_am = '" + row.triage_nombre_am + "'" +
+                        " triage_color = '" + row.triage_color + "'" +
+                        " triage_fecha_clasifica = '" + row.triage_fecha_clasifica + "'" +
+                        " triage_hora_clasifica = '" + row.triage_hora_clasifica + "'" +
+                        " triage_via_registro = '" + row.triage_via_registro + "'" +
+                        " asistentesmedicas_fecha = '" + row.asistentesmedicas_fecha + "'" +
+                        " asistentesmedicas_hora = '" + row.asistentesmedicas_hora + "'" +
+                        " pic_mt = '" + row.pic_mt + "'" +
+                        " pia_lugar_accidente = '" + row.pia_lugar_accidente + "'" +
+                        " WHERE triage_id = " + e["before"]["triage_id"]
+                        , (err, rows) => {
+                          if (err)
+                            console.log(err)
+                        })
+                    } else {
+                      connection.query("INSERT INTO os_asistentesmedicas_tabla_registro_pacientes (triage_nombre,triage_nombre_ap,triage_nombre_am,triage_color,triage_fecha_clasifica,triage_hora_clasifica,triage_via_registro,asistentesmedicas_fecha,asistentesmedicas_hora,pic_mt,pia_lugar_accidente) VALUES (" +
+                        + row.triage_id +
+                        " , '" + row.triage_nombre + "'" +
+                        " , '" + row.triage_nombre_ap + "'" +
+                        " , '" + row.triage_nombre_am + "'" +
+                        " , '" + row.triage_color + "'" +
+                        " , '" + row.triage_fecha_clasifica + "'" +
+                        " , '" + row.triage_hora_clasifica + "'" +
+                        " , '" + row.triage_via_registro + "'" +
+                        " , '" + row.asistentesmedicas_fecha + "'" +
+                        " , '" + row.asistentesmedicas_hora + "'" +
+                        " , '" + row.pic_mt + "'" +
+                        " , '" + row.pia_lugar_accidente + "')", (err, rows) => {
+                          if (err)
+                            console.log(err)
+                        })
+                    }
+                  } else {
+                    console.log(err)
+                  }
+                });
+              } else {
+                connection.query("INSERT INTO os_asistentesmedicas_tabla_registro_pacientes (triage_nombre,triage_nombre_ap,triage_nombre_am,triage_color,triage_fecha_clasifica,triage_hora_clasifica,triage_via_registro,asistentesmedicas_fecha,asistentesmedicas_hora,pic_mt,pia_lugar_accidente) VALUES (" +
+                  + row.triage_id +
+                  " , '" + row.triage_nombre + "'" +
+                  " , '" + row.triage_nombre_ap + "'" +
+                  " , '" + row.triage_nombre_am + "'" +
+                  " , '" + row.triage_color + "'" +
+                  " , '" + row.triage_fecha_clasifica + "'" +
+                  " , '" + row.triage_hora_clasifica + "'" +
+                  " , '" + row.triage_via_registro + "'" +
+                  " , '" + row.asistentesmedicas_fecha + "'" +
+                  " , '" + row.asistentesmedicas_hora + "'" +
+                  " , '" + row.pic_mt + "'" +
+                  " , '" + row.pia_lugar_accidente + "')", (err, rows) => {
+                    if (err)
+                      console.log(err)
+                  })
+              }
+            } else {
+              connection.query("DELETE * FROM os_asistentesmedicas_tabla_registro_pacientes WHERE triage_id = " + event.affectedRows[0]["before"]["triage_id"], (err, rows) => {
+              })
+            }
+          } else {
+            console.log(err)
+          }
+        })
+    } else if (e["before"]["triage_id"] != null && e["before"]["triage_id"] != null) {
+      connection.query("DELETE * FROM os_asistentesmedicas_tabla_registro_pacientes WHERE triage_id = " + event.affectedRows[0]["before"]["triage_id"], (err, rows) => {
       })
+    }
+    connection.release(); // return the connection to pool
   })
 }
 
-function getAsistentemedicaTablaRegistroPacientesAdmisionContinua(socket) {
+function preprocesamientoRegistroPacientesAtencionMedicaAdmisionContinua() {
   pool.getConnection((err, connection,) => {
     if (err) throw err;
     var dt = new Date();
@@ -298,25 +452,42 @@ function getAsistentemedicaTablaRegistroPacientesAdmisionContinua(socket) {
       "AND os_accesos.triage_id = os_triage.triage_id AND os_accesos.areas_id = os_asistentesmedicas.asistentesmedicas_id AND " +
       "os_asistentesmedicas.asistentesmedicas_fecha= '" + hoy + "' AND paciente_info.triage_id=os_triage.triage_id ORDER BY os_accesos.acceso_id LIMIT 150", (err, rows) => {
         if (!err) {
-          /*$sqlST7=$this->config_mdl->sqlGetDataCondition('paciente_info',array(
-            'triage_id'=>data[value]['triage_id']
-        ),'pia_lugar_accidente')[0];*/
-          data["table_data"] = rows
-          connection.query("SELECT * FROM um_config", (err, rows) => {
-            connection.release();
-            if (!err) {
-              data["um_config"] = rows
-              io.sockets.to(socket.id).emit("getAsistentemedicaTablaRegistroPacientesAdmisionContinua", data);
-            }
-          })
+          guardarRegistroPacientesAtencionMedicaAdmisionContinua(rows, connection);
         } else {
           console.log(err)
         }
       });
+      connection.release(); // return the connection to pool
   })
 }
 
-function updateRegistroPacientesAtencionMedicaAdmisionContinua() {
+
+function guardarRegistroPacientesAtencionMedicaAdmisionContinua(row, connection) {
+  console.log("rows")
+  var mysqlValues = "INSERT INTO os_asistentesmedicas_tabla_registro_pacientes (triage_id,triage_nombre,triage_nombre_ap,triage_nombre_am,triage_color,triage_fecha_clasifica,triage_hora_clasifica,triage_via_registro,asistentesmedicas_fecha,asistentesmedicas_hora,pic_mt,pia_lugar_accidente) VALUES "
+  for (i in row) {
+    var r = row[i]
+    mysqlValues += "( " + r.triage_id +
+      " ,'" + r.triage_nombre + "'" +
+      " ,'" + r.triage_nombre_ap + "'" +
+      " ,'" + r.triage_nombre_am + "'" +
+      " ,'" + r.triage_color + "'" +
+      " ,'" + r.triage_fecha_clasifica + "'" +
+      " ,'" + r.triage_hora_clasifica + "'" +
+      " ,'" + r.triage_via_registro + "'" +
+      " ,'" + r.asistentesmedicas_fecha + "'" +
+      " ,'" + r.asistentesmedicas_hora + "'" +
+      " ,'" + r.pic_mt + "'" +
+      " ,'" + r.pia_lugar_accidente + "' ),"
+  }
+  connection.query(mysqlValues.slice(0, -1), (err, rows) => {
+    if (err) {
+      console.log(err)
+    }
+  })
+}*/
+
+/*function updateRegistroPacientesAtencionMedicaAdmisionContinua() {
   pool.getConnection((err, connection,) => {
     if (err) throw err;
     var dt = new Date();
@@ -329,12 +500,12 @@ function updateRegistroPacientesAtencionMedicaAdmisionContinua() {
       "AND os_accesos.triage_id = os_triage.triage_id AND os_accesos.areas_id = os_asistentesmedicas.asistentesmedicas_id AND " +
       "os_asistentesmedicas.asistentesmedicas_fecha= '" + hoy + "' AND paciente_info.triage_id=os_triage.triage_id ORDER BY os_accesos.acceso_id LIMIT 150", (err, rows) => {
         if (!err) {
-          /*$sqlST7=$this->config_mdl->sqlGetDataCondition('paciente_info',array(
+          $sqlST7=$this->config_mdl->sqlGetDataCondition('paciente_info',array(
             'triage_id'=>data[value]['triage_id']
-        ),'pia_lugar_accidente')[0];*/
+        ),'pia_lugar_accidente')[0];
           data["table_data"] = rows
           connection.query("SELECT * FROM um_config", (err, rows) => {
-            connection.release();
+            
             if (!err) {
               data["um_config"] = rows
               io.sockets.emit("updateRegistroPacientesAtencionMedicaAdmisionContinua", data);
@@ -344,8 +515,9 @@ function updateRegistroPacientesAtencionMedicaAdmisionContinua() {
           console.log(err)
         }
       });
+      connection.release();
   })
-}
+}*/
 
 /*function updateRegistroPacientesAtencionMedicaAdmisionContinua(data) {
   pool.getConnection((err, connection,) => {
@@ -357,7 +529,6 @@ function updateRegistroPacientesAtencionMedicaAdmisionContinua() {
       "FROM os_triage, os_accesos, os_asistentesmedicas, paciente_info WHERE os_accesos.acceso_tipo='Asistente Médica' " +
       "AND os_accesos.triage_id = os_triage.triage_id AND os_accesos.areas_id = os_asistentesmedicas.asistentesmedicas_id " +
       "AND paciente_info.triage_id=os_triage.triage_id AND paciente_info.triage_id = " + data["triage_id"], (err, rows) => {
-        connection.release();
         if (!err) {
           console.log(rows[0])
           io.sockets.emit("updateRegistroPacientesAtencionMedicaAdmisionContinua", rows[0]);
@@ -365,6 +536,7 @@ function updateRegistroPacientesAtencionMedicaAdmisionContinua() {
           console.log(err)
         }
       });
+      connection.release();
   })
 }*/
 
@@ -372,8 +544,11 @@ function getDataPacientesAreasCriticasCamas(area, socket, rowsPacientes) {
   pool.getConnection((err, connection,) => {
     if (err)
       throw err;
-    connection.query('SELECT * FROM  os_camas WHERE os_camas.area_id = ' + areasCriticasDB[area]["areaId"], (err, rows,) => {
-      connection.release();
+    var sql = 'SELECT * FROM  os_camas'
+    if(area == "UCI"){
+      sql = 'SELECT * FROM  os_camas WHERE os_camas.area_id = "' + areasCriticasDB[area]["areaId"]+'"'
+    }
+    connection.query(sql, (err, rows,) => {
       if (!err) {
         try {
           var data = { "dataPacientes": rowsPacientes, "area": area, "camas": rows }
@@ -389,6 +564,7 @@ function getDataPacientesAreasCriticasCamas(area, socket, rowsPacientes) {
         console.log(err);
       }
     })
+    connection.release();
   })
 }
 
@@ -399,7 +575,6 @@ function getDataTooltip(cama_id_piso, socket) {
     if (err)
       throw err;
     connection.query('SELECT triage_nombre, triage_nombre_ap, triage_nombre_am, especialidad_nombre, empleado_nombre, empleado_apellidos, fecha_ingreso, os_triage.triage_id FROM os_camas, os_triage, os_empleados, um_especialidades, doc_43051 WHERE doc_43051.ingreso_servicio = um_especialidades.especialidad_id AND um_especialidades.especialidad_id = doc_43051.ingreso_servicio AND doc_43051.ingreso_medico = os_empleados.empleado_id AND os_triage.triage_id = doc_43051.triage_id  AND os_triage.triage_id = os_camas.triage_id AND os_camas.cama_id = ' + cama_id, (err, rows,) => {
-      connection.release(); // return the connection to pool
       if (!err) {
         try {
           io.sockets.to(socket.id).emit("getDataTooltip", { "dataTooltip": rows, "id": cama_id_piso });
@@ -410,6 +585,7 @@ function getDataTooltip(cama_id_piso, socket) {
         console.log(err);
       }
     });
+    connection.release();
   });
   return end;
 }
@@ -423,7 +599,6 @@ function getDataFechaCamaSuciaTooltip(cama_id_piso, socket) {
       throw err;
     //connection.query('SELECT MAX(fecha_hora) as fecha FROM os_camas_estados WHERE cama_id = ' + cama_id, (err, rows,) => {
     connection.query('SELECT cama_fh_estatus as fecha FROM os_camas WHERE cama_id =' + cama_id, (err, rows,) => {
-      connection.release(); // return the connection to pool
       if (!err) {
         try {
           io.sockets.to(socket.id).emit("getDataFechaCamaSuciaTooltip", { "dataTooltip": rows, "id": cama_id_piso });
@@ -434,6 +609,7 @@ function getDataFechaCamaSuciaTooltip(cama_id_piso, socket) {
         console.log(err);
       }
     });
+    connection.release();
   });
   return end;
 }
@@ -445,7 +621,6 @@ function getDataNotesTooltip(cama_id, cama_nombre, tipo_nota, socket) {
       throw err;
     //connection.query('SELECT MAX(fecha_hora) as fecha FROM os_camas_estados WHERE cama_id = ' + cama_id, (err, rows,) => {
     connection.query('SELECT * FROM os_camas_notas WHERE estado = 0 and cama_id =' + cama_id + " and tipo_nota = " + tipo_nota, (err, rows,) => {
-      connection.release(); // return the connection to pool
       if (!err) {
         try {
           io.sockets.to(socket.id).emit("getDataNotesTooltip", { "dataTooltip": rows, "id": cama_id, "cama_nombre": cama_nombre });
@@ -456,6 +631,7 @@ function getDataNotesTooltip(cama_id, cama_nombre, tipo_nota, socket) {
         console.log(err);
       }
     });
+    connection.release();
   });
   return end;
 }
@@ -466,7 +642,6 @@ function getDataCamasNotas(data) {
     if (err)
       throw err;
     connection.query('SELECT * FROM os_camas_notas WHERE estado = 0 and cama_id =' + cama_id, (err, rows,) => {
-      connection.release(); // return the connection to pool
       if (!err) {
         try {
           io.sockets.emit("getDataCamasNotas", { "cama_id": cama_id, "note_len": rows });
@@ -477,6 +652,7 @@ function getDataCamasNotas(data) {
         console.log(err);
       }
     });
+    connection.release();
   });
 }
 
@@ -510,11 +686,9 @@ function getDataRegistroSolicitudesAtendidas(affectedRows) {
             } else if (affectedRows[0]["after"]["doc_estatus"] == "En Espera") {
               MySQLEvent = "UPDATE um_consultas_dashboard SET I_D_Interconsultas_Solicitadas = " + (row[0]["I_D_Interconsultas_Solicitadas"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio
             } else {
-              connection.release();
               return (-1);
             }
             connection.query(MySQLEvent, (err, row) => {
-              connection.release();
               if (err) console.log(err);
             });
           } else {
@@ -523,11 +697,9 @@ function getDataRegistroSolicitudesAtendidas(affectedRows) {
             } else if (affectedRows[0]["after"]["doc_estatus"] == "En Espera") {
               MySQLEvent = inserts + "('" + fecha + "',0,1," + servicio + ")"
             } else {
-              connection.release();
               return (-1);
             }
             connection.query(MySQLEvent, (err, row) => {
-              connection.release();
               if (err) console.log(err);
             })
           }
@@ -535,6 +707,7 @@ function getDataRegistroSolicitudesAtendidas(affectedRows) {
           console.log(err)
         }
       })
+      connection.release();
     })
   } else if (affectedRows[0]["after"]["doc_estatus"] != affectedRows[0]["before"]["doc_estatus"]) {
     pool.getConnection((err, connection,) => {
@@ -553,13 +726,11 @@ function getDataRegistroSolicitudesAtendidas(affectedRows) {
           if (row[0] != undefined) {
             MySQLEvent = "UPDATE um_consultas_dashboard SET I_D_Interconsultas_Atendidas = " + (row[0]["I_D_Interconsultas_Atendidas"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio
             connection.query(MySQLEvent, (err, row) => {
-              connection.release();
               if (err) console.log(err);
             });
           } else {
             MySQLEvent = inserts + "('" + fecha + "',1,1," + servicio + ")"
             connection.query(MySQLEvent, (err, row) => {
-              connection.release();
               if (err) console.log(err);
             })
           }
@@ -567,6 +738,7 @@ function getDataRegistroSolicitudesAtendidas(affectedRows) {
           console.log(err)
         }
       })
+      connection.release();
     })
   }
 }
@@ -596,7 +768,6 @@ function getDataRegistroPacientesIngresados(affectedRows) {
               queryAux = "UPDATE um_consultas_dashboard SET I_D_Pacientes_Ingresados_Urg = " + (row[0]["I_D_Pacientes_Ingresados_Urg"] + 1) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio;
             }
             connection.query(queryAux, (err, row) => {
-              connection.release();
               if (err) console.log(err);
             });
           } else {
@@ -606,7 +777,6 @@ function getDataRegistroPacientesIngresados(affectedRows) {
               queryAux = inserts + "('" + fecha + "',0,1," + servicio + ")";
             }
             connection.query(queryAux, (err, row) => {
-              connection.release();
               if (err) console.log(err);
             })
           }
@@ -614,6 +784,7 @@ function getDataRegistroPacientesIngresados(affectedRows) {
           console.log(err)
         }
       })
+      connection.release();
     })
   }
 }
@@ -664,28 +835,25 @@ function getDataRegistroPicIndicioEmbarazo(affectedRows) {
             if (row[0] != undefined) {
               queryAux = "UPDATE um_consultas_dashboard SET pic_indicio_embarazo = " + (row[0]["pic_indicio_embarazo"] + emb) + " WHERE I_D_Fecha = '" + fecha + "' and I_D_Servicio = " + servicio;
               connection.query(queryAux, (err, row) => {
-                connection.release();
                 if (err) console.log(err);
               });
             } else {
               if (affectedRows[0]["after"]["tipo_ingreso"] == "Programado") {
                 queryAux = inserts + "('" + fecha + "',1," + servicio + ")";
                 connection.query(queryAux, (err, row) => {
-                  connection.release();
                   if (err) console.log(err);
                 })
               }
             }
           } else {
-            connection.release();
             console.log(err)
           }
         })
       } else {
-        connection.release();
         console.log(err)
       }
     })
+    connection.release();
   })
 }
 
@@ -735,11 +903,11 @@ function registroAltaPreAlta(estado) {
             }
           })
         }
-        connection.release();
       } else {
         console.log(err)
       }
     })
+    connection.release();
   });
 }
 
@@ -799,24 +967,20 @@ function registroSolicitudesAtendidas() {
                 if (err) console.log(err);
                 if (update.length > 0) {
                   connection.query(update, (err, row,) => {
-                    connection.release();
                     if (err) console.log(err);
                     else console.log("actualización de interconsultas completa 1")
                   })
                 } else {
-                  connection.release();
                   console.log("actualización de interconsultas completa 2")
                 }
               })
             } else {
               if (update.length > 0) {
                 connection.query(update, (err, row,) => {
-                  connection.release();
                   if (err) console.log(err)
                   else console.log("actualización de interconsultas completa 3")
                 })
               } else {
-                connection.release();
                 console.log("actualización de interconsultas completa 4")
               }
             }
@@ -828,6 +992,7 @@ function registroSolicitudesAtendidas() {
         console.log(err)
       }
     })
+    connection.release();
   })
 }
 
@@ -899,24 +1064,20 @@ function registroPacientesIngresados() {
                 if (err) console.log(err);
                 if (update.length > 0) {
                   connection.query(update, (err, row,) => {
-                    connection.release();
                     if (err) console.log(err);
                     registroIndicioEmbarazo();
                   })
                 } else {
-                  connection.release();
                   registroIndicioEmbarazo();
                 }
               })
             } else {
               if (update.length > 0) {
                 connection.query(update, (err, row,) => {
-                  connection.release();
                   if (err) console.log(err);
                   registroIndicioEmbarazo();
                 })
               } else {
-                connection.release();
                 registroIndicioEmbarazo();
               }
             }
@@ -924,6 +1085,7 @@ function registroPacientesIngresados() {
         })
       }
     })
+    connection.release();
   })
 }
 
@@ -988,24 +1150,20 @@ function registroIndicioEmbarazo() {
                 if (err) console.log(err);
                 if (update.length > 0) {
                   connection.query(update, (err, row,) => {
-                    connection.release();
                     if (err) console.log(err);
                     registroSolicitudesAtendidas();
                   })
                 } else {
-                  connection.release();
                   registroSolicitudesAtendidas();
                 }
               })
             } else {
               if (update.length > 0) {
                 connection.query(update, (err, row,) => {
-                  connection.release();
                   if (err) console.log(err);
                   registroSolicitudesAtendidas();
                 })
               } else {
-                connection.release();
                 registroSolicitudesAtendidas();
               }
             }
@@ -1013,6 +1171,7 @@ function registroIndicioEmbarazo() {
         })
       }
     })
+    connection.release();
   })
 }
 
@@ -1024,7 +1183,6 @@ function actualizarDashboard_ac(event) {
           if (err) throw err;
           connection.query("SELECT triage_id, triage_nombre, triage_nombre_ap, triage_nombre_am " +
             "FROM os_triage WHERE triage_id = " + event.affectedRows[0]["after"]["triage_id"], (err, row) => {
-              connection.release();
               if (!err) {
                 if (row[0] != undefined) {
                   var inf = row[0]
@@ -1035,18 +1193,19 @@ function actualizarDashboard_ac(event) {
                 }
               }
             });
+            connection.release();
         })
       }
       if (event.affectedRows[0]["before"]["triage_id"] != 0 && event.affectedRows[0]["before"]["triage_id"] != null) {
         pool.getConnection((err, connection,) => {
           if (err) throw err;
           connection.query("SELECT * FROM os_camas WHERE area_id = 1 AND triage_id =" + event.affectedRows[0]["before"]["triage_id"], (err, row,) => {
-            connection.release();
             if (row[0] == undefined) {
               var inf = { "tipo": "delete", "triage_id": event.affectedRows[0]["before"]["triage_id"] }
               io.sockets.emit("actualizarDashboard_ac", inf);
             }
           })
+          connection.release();
         })
       }
     } else if (event.affectedRows[0]["after"]["estado_salud"] != event.affectedRows[0]["before"]["estado_salud"]) {
@@ -1060,7 +1219,7 @@ function actualizarDashboard_ac(event) {
 //Detect mysql events
 const MySQLEvents = require('@rodrigogs/mysql-events');
 const { pathToFileURL } = require("url");
-const getDataPacientesAreasCriticasTablas = ["um_pacientes_uci", "os_camas", "os_triage"]
+const getDataPacientesAreasCriticasTablas = ["um_pacientes_uci", "um_pacientes_utr", "um_pacientes_utmo", "os_camas", "os_triage"]
 
 const program = async () => {
   const connection = mysql.createPool({
@@ -1091,7 +1250,8 @@ const program = async () => {
           }
         }
       } if (getDataPacientesAreasCriticasTablas.find(element => element.trim() === event.table)) {
-        getDataPacientesAreasCriticas("UCI", "")
+        var area = getDataPacientesAreasCriticasArea(event)
+        getDataPacientesAreasCriticas(area, "")
       } if (event.table == "os_camas_notas") {
         getDataCamasNotas(event.affectedRows)
       } if (event.table == "doc_43051") {
@@ -1101,7 +1261,7 @@ const program = async () => {
       } if (event.table == "paciente_info") {
         getDataRegistroPicIndicioEmbarazo(event.affectedRows)
       } if (event.table == "os_asistentesmedicas") {
-        updateRegistroPacientesAtencionMedicaAdmisionContinua(event.affectedRows[0]["after"])
+        //updateRegistroPacientesAtencionMedicaAdmisionContinua(event)
       } if (event.table == "um_consultas_dashboard") {
         io.sockets.emit("realTimeUpdateDashboard", event.affectedRows[0]["after"]);
       }
@@ -1113,3 +1273,6 @@ const program = async () => {
 program()
   .then(() => console.log('Waiting for database events...'))
   .catch(console.error);
+
+//updateAllRegistroPacientesAtencionMedicaAdmisionContinua(null)
+//preprocesamientoRegistroPacientesAtencionMedicaAdmisionContinua()

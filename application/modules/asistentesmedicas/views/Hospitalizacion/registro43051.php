@@ -304,7 +304,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label class="mayus-bold">MOTIVO DE INTERNAMIENTO</label>
+                                                <label class="mayus-bold">INTERNAMIENTO POR</label>
                                                 <select name="motivo_internamiento" data-value="<?=$Doc43051['motivo_internamiento']?>" class="form-control" required>
                                                     <option value="" ></option>
                                                     <option value="Tratamiento">Tratamiento</option>
@@ -316,9 +316,17 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
+                                                <label class="mayus-bold">MOTIVO DE INTERNAMIENTO:</label>
+                                                <input class="form-control" value="<?=$OrdenInternamiento['motivo_internamiento']?>" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
                                                 <label class="mayus-bold">DIAGNOSTICO DE INGRESO:</label>
                                                 <input class="form-control" name="diagnostico_presuntivo"  value="<?=$Diagnostico['cie10_nombre']?>" readonly>
-                                                <input type="hidden" class="form-control" name="dx_id"  value="<?=$Diagnostico['cie10_id']?>" readonly>
+                                                <input type="hidden" class="form-control" name="dx_id"  value="<?=$OrdenInternamiento['diagnostico_id']?>" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -363,7 +371,7 @@
                                         
                                         <div class="col-md-4">
                                             <div class="form-group" >
-                                                <label style="text-transform: uppercase;font-weight: bold">Asistente Médica Registra</label>
+                                                <label style="text-transform: uppercase;font-weight: bold">Asistente Médica Registra ó actualiza</label>
                                                 <input class="form-control" name="pic_am" required="" placeholder="" value="<?=$PINFO['pic_am']=='' ? $empleado[0]['empleado_nombre'].' '.$empleado[0]['empleado_apellidos'] : $PINFO['pic_am']?>" readonly> 
                                             </div> 
                                         </div>
@@ -391,7 +399,7 @@
                         <!-- fon del moda -->
                         <div class="row">
                             <div class="col-md-offset-8 col-md-2">
-                                <button type="button" class="btn btn-imms-cancel btn-block" onclick="window.history.back()">Cancelar</button>
+                                <button type="button" class="btn btn-imms-cancel btn-block" onclick="window.top.close()">Cancelar</button>
                             </div>
                             <div class="col-md-2">
                                 <input type="hidden" name="area_nombre" value="<?=$this->UMAE_AREA?>">

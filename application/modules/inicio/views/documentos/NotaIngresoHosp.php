@@ -154,7 +154,7 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
             text-align: justify;
         }
 
-        .contenido {
+        .contenidol {
             width: 580px;
             text-align: justify;
             padding-top: 5px;
@@ -167,7 +167,7 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
     <div style="position:absolute; left: 1px; margin-top: -10px; font-size: 12px;">
         <p style="margin-bottom: -6px;"><b>TIPO DE INTERROGATORIO</b> <?= $nota['tipo_interrogatorio'] ?></p>
         <?php if ($nota['motivo_ingreso_p1'] == '1') { ?>
-            <span style="margin-bottom: -6px;font-weight: bold;"><br>MOTIVO DE INGRESO</span>
+            <span style="margin-bottom: 0px;font-weight: bold;"><br>MOTIVO DE INGRESO</span>
             <p class="contenido"><?= $nota['motivo_ingreso'] ?></p>
         <?php } ?>
 

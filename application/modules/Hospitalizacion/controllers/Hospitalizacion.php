@@ -699,4 +699,41 @@ class Hospitalizacion extends Config{
     public function BuscarPacientesPendientes (){
         
     }
+
+    public function ProcesoDeAltaPorMedico() {
+
+        $infoPaciente = $this->config_mdl->_query("SELECT id,
+                                                   triage_nombre,
+                                                   triage_nombre_ap,
+                                                   triage_nombre_am,
+                                                   fecha_ingreso,
+                                                   hora_ingreso,
+                                                   fecha_asignacion,
+                                                   tipo_ingreso,
+                                                   pum_nss,
+                                                   pum_nss_agregado,
+                                                   ingreso_servicio                                                
+                                            FROM
+                                                os_triage
+                                                INNER JOIN doc_43051
+                                                INNER JOIN paciente_info
+                                            WHERE
+                                                os_triage.triage_id = doc_43051.triage_id
+                                                AND paciente_info.triage_id = os_triage.triage_id
+                                                AND os_triage.triage_id =".$this->input->post('folio'))[0];
+
+        $sqlMotivoEgreso=$this->config_mdl->sqlGetData('um_motivo_egreso');
+            
+        $motivoEgreso .= '<option value="0" disable>Selecciona</option>';;
+        foreach ($sqlMotivoEgreso as $value) {           
+            $motivoEgreso.='<option value="'.$value['id'].'">'.$value['nombre'].'</option>';
+        }
+
+                $this->setOutput(array('accion'      => '1',
+                                       'infoPaciente'=> $infoPaciente,
+                                        
+                                       'motivoEgreso'=> $motivoEgreso
+                                        ));
+            
+    }
 }
