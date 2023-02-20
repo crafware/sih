@@ -114,7 +114,8 @@ class Admisionhospitalaria extends Config{
     }
 
     public function TableroCamas() {
-        $this->load->view('TableroCamas');
+        $sql['Especialidades'] = $this->config_mdl->_get_data('um_especialidades');
+        $this->load->view('TableroCamas',$sql);
     }
    
   
@@ -166,13 +167,26 @@ class Admisionhospitalaria extends Config{
             $Disponibles = $this->TotalCamasEstatusPisos($value['piso_id'], 'Disponible'); //Esta Vestida
             $Ocupadas = $this->TotalCamasEstatusPisos($value['piso_id'], 'Ocupado');
             $TotalPiso = $this->TotalPorPiso($value['piso_id']);
-
+            $nombrePiso = '<li><h5 class="text-center link-acciones bold">Piso ' . $value["piso_nombre"]. '</h5></li>';
+            $ReportePiso = '<li><a href="#" class="ReportePiso"  data-piso="' . $value["area_id"] . '"><i class="fa fa-share-square-o icono-accion"></i> Reporte por piso</a></li>';
+            $ReporteEspe = '<li><a href="#" class="ReporteEspe"><i class="fa fa-share-square-o icono-accion"></i> Reporte por especialidad</a></li>';
+            $ReportesPisos = '<div style="float: left;"> 
+                                <ul class="list-inline list-menu">
+                                    <li class="dropdown">
+                                        <a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-file-text-o"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -215px">' .$nombrePiso. ' ' .$ReportePiso. ' ' .$ReporteEspe. '</ul>
+                                    </li>
+                                </ul>
+                            </div>';
             $Col .= '<div class="container-fluid col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="bedCharts-space text-left">
                         <span style="font-weight: bold">' . $value['piso_nombre_corto'] . '</span>
                         <span class="infoPisoTotal">Total:' . $TotalPiso . '</span>
                         <span class="infoPisoDisponibles">Disponibles: ' . $Disponibles . '</span>
                         <span class="infoPisoOcupadas" style="padding-left: 50px">Ocupadas: ' . $Ocupadas . '</span>
+                        <span style="float:right;">' . $ReportesPisos . '</span>
                     </div>  
                     <div class="container-fluid col-lg-12 col-md-12 col-sm-12 col-xs-12 rowCamas">';
 
@@ -1127,31 +1141,44 @@ class Admisionhospitalaria extends Config{
                     <div id="bead-map" >';
         $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 0");
         $NotasDes = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 1");
+        //$Especialidades = $this->config_mdl->_get_data("um_especialidades", array("especialidad_hospitalisacion" => 1));
         foreach ($Pisos as $value) {
+            $Disponibles = $this->TotalCamasEstatusPisos($value['piso_id'], 'Disponible'); //Esta Vestida
+            $Ocupadas = $this->TotalCamasEstatusPisos($value['piso_id'], 'Ocupado');
+            $nombrePiso = '<li><h5 class="text-center link-acciones bold">Piso ' . $value["piso_nombre"]. '</h5></li>';
+            $ReportePiso = '<li><a href="#" class="ReportePiso"  data-piso="' . $value["area_id"] . '"><i class="fa fa-share-square-o icono-accion"></i> Reporte por piso</a></li>';
+            $ReporteEspe = '<li><a href="#" class="ReporteEspe"><i class="fa fa-share-square-o icono-accion"></i> Reporte por especialidad</a></li>';
+            $ReportesPisos = '<div style="float: left;"> 
+                        <ul class="list-inline list-menu">
+                            <li class="dropdown">
+                                <a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-file-text-o"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -215px">' .$nombrePiso. ' ' .$ReportePiso. ' ' .$ReporteEspe. '</ul>
+                            </li>
+                        </ul>
+                    </div>';
+            $TotalPiso = $this->TotalPorPiso($value['piso_id']);
             $Camas = $this->config_mdl->_query("SELECT * FROM os_camas, os_areas, os_pisos, os_pisos_camas, os_pisos_sc WHERE 
                 os_areas.area_id        =os_camas.area_id AND 
                 os_pisos_camas.cama_id  =os_camas.cama_id AND
                 os_pisos_camas.piso_id  =os_pisos.piso_id AND 
                 os_pisos_sc.cama_id     =os_camas.cama_id AND 
                 os_pisos.piso_id        =" . $value['piso_id']);
-
-
-            $Disponibles = $this->TotalCamasEstatusPisos($value['piso_id'], 'Disponible'); //Esta Vestida
-            $Ocupadas = $this->TotalCamasEstatusPisos($value['piso_id'], 'Ocupado');
-            $TotalPiso = $this->TotalPorPiso($value['piso_id']);
-
             $Col .= '<div class="container-fluid col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="bedCharts-space text-left">
                             <span style="font-weight: bold">' . $value['piso_nombre_corto'] . '</span>
                             <span class="infoPisoTotal">Total:' . $TotalPiso . '</span>
                             <span class="infoPisoDisponibles">Disponibles: ' . $Disponibles . '</span>
                             <span class="infoPisoOcupadas" style="padding-left: 50px">Ocupadas: ' . $Ocupadas . '</span>
+                            <span style="float:right;">' . $ReportesPisos . '</span>
                         </div>  
                         <div class="container-fluid col-lg-12 col-md-12 col-sm-12 col-xs-12 rowCamas">';
-
             foreach ($Camas as $valor) {
                 $tiempoIntervalo = '';
                 $info43051 = $this->config_mdl->_get_data_condition('doc_43051', array('triage_id' => $valor['triage_id']))[0];
+                $OcuparCama = '<li><a href="#" class="ocuparCama" data-triage="' . $valor['triage_id'] . '" data-cama="' . $valor['cama_id'] . '" data-camanombre="' . $valor['cama_nombre'] . '"><i class="fa fa-bed icono-accion"></i>  Ocupar cama</a></li>';
+
                 /* Acciones para el popup*/
                 $nombreCama = '<li><h5 class="text-center link-acciones bold">Cama ' . $valor['cama_nombre'] . '</h5></li>';
                 /* Acciones de sobre la cama asignada */
@@ -1190,7 +1217,14 @@ class Admisionhospitalaria extends Config{
                         'Tiempo2' => date('Y-m-d H:i:s')
                     ));
                     $tiempoIntervalo .= $tiempoEspera->format('%h:%i min');
-                    $acciones = '<i class="fa fa-bed"></i>';
+                    $acciones = '<ul class="list-inline list-menu">
+                                    <li class="dropdown">
+                                        <a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-bed"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' . $nombreCama . ' ' . $OcuparCama . '</ul>
+                                    </li>
+                                </ul>';
                 } else if ($valor['cama_estado'] == 'Contaminada') {   // Contaminada
                     $CamaStatus = 'red';
                     $Estado = 'Limpia';
@@ -1218,9 +1252,28 @@ class Admisionhospitalaria extends Config{
                     $color = 'red';
                 }
 
-                if ($valor['cama_estado'] == 'Sucia' || $valor['cama_estado'] == 'Contaminada') {
+                /*if ($valor['cama_estado'] == 'Sucia' || $valor['cama_estado'] == 'Contaminada') {
                     $CamaCeldaSemaforo = $valor['cama_display'];
                     $acciones = '<i class="fa fa-bed"></i>';
+                }*/
+                if ($valor['cama_estado'] == 'Sucia' || $valor['cama_estado'] == 'Contaminada') {
+                    $CamaCeldaSemaforo = $valor['cama_display'];
+                    $ConfirmarLimpieza = '<li><a href="#" class="confirmar-Limpieza" ' . '" data-cama="' . $valor['cama_id'] . '" data-cama-id="' . $valor['cama_id'] . '" data-estado="' . $valor['cama_estado'] . '" data-cama_nombre="' . $valor['cama_nombre'] . '" data-folio="' . $valor['triage_id'] . '" data-paciente="' . $proceso  . '"><i class="fa fa-paint-brush icono-accion"></i> Confirmar limpieza</a></li>';
+                    $AgregarNota = '<li><a href="#" class="nota-cama" ' . '" data-cama="' . $valor['cama_id'] . '" data-cama-id="' . $valor['cama_id'] . '" data-estado="' . $valor['cama_estado'] . '" data-cama_nombre="' . $valor['cama_nombre'] . '" data-folio="' . $valor['triage_id'] . '" data-paciente="' . $proceso  . '"><i class="fa fa-file-text-o icono-accion"></i> Agregar nota</a></li>';
+                    $CamaCeldaSemaforo_int = 4 - intval($CamaCeldaSemaforo);
+                    if ($CamaCeldaSemaforo_int <= 3) {
+                        $CambiarEstadoSemaforo = '<li><a href="#" class="cambiar-estado-semaforo" ' . '" data-cama="' . $valor['cama_id'] . '" data-cama-id="' . $valor['cama_id'] . '" data-estado="' . $valor['cama_estado'] . '" data-cama_nombre="' . $valor['cama_nombre'] . '" data-folio="' . $valor['triage_id'] . '" data-semaforo="' . $CamaCeldaSemaforo  . '"><i class="fa fa-paint-brush icono-accion"></i> Confirmar limpieza No.' . $CamaCeldaSemaforo_int . '</a></li>';
+                    } else {
+                        $CambiarEstadoSemaforo = "";
+                    }
+                    $acciones = '<ul class="list-inline list-menu">
+                                    <li class="dropdown">
+                                        <a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-bed"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' . $nombreCama . ' ' . $ConfirmarLimpieza . ' ' . $AgregarNota . ' ' . $CambiarEstadoSemaforo . ' </ul>
+                                    </li>
+                                </ul>';
                 }
                 $Col .= '<div class="contenedor fila ' . $borde . '">
                             <div id="proceso" style="color: ' . $color . ';">
@@ -1256,6 +1309,8 @@ class Admisionhospitalaria extends Config{
                         <div id = "nota_des_' . $valor['cama_id'] . '" class="notificacion-nota-des" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $OpDes . '"><p>' . "$NotasLenDes" . '</p></div>
                     </div>';
             } //cierre foreach ($Camas as $value)
+            
+            
             $Col .= '</div>'; // cierre de div class="panel panel-default"
             $Col .= '</div>'; // cierre de div class="panel panel-default"
             //$Col.=$modal;
@@ -1576,7 +1631,7 @@ class Admisionhospitalaria extends Config{
             'area_id'=> $this->input->post('area_id'),
             'cama_estado'=>'Disponible'
         ));
-        $optio_camas = '';
+        $option_camas = '';
         $option_camas .= '<option value="" disabled selected>Selecciona</option>';
         foreach ($sql as $value) {
             $option_camas.='<option value="'.$value['cama_id'].'">'.$value['cama_nombre'].'</option>';
@@ -1672,11 +1727,17 @@ class Admisionhospitalaria extends Config{
         ),array(
             'triage_id' =>  $this->input->post('triage_id')
         ));
-
+        $cama_nombre_actual =  $this->config_mdl->_get_data_condition("os_camas", array(
+            'cama_id' => $this->input->post('cama_id_actual')
+        ));
+        $cama_id_new        =  $this->config_mdl->_get_data_condition("os_camas", array(
+            'cama_id' => $this->input->post('cama_id_new')
+        ));
+ 
         $this->config_mdl->_insert('os_camas_log',array(
             'cama_log_fecha'=> date('d/m/Y'),
             'cama_log_hora'=> date('H:i'),
-            'cama_log_tipo'=>'Cambio de Cama id'.' '.$this->input->post('cama_id_actual').' a '.$this->input->post('cama_id_new'),
+            'cama_log_tipo'=>'Cambio de Cama '.$cama_nombre_actual[0]["cama_nombre"].' a '.$cama_id_new[0]["cama_nombre"],
             'cama_log_modulo'=>'AdmisionHospitalaria',
             'cama_id'=> $this->input->post('cama_id_new'),
             'triage_id'=> $this->input->post('triage_id'),
@@ -1774,6 +1835,8 @@ class Admisionhospitalaria extends Config{
 
             $this->config_mdl->_update_data('os_camas', array(
                                         'cama_estado'     => 'Ocupado',
+                                        'id_servicio_trat'=> $info43051['ingreso_servicio'],
+                                        'id_medico_trat'  => $info43051['ingreso_medico'],
                                         'cama_fh_estatus' => date('Y-m-d H:i')), array(
                                         'cama_id'         => $this->input->post('cama_id')));
 
@@ -1880,7 +1943,7 @@ class Admisionhospitalaria extends Config{
     }
 
     public function ReporteAltas() {
-      $this->load->view('ReporteAltas', $sql);
+      $this->load->view('ReporteAltas');
     }
     public function GetMedicoEspecialista() {
          
@@ -2384,8 +2447,9 @@ class Admisionhospitalaria extends Config{
     }
 
     public function ProcesoDeAlta() {
-        $cama = $this->input->post('cama_id');
-
+        $cama = $_POST['cama_id'];
+        $especialidad = "";
+        $motivoEgreso = "";
         $infoC = $this->config_mdl->_query("SELECT os_camas.cama_id,triage_id,cama_nombre,cama_genero,piso_nombre_corto FROM os_camas
                                             INNER JOIN os_pisos
                                             INNER JOIN os_pisos_camas
@@ -2612,7 +2676,11 @@ class Admisionhospitalaria extends Config{
         if(!empty($servicio_egreso)){
           $salidaServicio = $servicio_egreso;
           $salidaMedico = $this->input->post('medico_egreso');
+<<<<<<< HEAD
           $motivoAlta = $this->input->post('motivo_egreso');
+=======
+          $motivoalta = $this->input->post('motivo_egreso');
+>>>>>>> f59ef181d4b841819dd9b386dfd0172068845fa5
           $proceso      = 2;
         }else {
           $salidaServicio = $notaAlta['empleado_servicio_id'];
@@ -2686,7 +2754,7 @@ class Admisionhospitalaria extends Config{
                 'tipo_ingreso'          => $paciente['tipo_ingreso'],
                 'nss'                   => $paciente['pum_nss'].' '.$paciente['pum_nss_agregado'],
                 'paciente'              => $paciente['triage_nombre'].' '.$paciente['triage_nombre_ap'].' '.$paciente['triage_nombre_am'],
-                'motivoalta'            => $motivoAlta,
+                'motivoalta'            => $motivoalta,
                 'fecha_h_asigna_cama'   => $paciente['fecha_asignacion'],
                 'fecha_h_ingreso'       => $paciente['fecha_ingreso'],
                 'fecha_h_alta_hosp'     => date('Y-m-d H:i'),  // fecha y hora en que asistente medica da alta en camas       

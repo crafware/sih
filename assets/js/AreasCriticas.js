@@ -47,7 +47,11 @@ $(document).ready(function () {
 
                 cancel: {
                     label: 'Cancelar',
+<<<<<<< HEAD
                     className: 'red'
+=======
+                    className: 'btn-imss-cancel'
+>>>>>>> f59ef181d4b841819dd9b386dfd0172068845fa5
                 }
             },
             callback: function (res) {
@@ -124,7 +128,7 @@ $(document).ready(function () {
                         buttons: {
                             cancel: {
                                 label: 'Cancelar',
-                                className: 'red'
+                                className: 'btn-imss-cancel'
                             }, confirm: {
                                 label: 'Confirmar',
                                 className: 'back-imss'

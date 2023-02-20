@@ -230,7 +230,7 @@ function ModalPacientePrescripciones(dataArray){
             },
             cancel: {
                 label: 'Cancelar',
-                className: 'btn-basic'
+                className: 'btn-imss-cancel'
             }
           },
           callback: function(result){
@@ -372,7 +372,7 @@ function FormMensajePrescripcion(prescripcion_id){
           },
           cancel: {
               label: 'Cancelar',
-              className: 'btn-basic'
+              className: 'btn-imss-cancel'
           }
         },
         callback: function(result){

@@ -191,8 +191,10 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
             <p style="margin-bottom: 1px">Antecedentes Gineco Obstetricos</p>
             <p class="contenido"><?= $nota['antecedentes_ginecoobstetricos'] ?></p>
         <?php } ?>
-        <?php if ($nota['ESTADO_ACTUAL_p1'] == '1') { ?>
-            <span style="font-weight: bold;"><br>ESTADO ACTUAL</span>
+        <?php if($nota['padecimiento_actual_p1'] == '1' || $nota['exploracion_fisica_p1'] == '1') {
+                if ($nota['ESTADO_ACTUAL_p1'] == '1') {?>
+                <span style="font-weight: bold;"><br>ESTADO ACTUAL</span>
+            <?php } ?>
         <?php } ?>
         <?php if ($nota['padecimiento_actual_p1'] == '1') { ?>
             <p style="margin-bottom: 1px">Padecimiento Actual</p>
@@ -202,8 +204,10 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
             <p style="margin-bottom: 1px">Exploracion Fisica</p>
             <p class="contenido"><?= $nota['exploracion_fisica'] ?></p>
         <?php } ?>
-        <?php if ($nota['EXAMENES_AUXILIARES_DE_p1'] == '1') { ?>
-            <span style="font-weight: bold;">EXAMENES AUXILIARES DE DIAGNÓSTICO</span>
+        <?php if ($nota['estudios_laboratorio_p1'] == '1' || $nota['estudios_gabinete_p1'] == '1') { ?>
+            <?php if ($nota['EXAMENES_AUXILIARES_DE_p1'] == '1') { ?>
+                <span style="font-weight: bold;">EXAMENES AUXILIARES DE DIAGNÓSTICO</span>
+            <?php } ?>
         <?php } ?>
         <?php if ($nota['estudios_laboratorio_p1'] == '1') { ?>
             <p style="margin-bottom: 1px">Estudios Laboratorio</p>
@@ -351,8 +355,11 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
             <p style="margin-bottom: 1px">Antecedentes Gineco Obstetricos</p>
             <p class="contenido"><?= $nota['antecedentes_ginecoobstetricos'] ?></p>
         <?php } ?>
-        <?php if ($nota['ESTADO_ACTUAL_p1'] == '2') { ?>
-            <span style="font-weight: bold;"><br>ESTADO ACTUAL</span>
+        <?php 
+            if(($nota['padecimiento_actual_p1'] == '2' || $nota['exploracion_fisica_p1'] == '2') && !($nota['padecimiento_actual_p1'] == '1' || $nota['exploracion_fisica_p1'] == '1')) {
+                if ($nota['ESTADO_ACTUAL_p1'] == '2') { ?>
+                    <span style="font-weight: bold;"><br>ESTADO ACTUAL</span>
+            <?php } ?>
         <?php } ?>
         <?php if ($nota['padecimiento_actual_p1'] == '2') { ?>
             <p style="margin-bottom: 1px">Padecimiento Actual</p>
@@ -362,8 +369,10 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
             <p style="margin-bottom: 1px">Exploracion Fisica</p>
             <p class="contenido"><?= $nota['exploracion_fisica'] ?></p>
         <?php } ?>
-        <?php if ($nota['EXAMENES_AUXILIARES_DE_p1'] == '2') { ?>
-            <span style="font-weight: bold;">EXAMENES AUXILIARES DE DIAGNÓSTICO</span>
+        <?php if (($nota['estudios_laboratorio_p1'] == '2' || $nota['estudios_gabinete_p1'] == '2') && !($nota['estudios_laboratorio_p1'] == '1' || $nota['estudios_gabinete_p1'] == '1')) { ?>
+            <?php if ($nota['EXAMENES_AUXILIARES_DE_p1'] == '2') { ?>
+                <span style="font-weight: bold;">EXAMENES AUXILIARES DE DIAGNÓSTICO</span>
+            <?php } ?>
         <?php } ?>
         <?php if ($nota['estudios_laboratorio_p1'] == '2') { ?>
             <p style="margin-bottom: 1px">Estudios Laboratorio</p>
@@ -373,6 +382,8 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
             <p style="margin-bottom: 1px">Estudios de Gabinete</p>
             <p class="contenido"><?= $nota['estudios_gabinete'] ?></p>
         <?php } ?>
+        <p>Diagnosticos_p1: <?= print_r($Diagnosticos_p1)?></p>
+        <p>Diagnosticos: <?= print_r($Diagnosticos)?></p>
         <p style="font-weight: bold;margin-bottom: 1px">IMPRESIÓN DIAGNÓSTICA</p>
         <p style="margin-bottom: 1px">Diagnóstico de Ingreso</p>
         <p class="contenido"><?= $Diagnosticos[0]['cie10_clave'] ?> - <?= $Diagnosticos[0]['cie10_nombre'] ?></p>
@@ -404,7 +415,7 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
 
             <?php } ?>
 
-        <?php     } ?>
+        <?php } ?>
 
         <p style="font-weight: bold;margin-bottom: 1px">PLAN Y ORDENES MÉDICAS</p>
         <!--<p><?= print_r($nota) ?></p>-->
@@ -687,13 +698,19 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
                     </div>
         <?php }} ?>
     </page_footer>
+    <!--<p><?= __DIR__?></p>-->
 </page>
 
 <?php
 $html =  ob_get_clean();
-$pdf = new HTML2PDF('P', 'A4', 'fr', 'UTF-8');
-$pdf->writeHTML($html);
-// $pdf->pdf->IncludeJS("print(true);");
-$pdf->pdf->SetTitle('NOTA DE INGRESO ');
-$pdf->Output($Nota['notas_tipo'] . '.pdf');
+//$pdf = new HTML2PDF('P', 'A4', 'fr', 'UTF-8');
+//$pdf->writeHTML($html);
+//// $pdf->pdf->IncludeJS("print(true);");
+//$pdf->pdf->SetTitle('NOTA DE INGRESO ');
+//$pdf->Output($Nota['notas_tipo'] . '.pdf');
+require __DIR__.'/vendor/autoload.php';
+use spipu\Html2Pdf\Html2Pdf;
+$html2pdf = new Html2Pdf();
+$html2pdf->writeHTML('<h1>HelloWorld</h1>This is my first test');
+$html2pdf->output();
 ?>

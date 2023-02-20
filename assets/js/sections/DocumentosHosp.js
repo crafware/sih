@@ -2614,7 +2614,7 @@ $(document).ready(function () {
                 },
                 cancel: {
                     label: 'Cancelar',
-                    className: 'btn-basic'
+                    className: 'btn-imss-cancel'
                 }
               },
               callback:function(result){
@@ -2762,7 +2762,7 @@ $(document).ready(function () {
           },
           cancel: {
               label: 'Cancelar',
-              className: 'btn-basic'
+              className: 'btn-imss-cancel'
           }
         },
         callback: function(result){

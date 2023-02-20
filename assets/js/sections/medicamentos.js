@@ -271,7 +271,7 @@ function FormularioAntimicrobianoOncologico(){
             },
             cancel: {
                 label: 'Cancelar',
-                className: 'btn-basic'
+                className: 'btn-imss-cancel'
             }
           },
           callback:function(result){
@@ -419,7 +419,7 @@ function FormularioNPT(){
       },
       cancel: {
           label: 'Cancelar',
-          className: 'btn-basic'
+          className: 'btn-imss-cancel'
       }
     },
     callback: function(result){

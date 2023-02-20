@@ -53,6 +53,17 @@ function getServerIp(){
 	</div>
 </div>
 <input type="hidden" name="area" value="<?= $this->UMAE_AREA?>">
+<script>
+	var Especialidades = <?= json_encode($Especialidades) ?>;
+	var inputOptions = [{ text: '', value: ''}];
+	for(var i = 0;i < Especialidades.length; i++){
+		var aux = {
+			text: 	Especialidades[i]["especialidad_nombre"],
+			value:	Especialidades[i]["especialidad_id"]
+		}
+		inputOptions.push(aux)
+	}
+</script>
 <?= modules::run('Sections/Menu/footer'); ?>
 <script src="<?= base_url('assets/js/DireccionEnfermeria.js?'). md5(microtime())?>" type="text/javascript"></script>
 <!--<script src="<?= base_url('assets/js/Conservacionlimpieza.js?'). md5(microtime())?>" type="text/javascript"></script>-->

@@ -546,7 +546,7 @@ function getDataPacientesAreasCriticasCamas(area, socket, rowsPacientes) {
       throw err;
     var sql = 'SELECT * FROM  os_camas'
     if(area == "UCI"){
-      sql = 'SELECT * FROM  os_camas WHERE os_camas.area_id = "' + areasCriticasDB[area]["areaId"]+'"'
+      sql = 'SELECT * FROM os_camas WHERE os_camas.area_id = "' + areasCriticasDB[area]["areaId"]+'"'
     }
     connection.query(sql, (err, rows,) => {
       if (!err) {
@@ -1276,3 +1276,7 @@ program()
 
 //updateAllRegistroPacientesAtencionMedicaAdmisionContinua(null)
 //preprocesamientoRegistroPacientesAtencionMedicaAdmisionContinua()
+
+
+/*
+*/

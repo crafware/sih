@@ -17,7 +17,11 @@ $(document).ready(function () {
             buttons: {
                 cancel: {
                     label: 'Cancelar',
+<<<<<<< HEAD:assets/js/medicoHospNotas_servidor.js
                     className: 'btn-danger'
+=======
+                    className: 'btn-imss-cancel'
+>>>>>>> f59ef181d4b841819dd9b386dfd0172068845fa5:assets/js/ConsultoriosOLD.js
                 },confirm: {
                     label: 'Ver Expediente',
                     className: 'btn-success'
@@ -48,7 +52,7 @@ $(document).ready(function () {
             buttons: {
                 cancel: {
                     label: 'Cancelar',
-                    className: 'back-imss'
+                    className: 'btn-imss-cancel'
                 },confirm: {
                     label: 'Agregar a Consultorio',
                     className: 'back-imss'
@@ -94,7 +98,11 @@ $(document).ready(function () {
             buttons: {
                 cancel: {
                     label: 'Cancelar',
+<<<<<<< HEAD:assets/js/medicoHospNotas_servidor.js
                     className: 'btn-danger'
+=======
+                    className: 'btn-imss-cancel'
+>>>>>>> f59ef181d4b841819dd9b386dfd0172068845fa5:assets/js/ConsultoriosOLD.js
                 },confirm: {
                     label: 'Agregar',
                     className: 'btn-success'
@@ -506,5 +514,133 @@ $(document).ready(function () {
         let fecha=$('#fecha').val();
         passDate(fecha);
     });
+<<<<<<< HEAD:assets/js/medicoHospNotas_servidor.js
+=======
+    $('#fechaProductividad').datepicker({
+        autoclose: true,
+        format: 'dd-mm-yyyy',
+        todayHighlight: true,
+        placement: 'bottom'
+    });
+    $('.clockpicker-ce').clockpicker({
+        placement: 'bottom',
+        autoclose: true
+    });
+    $('.btn-indicador-ce').click(function () {
+        $.ajax({
+            url: base_url+"Consultorios/AjaxIndicadores",
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                inputFechaInicio:$('input[name=inputFechaInicio]').val(),
+                csrf_token:csrf_token
+            },beforeSend: function (xhr) {
+                msj_loading();
+            },success: function (data, textStatus, jqXHR) {
+                console.log(data)
+                bootbox.hideAll();
+                $('.TOTAL_PACIENTES_CONSULTORIOS_DOC').find('span').html(data.TOTAL_DOCS+' DOCUMENTOS GENERADOS');
+                $('.GENERAR_LECHAGA_CONSULTORIOS')
+                        .attr('data-inputfecha',$('input[name=inputFechaInicio]').val()).removeClass('hide');
+                
+            },error: function (e) {
+                bootbox.hideAll();
+                MsjError();
+                console.log(e)
+            }      
+        })
+    })
+    $('.GENERAR_LECHAGA_CONSULTORIOS').click(function (e) {
+        AbrirDocumento(base_url+'Inicio/Documentos/LechugaConsultorios?inputFechaInicio='+$(this).attr('data-inputfecha'),'_blank');
+    });
+    /*Destinos*/
+    $('.btn-add-dest').click(function (e) {
+        e.preventDefault();
+        AjaxDestino({
+            destino_id:0,
+            destino_nombre:'',
+            destino_accion:'add'
+        })
+    })
+    function AjaxDestino(info) {
+        bootbox.confirm({
+            title:'<h5>NUEVO DESTINO</h5>',
+            message:'<div class="row">'+
+                        '<div class="col-md-12">'+
+                            '<div class="form-group">'+
+                                '<input type="text" name="destino_nombre" value="'+info.destino_nombre+'" class="form-control" placeholder="Nombre del destino">'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'
+            ,size:'small',
+            buttons:{
+                confirm:{
+                    label:'Aceptar',
+                    className:'back-imss'
+                },cancel:{
+                    label:'Cancelar',
+                    className:'btn-imss-cancel'
+                }
+            },callback:function (response) {
+                if(response==true){
+                    var destino_nombre=$('body input[name=destino_nombre]').val();
+                    if(destino_nombre!=''){
+                        $.ajax({
+                            url: base_url+"Consultorios/AjaxDestinos",
+                            type: 'POST',
+                            dataType: 'json',
+                            data:{
+                                destino_id:info.destino_id,
+                                destino_nombre:destino_nombre,
+                                destino_accion:info.destino_accion,
+                                csrf_token:csrf_token
+                            },beforeSend: function (xhr) {
+                                msj_loading();
+                            },success: function (data, textStatus, jqXHR) {
+                                if(data.accion=='1'){
+                                    msj_success_noti('Dato Guardados');
+                                    ActionWindowsReload();
+                                }
+                            },error: function (e) {
+                                bootbox.hideAll();
+                                MsjError();
+                                console.log(e);
+                            }
+                        })        
+                    }else{
+                        msj_error_noti('Campor Requerido');
+                    }
+                }
+            }
+            
+        })
+    }
+    $('body').on('click','.destino-eliminar',function () {
+        var destino_id=$(this).attr('data-id');
+        if(confirm('¿ELIMINAR REGISTRO?')){
+            $.ajax({
+                url: base_url+"Consultorios/AjaxDestinosEliminar",
+                type: 'POST',
+                dataType: 'json',
+                data:{
+                    destino_id:destino_id,
+                    csrf_token:csrf_token
+                },beforeSend: function (xhr) {
+                    msj_loading();
+                },success: function (data, textStatus, jqXHR) {
+                    bootbox.hideAll();
+                    if(data.accion=='1'){
+                        msj_success_noti('Registro eliminado');
+                    }
+                },error: function (e) {
+                    bootbox.hideAll();
+                    MsjError();
+                    console.log(e)
+                }
+            });
+        }
+    });
+    /*Agregar Nuevo Consultorio*/
+>>>>>>> f59ef181d4b841819dd9b386dfd0172068845fa5:assets/js/ConsultoriosOLD.js
     
 })
