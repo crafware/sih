@@ -17,7 +17,14 @@
                 <div class="tab-content p m-b-md b-t b-t-2x">
                     <div role="tabpanel" class="tab-pane animated fadeIn active" id="tab_1">
                         <div class="row">
-                            <div class="col-md-4 col-md-offset-8">
+                            <div class="col-md-2">
+                                <label for=""><b>Filtrar por fecha de ingreso</b></label>
+                                <div class="input-group m-b">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" name="fecha" class="form-control" id="fecha" value="<?php echo date("d-m-Y");?>" placeholder="Seleccionar fecha">
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-md-offset-6">
                                 <div class="input-group m-b ">
                                     <span class="input-group-addon back-imss border-back-imss" >
                                         <i class="fa fa-search"></i>
@@ -74,10 +81,8 @@
                                                 <?php if($value['estado_ingreso_med']=='Esperando'){?>
                                                     <i class="fa fa-pencil-square-o icono-accion tip pointer" id='ingresoPaciente' data-original-title="Ingresar paciente al servicio" data-value="<?=$value['triage_id']?>"></i>
                                                 <?php }?>
-                                                <!--
-                                                <a href="<?=  base_url()?>Sections/Documentos/Expediente/<?=$value['triage_id']?>/?tipo=Hospitalizacion" target="_blank">
-                                                    <i class="fa fa-share-square-o icono-accion tip" data-original-title="Ver Expediente"></i>
-                                                </a> -->
+
+                                                <i class="fa fa-sign-out icono-accion pointer tip borrar-paciente-ingreso" data-id="<?=$value['triage_id']?>" data-original-title="Borrar de la lista"></i>
                                             </td>
                                         </tr>
                                         <?php } ?>
@@ -199,8 +204,6 @@
                                                     <i class="fa fa-pencil-square-o icono-accion tip" data-original-title="Requisitar Información"></i>
                                                 </a>
                                                 <?php if($value['ce_hf']){?>
-                                                <i class="fa fa-bed tip salida-paciente-observacion pointer icono-accion" data-con="<?=$info_c[0]['empleado_area']?>"  data-id="<?=$value['triage_id']?>" data-original-title="Enviar a Observación"></i>&nbsp;
-
                                                 <i class="fa fa-share-square-o icono-accion pointer tip abandono-consultorio" data-id="<?=$value['triage_id']?>" data-original-title="Alta por ausencia del paciente"></i>
                                                 <?php }?>
                                                 <?php if($value['hora_atencion']){?>
@@ -287,8 +290,8 @@
 </div>
 <input type="hidden" name="umae_user" value="<?=$this->UMAE_USER?>">
 <?= modules::run('Sections/Menu/footer'); ?>
-<script src="<?= base_url('assets/Sections/Pacientes.js?').md5(microtime())?>" type="text/javascript"></script>
-<script src="<?= base_url('assets/js/medicoHospNotas.js?').md5(microtime())?>" type="text/javascript"></script>
+<script type="text/javascript" src="<?= base_url('assets/Sections/Pacientes.js?').md5(microtime())?>" ></script>
+<script type="text/javascript" src="<?= base_url('assets/js/medicoHospNotas.js?').md5(microtime())?>" ></script>
 
 
 <script>
