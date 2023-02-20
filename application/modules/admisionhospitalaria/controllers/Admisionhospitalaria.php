@@ -114,7 +114,7 @@ class Admisionhospitalaria extends Config{
     }
 
     public function TableroCamas() {
-        $sql['Especialidades'] = $this->config_mdl->_get_data('um_especialidades');
+        $sql['Especialidades'] = $this->config_mdl->_query('SELECT * FROM um_especialidades WHERE especialidad_hospitalizacion = 1');
         $this->load->view('TableroCamas',$sql);
     }
    
