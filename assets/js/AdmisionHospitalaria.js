@@ -896,4 +896,21 @@ $(document).ready(function () {
       $('.pdfIngresosHosp').click(function (e){
         AbrirDocumento(base_url+'inicio/documentos/IngresosAdmisionHospitalaria?fecha_inicio='+$(this).attr('data-fecha_inicio'));
     });
+    $('body').on('click','.ReportePiso', function(e){
+        e.preventDefault();
+        let piso_id = $(this).data("piso");
+        AbrirDocumento('http://localhost/sih/inicio/Documentos/reporteEstadoSaludPisoAdmisionHospitalaria?piso_id='+piso_id);
+    })
+    $('body').on('click','.ReporteEspe', function(e){
+        e.preventDefault();
+        bootbox.prompt({
+            title: 'Selecciona servicio',
+            inputType: 'select',
+            inputOptions: inputOptions,
+            callback: function (result) {
+                console.log(result);
+                AbrirDocumento('http://localhost/sih/inicio/Documentos/reporteEstadoSaludPisoAdmisionHospitalaria?especialidad_id='+result);
+            }
+        });
+    })
 });

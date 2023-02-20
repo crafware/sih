@@ -114,7 +114,8 @@ class Admisionhospitalaria extends Config{
     }
 
     public function TableroCamas() {
-        $this->load->view('TableroCamas');
+        $sql['Especialidades'] = $this->config_mdl->_get_data('um_especialidades');
+        $this->load->view('TableroCamas',$sql);
     }
    
   
@@ -166,13 +167,26 @@ class Admisionhospitalaria extends Config{
             $Disponibles = $this->TotalCamasEstatusPisos($value['piso_id'], 'Disponible'); //Esta Vestida
             $Ocupadas = $this->TotalCamasEstatusPisos($value['piso_id'], 'Ocupado');
             $TotalPiso = $this->TotalPorPiso($value['piso_id']);
-
+            $nombrePiso = '<li><h5 class="text-center link-acciones bold">Piso ' . $value["piso_nombre"]. '</h5></li>';
+            $ReportePiso = '<li><a href="#" class="ReportePiso"  data-piso="' . $value["area_id"] . '"><i class="fa fa-share-square-o icono-accion"></i> Reporte por piso</a></li>';
+            $ReporteEspe = '<li><a href="#" class="ReporteEspe"><i class="fa fa-share-square-o icono-accion"></i> Reporte por especialidad</a></li>';
+            $ReportesPisos = '<div style="float: left;"> 
+                                <ul class="list-inline list-menu">
+                                    <li class="dropdown">
+                                        <a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-file-text-o"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -215px">' .$nombrePiso. ' ' .$ReportePiso. ' ' .$ReporteEspe. '</ul>
+                                    </li>
+                                </ul>
+                            </div>';
             $Col .= '<div class="container-fluid col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="bedCharts-space text-left">
                         <span style="font-weight: bold">' . $value['piso_nombre_corto'] . '</span>
                         <span class="infoPisoTotal">Total:' . $TotalPiso . '</span>
                         <span class="infoPisoDisponibles">Disponibles: ' . $Disponibles . '</span>
                         <span class="infoPisoOcupadas" style="padding-left: 50px">Ocupadas: ' . $Ocupadas . '</span>
+                        <span style="float:right;">' . $ReportesPisos . '</span>
                     </div>  
                     <div class="container-fluid col-lg-12 col-md-12 col-sm-12 col-xs-12 rowCamas">';
 
@@ -1127,20 +1141,20 @@ class Admisionhospitalaria extends Config{
                     <div id="bead-map" >';
         $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 0");
         $NotasDes = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 1");
-        $Especialidades = $this->config_mdl->_get_data("um_especialidades", array("especialidad_hospitalisacion" => 1));
+        //$Especialidades = $this->config_mdl->_get_data("um_especialidades", array("especialidad_hospitalisacion" => 1));
         foreach ($Pisos as $value) {
             $Disponibles = $this->TotalCamasEstatusPisos($value['piso_id'], 'Disponible'); //Esta Vestida
             $Ocupadas = $this->TotalCamasEstatusPisos($value['piso_id'], 'Ocupado');
             $nombrePiso = '<li><h5 class="text-center link-acciones bold">Piso ' . $value["piso_nombre"]. '</h5></li>';
             $ReportePiso = '<li><a href="#" class="ReportePiso"  data-piso="' . $value["area_id"] . '"><i class="fa fa-share-square-o icono-accion"></i> Reporte por piso</a></li>';
             $ReporteEspe = '<li><a href="#" class="ReporteEspe"><i class="fa fa-share-square-o icono-accion"></i> Reporte por especialidad</a></li>';
-            $ReportesPisos = '<div style="align:right;"> 
+            $ReportesPisos = '<div style="float: left;"> 
                         <ul class="list-inline list-menu">
                             <li class="dropdown">
                                 <a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-file-text-o"></i>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' .$nombrePiso. ' ' .$ReportePiso. ' ' .$ReporteEspe. '</ul>
+                                <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -215px">' .$nombrePiso. ' ' .$ReportePiso. ' ' .$ReporteEspe. '</ul>
                             </li>
                         </ul>
                     </div>';
@@ -1157,7 +1171,7 @@ class Admisionhospitalaria extends Config{
                             <span class="infoPisoTotal">Total:' . $TotalPiso . '</span>
                             <span class="infoPisoDisponibles">Disponibles: ' . $Disponibles . '</span>
                             <span class="infoPisoOcupadas" style="padding-left: 50px">Ocupadas: ' . $Ocupadas . '</span>
-                            <span style="float:left;">' . $ReportesPisos . '</span>
+                            <span style="float:right;">' . $ReportesPisos . '</span>
                         </div>  
                         <div class="container-fluid col-lg-12 col-md-12 col-sm-12 col-xs-12 rowCamas">';
             foreach ($Camas as $valor) {
