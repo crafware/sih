@@ -2676,11 +2676,7 @@ class Admisionhospitalaria extends Config{
         if(!empty($servicio_egreso)){
           $salidaServicio = $servicio_egreso;
           $salidaMedico = $this->input->post('medico_egreso');
-<<<<<<< HEAD
-          $motivoAlta = $this->input->post('motivo_egreso');
-=======
           $motivoalta = $this->input->post('motivo_egreso');
->>>>>>> f59ef181d4b841819dd9b386dfd0172068845fa5
           $proceso      = 2;
         }else {
           $salidaServicio = $notaAlta['empleado_servicio_id'];

@@ -4,13 +4,7 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
     'Tiempo2' =>  $nota['fecha_elabora'] . ' ' . $nota['hora_elabora']
 ));
 ?>
-
-<page backtop="80mm" backbottom="50mm" backleft="48" backright="1mm" backimg="<?= base_url() ?>assets/doc/DOC430128_HF.png">
-    <page_header>
-        <div style="position: absolute;margin-top:237px;margin-left: 360px ">:[[page_cu]]/[[page_nb]]</div>
-        <div style="position: absolute;margin-top:250px;margin-left: 360px "></div>
-    </page_header>
-    <style type="text/css">
+<style type="text/css">
         ul {
             width: 550px;
             text-align: justify;
@@ -21,79 +15,273 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
             text-align: justify;
         }
 
+        .contenidol {
+            width: 580px;
+            text-align: justify;
+            padding-top: 5px;
+            padding-bottom: 0px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
         .contenido {
             width: 580px;
             text-align: justify;
-            padding-top: 0px;
+            padding-top: 5px;
             padding-bottom: 0px;
             margin-top: 0px;
             margin-bottom: 0px;
         }
     </style>
-    <?php 
-           // $PgNo= "This is the page " . $pdf->getAliasNumPage() . " of " . $pdf->getAliasNbPages();
-           //$this->getNumPages();
-    ?>
-    <div style="position: absolute;margin-top:250px;margin-left: 360px "></div>
-    <div style="position:absolute; left: 1px; margin-top: -10px; font-size: 10px;">
-        <?php if ($nota['tipo_interrogatorio'] != '') { ?>
-            <p style="margin-bottom: -6px;"><b>TIPO DE INTERROGATORIO</b> <?= $nota['tipo_interrogatorio'] ?></p>
-        <?php } ?>
-        <?php if ($nota['motivo_ingreso'] != '') { ?>
+<?php $pagina = 1; ?>
+<page backtop="80mm" backbottom="30mm" backleft="48" backright="1mm" backimg="<?= base_url() ?>assets/doc/DOC430128_HF.png">
+    <page_header>
+        <div style="position: absolute;margin-top: 15px">
+            
+            <div style="position: absolute;margin-left: 435px;margin-top: 50px;width: 270px;text-transform: uppercase;font-size: 11px;text-align: left;">
+                <b>NOMBRE DEL PACIENTE: </b>
+            </div>
+            <div style="position: absolute;margin-left: 435px;margin-top: 61px;width: 350px;text-transform: uppercase;font-size: 14px;text-align: left;">
+                <?= $info['triage_nombre'] ?> <?= $info['triage_nombre_ap'] ?> <?= $info['triage_nombre_am'] ?>
+            </div>
+            <div style="position: absolute;margin-left: 437px;margin-top: 75px;width: 270px;text-transform: uppercase;font-size: 13px;">
+                <b>N.S.S:</b> <?= $PINFO['pum_nss'] ?>-<?= $PINFO['pum_nss_agregado'] ?>
+            </div>
+            <?php $fecha = Modules::run('Config/ModCalcularEdad', array('fecha' => $info['triage_fecha_nac'])); ?>
+            <div style="position: absolute;margin-left: 437px;margin-top: 95px;width: 270px;text-transform: uppercase;font-size: 11px;">
+                <p style="margin-top: -2px">
+                    <b>EDAD:</b> <?= $fecha->y == 0 ? $fecha->m . ' MESES' : $fecha->y . ' AÑOS' ?>
+                </p>
+                <p style="margin-top: -10px">
+                    <b>UMF:</b> <?= $PINFO['pum_umf'] ?>/<?= $PINFO['pum_delegacion'] ?>
+                </p>
+                <p style="margin-top: -10px">
+                    <b><?= $hoja['hf_atencion'] ?></b>
+                </p>
+
+            </div>
+            <div style="position: absolute;margin-left: 540px;margin-top: 95px;width: 270px;text-transform: uppercase;font-size: 11px;">
+                <p style="margin-top: -2px">
+                    <b>GENERO:</b> <?= $info['triage_paciente_sexo'] ?>
+                </p>
+                <p style="margin-top: -10px">
+                    <b>PROCEDE:</b> <?= $PINFO['pia_procedencia_espontanea'] == 'Si' ? 'ESPONTANEO' : 'REFERENCIADO' ?>
+                </p>
+                <p style="margin-top: -10px">
+                    <b>ATENCION:</b><?= $PINFO['pia_tipo_atencion'] ?>
+                </p>
+            </div>
+            <div style="position: absolute;margin-left: 437px;margin-top: 136px;width: 270px;text-transform: uppercase;font-size: 11px;">
+                <?php if ($PINFO['pia_procedencia_espontanea'] == 'No') { ?>
+
+                    <p style="margin-top: -7px">
+                        <b>4-30-8/NM:</b> <?= $PINFO['pia_procedencia_hospital'] ?> <?= $PINFO['pia_procedencia_hospital_num'] ?>
+                    </p>
+                <?php } ?>
+            </div>
+            <div style="position: absolute;margin-left: 437px;margin-top: 154px;width: 300px;text-transform: uppercase;font-size: 11px;">
+                <p style="margin-top: -10px">
+                    <b>DOMICILIO: </b> <?= $DirPaciente['directorio_cn'] ?>, <?= $DirPaciente['directorio_colonia'] ?>, <?= $DirPaciente['directorio_cp'] ?>, <?= $DirPaciente['directorio_municipio'] ?>, <?= $DirPaciente['directorio_estado'] ?> <B>TEL:</B><?= $DirPaciente['directorio_telefono'] ?>
+                </p>
+            </div>
+            <div style="position: absolute;margin-left: 437px;margin-top: 185px;width: 300px;text-transform: uppercase;font-size: 11px;">
+                <p style="margin-top: -1px">
+                    <b>FOLIO:</b> <?= $info['triage_id'] ?>
+                </p>
+                <p style="margin-top: -10px">
+                    <b>FECHA DE INGRESO Y HORA CERO:</b> <?= date('d-m-Y', strtotime($info['triage_horacero_f'])) ?> <?= $info['triage_horacero_h'] ?>
+                </p>
+                <p style="margin-top: -7px">
+                    <b>CAMA:</b> <?= $infoCama['cama_nombre'] ?> - <?= $infoCama['piso_nombre_corto'] ?>
+                </p>
+                <p style="margin-top: -9px">
+                    <b>TIEMPO DE ESTANCIA:</b> <?= $tiempo_estancia->d ?> dias <?= $tiempo_estancia->h ?> hrs <?= $tiempo_estancia->i ?> min.
+                </p>
+                <p style="margin-top: -11px">
+                    <b>MEDICO TRATANTE:</b> <?= $medicoTratante['empleado_nombre'] ?> <?= $medicoTratante['empleado_apellidos'] ?>
+                </p>
+            </div>
+            <div style="position: absolute;margin-top: 263px;margin-left: 210px; width: 500px;text-transform: uppercase;font-size: 13px;text-align: center;">
+                <b>NOTA DE INGRESO DEL SERVICIO DE <?= $Servicio['especialidad_nombre'] ?></b>
+            </div>
+            <div style="position: absolute;margin-top:237px;margin-left: 360px ">:[[page_cu]]/[[page_nb]]</div>
+            <div style="position: absolute;margin-top:250px;margin-left: 360px "><?=$pagina?></div>
+            <!-- fecha de  creacion del documento -->
+            <div style="position: absolute;margin-left: 10px;margin-top: 270px;width: 150px;font-size: 12px;text-align: center;">
+                <h5><?= date("d/m/Y", strtotime($nota['fecha_elabora'])); ?> <?= $nota['hora_elabora'] ?></h5>
+            </div>
+            <div style="position: absolute;margin-left: 30px;margin-top: 320px;width: 110px;font-size: 12px;text-align: center">
+                <?php if ($SignosVitales['sv_ta'] != '') { ?>
+                    <h5 style="margin-top: -5px">Presión Arterial</h5>
+                    <p style="margin-top: -15px"><?= $SignosVitales['sv_ta'] ?> mmHg</p>
+                <?php } ?>
+                <?php if ($SignosVitales['sv_temp'] != '') { ?>
+                    <h5 style="margin-top: -5px">Temperatura</h5>
+                    <p style="margin-top: -15px"><?= $SignosVitales['sv_temp'] ?> °C</p>
+                <?php } ?>
+                <?php if ($SignosVitales['sv_fc'] != '') { ?>
+                    <h5 style="margin-top: -5px">Frecuencia Cardíaca</h5>
+                    <p style="margin-top: -15px"><?= $SignosVitales['sv_fc'] ?> (lpm)</p>
+                <?php } ?>
+                <?php if ($SignosVitales['sv_fr'] != '') { ?>
+                    <h5 style="margin-top: -5px">Frecuencia Respiratoria</h5>
+                    <p style="margin-top: -15px"><?= $SignosVitales['sv_fr'] ?> (rpm)</p>
+                <?php } ?>
+                <?php if ($SignosVitales['sv_oximetria'] != '') { ?>
+                    <h5 style="margin-top: -5px">Oximetria</h5>
+                    <p style="margin-top: -15px"><?= $SignosVitales['sv_oximetria'] ?> (%SpO2)</p>
+                <?php } ?>
+                <?php if ($SignosVitales['sv_dextrostix'] != '') { ?>
+                    <h5 style="margin-top: -5px">Glucometría</h5>
+                    <p style="margin-top: -15px"><?= $SignosVitales['sv_dextrostix'] ?> (mg/dl)</p>
+                <?php } ?>
+                <?php if ($escalaSalud['escala_eva'] != '') { ?>
+                    <h5 style="margin-top: -5px">Escala de dolor (EVA):</h5>
+                    <p style="margin-top: -28px; margin-left: 65px"><?= $escalaSalud['escala_eva'] ?></p>
+                <?php } ?>
+                <?php if ($escalaSalud['riesgo_caida'] != '') { ?>
+                    <h5 style="margin-top: -5px">Riesgo de caída</h5>
+                    <p style="margin-top: -15px"><?= $escalaSalud['riesgo_caida'] ?></p>
+                <?php } ?>
+                <?php if ($escalaSalud['escala_riesgo_trombosis'] != '') { ?>
+                    <h5 style="margin-top: -5px">Riesgo de trombosis:</h5>
+                    <p style="margin-top: -15px"><?= $escalaSalud['escala_riesgo_trombosis'] ?></p>
+                <?php } ?>
+                <?php if ($escalaSalud['escala_glasgow'] != '') { ?>
+                    <h5 style="margin-top: -5px">Escala de Glasgow:</h5>
+                    <p style="margin-top: -28px; margin-left: 75px"><?= $escalaSalud['escala_glasgow'] ?></p>
+                <?php } ?>
+                <?php if ($nota['estado_salud'] != '') { ?>
+                    <h5 style="margin-top: -5px">Estado de Salud</h5>
+                    <p style="margin-top: -15px"><?= $nota['estado_salud'] ?></p>
+                <?php } ?>
+            </div>
+            <div style="margin-left: 280px;margin-top: 980px">
+                <barcode type="C128A" value="<?= $info['triage_id'] ?>" style="height: 40px;"></barcode>
+            </div>
+        </div>
+    </page_header>
+    <div style="position:absolute; left: 1px; margin-top: -10px; font-size: 11px;">
+        <p style="margin-bottom: -6px;"><b>TIPO DE INTERROGATORIO</b> <?= $nota['tipo_interrogatorio'] ?></p>
+        <?php if ($nota['motivo_ingreso_p1'] == '1') { ?>
             <span style="margin-bottom: 0px;font-weight: bold;"><br>MOTIVO DE INGRESO</span>
-            <span><br><?= $nota['motivo_ingreso'] ?></span>
+            <p class="contenido"><?= $nota['motivo_ingreso'] ?></p>
         <?php } ?>
 
-        
-        
-        <span style="font-weight: bold;"><br>ANTECEDENTES</span>
-        <?php if ($nota['antecedentes_heredofamiliares'] != '') { ?>
+        <?php if ($nota['antecedentes_heredofamiliares_p1'] == '1') { ?>
+            <span style="font-weight: bold;"><br>ANTECEDENTES</span>
+        <?php } ?>
+
+        <?php if ($nota['antecedentes_heredofamiliares_p1'] == '1') { ?>
             <p style="margin-bottom: 1px">Antecedentes Heredo familiares</p>
             <p class="contenido"><?= $nota['antecedentes_heredofamiliares'] ?></p>
         <?php } ?>
-        <?php if ($nota['antecedentes_personales_nopatologicos'] != '') { ?>
+        <?php if ($nota['antecedentes_personales_nopatologicos_p1'] == '1') { ?>
             <p style="margin-bottom: 1px;">Antecedentes Personales no Patologicos</p>
             <p class="contenido"><?= $nota['antecedentes_personales_nopatologicos'] ?></p>
         <?php } ?>
-        <?php if ($nota['antecedentes_personales_patologicos'] != '') { ?>
+        <?php if ($nota['antecedentes_personales_patologicos_p1'] == '1') { ?>
             <p style="margin-bottom: 1px">Antecedentes Personales Patológicos</p>
             <p class="contenido"><?= $nota['antecedentes_personales_patologicos'] ?></p>
         <?php } ?>
-        <?php if ($nota['antecedentes_ginecoobstetricos'] != '') { ?>
+        <?php if ($nota['antecedentes_ginecoobstetricos_p1'] == '1') { ?>
             <p style="margin-bottom: 1px">Antecedentes Gineco Obstetricos</p>
             <p class="contenido"><?= $nota['antecedentes_ginecoobstetricos'] ?></p>
         <?php } ?>
-        <span style="font-weight: bold;">ESTADO ACTUAL</span>
-        <?php if ($nota['padecimiento_actual'] != '') { ?>
+        <?php if($nota['padecimiento_actual_p1'] == '1' || $nota['exploracion_fisica_p1'] == '1') {
+                if ($nota['ESTADO_ACTUAL_p1'] == '1') {?>
+                <span style="font-weight: bold;"><br>ESTADO ACTUAL</span>
+            <?php } ?>
+        <?php } ?>
+        <?php if ($nota['padecimiento_actual_p1'] == '1') { ?>
             <p style="margin-bottom: 1px">Padecimiento Actual</p>
             <p class="contenido"><?= $nota['padecimiento_actual'] ?></p>
         <?php } ?>
-        <?php if ($nota['exploracion_fisica'] != '') { ?>
+        <?php if ($nota['exploracion_fisica_p1'] == '1') { ?>
             <p style="margin-bottom: 1px">Exploracion Fisica</p>
             <p class="contenido"><?= $nota['exploracion_fisica'] ?></p>
         <?php } ?>
-        <span style="font-weight: bold;">EXAMENES AUXILIARES DE DIAGNÓSTICO</span>
-        <?php if ($nota['estudios_laboratorio'] != '') { ?>
+        <?php if ($nota['estudios_laboratorio_p1'] == '1' || $nota['estudios_gabinete_p1'] == '1') { ?>
+            <?php if ($nota['EXAMENES_AUXILIARES_DE_p1'] == '1') { ?>
+                <span style="font-weight: bold;">EXAMENES AUXILIARES DE DIAGNÓSTICO</span>
+            <?php } ?>
+        <?php } ?>
+        <?php if ($nota['estudios_laboratorio_p1'] == '1') { ?>
             <p style="margin-bottom: 1px">Estudios Laboratorio</p>
             <p class="contenido"><?= $nota['estudios_laboratorio'] ?></p>
         <?php } ?>
-        <?php if ($nota['estudios_gabinete'] != '') { ?>
+        <?php if ($nota['estudios_gabinete_p1'] == '1') { ?>
             <p style="margin-bottom: 1px">Estudios de Gabinete</p>
             <p class="contenido"><?= $nota['estudios_gabinete'] ?></p>
         <?php } ?>
+    </div>
+</page>
+
+<page pageset="new" backtop="80mm" backbottom="40mm" backleft="5mm" backright="1mm" backimg="<?= base_url() ?>assets/doc/DOC430128_BACK.png">  
+    <div style="position:absolute; left: 1px; margin-top: -10px; font-size: 11px;">
+        <?php if ($nota['tipo_interrogatorio_p1'] == '2') { ?>
+            <p style="margin-bottom: -6px;"><b>TIPO DE INTERROGATORIO</b> <?= $nota['tipo_interrogatorio'] ?></p>
+        <?php } ?>
+        <?php if ($nota['motivo_ingreso_p1'] == '2') { ?>
+            <span style="margin-bottom: -6px;font-weight: bold;"><br>MOTIVO DE INGRESO</span>
+            <p class="contenido"><?= $nota['motivo_ingreso'] ?></p>
+        <?php } ?>
+        <?php if ($nota['antecedentes_heredofamiliares_p1'] == '2') { ?>
+            <span style="font-weight: bold;"><br>ANTECEDENTES</span>
+        <?php } ?>
+        <?php if ($nota['antecedentes_heredofamiliares_p1'] == '2') { ?>
+            <p style="margin-bottom: 1px">Antecedentes Heredo familiares</p>
+            <p class="contenido"><?= $nota['antecedentes_heredofamiliares'] ?></p>
+        <?php } ?>
+        <?php if ($nota['antecedentes_personales_nopatologicos_p1'] == '2') { ?>
+            <p style="margin-bottom: 1px;">Antecedentes Personales no Patologicos</p>
+            <p class="contenido"><?= $nota['antecedentes_personales_nopatologicos'] ?></p>
+        <?php } ?>
+        <?php if ($nota['antecedentes_personales_patologicos_p1'] == '2') { ?>
+            <p style="margin-bottom: 1px">Antecedentes Personales Patológicos</p>
+            <p class="contenido"><?= $nota['antecedentes_personales_patologicos'] ?></p>
+        <?php } ?>
+        <?php if ($nota['antecedentes_ginecoobstetricos_p1'] == '2') { ?>
+            <p style="margin-bottom: 1px">Antecedentes Gineco Obstetricos</p>
+            <p class="contenido"><?= $nota['antecedentes_ginecoobstetricos'] ?></p>
+        <?php } ?>
+        <?php 
+            if(($nota['padecimiento_actual_p1'] == '2' || $nota['exploracion_fisica_p1'] == '2') && !($nota['padecimiento_actual_p1'] == '1' || $nota['exploracion_fisica_p1'] == '1')) {
+                if ($nota['ESTADO_ACTUAL_p1'] == '2') { ?>
+                    <span style="font-weight: bold;"><br>ESTADO ACTUAL</span>
+            <?php } ?>
+        <?php } ?>
+        <?php if ($nota['padecimiento_actual_p1'] == '2') { ?>
+            <p style="margin-bottom: 1px">Padecimiento Actual</p>
+            <p class="contenido"><?= $nota['padecimiento_actual'] ?></p>
+        <?php } ?>
+        <?php if ($nota['exploracion_fisica_p1'] == '2') { ?>
+            <p style="margin-bottom: 1px">Exploracion Fisica</p>
+            <p class="contenido"><?= $nota['exploracion_fisica'] ?></p>
+        <?php } ?>
+        <?php if (($nota['estudios_laboratorio_p1'] == '2' || $nota['estudios_gabinete_p1'] == '2') && !($nota['estudios_laboratorio_p1'] == '1' || $nota['estudios_gabinete_p1'] == '1')) { ?>
+            <?php if ($nota['EXAMENES_AUXILIARES_DE_p1'] == '2') { ?>
+                <span style="font-weight: bold;">EXAMENES AUXILIARES DE DIAGNÓSTICO</span>
+            <?php } ?>
+        <?php } ?>
+        <?php if ($nota['estudios_laboratorio_p1'] == '2') { ?>
+            <p style="margin-bottom: 1px">Estudios Laboratorio</p>
+            <p class="contenido"><?= $nota['estudios_laboratorio'] ?></p>
+        <?php } ?>
+        <?php if ($nota['estudios_gabinete_p1'] == '2') { ?>
+            <p style="margin-bottom: 1px">Estudios de Gabinete</p>
+            <p class="contenido"><?= $nota['estudios_gabinete'] ?></p>
+        <?php } ?>
+
         <p style="font-weight: bold;margin-bottom: 1px">IMPRESIÓN DIAGNÓSTICA</p>
         <p style="margin-bottom: 1px">Diagnóstico de Ingreso</p>
-
         <p class="contenido"><?= $Diagnosticos[0]['cie10_clave'] ?> - <?= $Diagnosticos[0]['cie10_nombre'] ?></p>
         <p class="contenido"><?= ($Diagnosticos[0]['complemento'] == 'S/C') ? '' : $Diagnosticos[0]['complemento']; ?></p>
 
         <?php if (count($Diagnosticos) > 1) { ?>
             <h5 style="margin-bottom: -6px">Diagnosticos Secundarios</h5>
-
             <?php for ($x = 1; $x < count($Diagnosticos); $x++) { ?>
                 <p class="contenido"><?= $Diagnosticos[$x]['cie10_clave'] ?> - <?= $Diagnosticos[$x]['cie10_nombre'] ?></p>
                 <p class="contenido"><?= ($Diagnosticos[$x]['complemento'] === 'S/C') ? '' : $Diagnosticos[$x]['complemento']; ?></p>
-
             <?php } ?>
         <?php } ?>
         <?php if ($nota['comentario'] != '') { ?>
@@ -115,10 +303,10 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
 
             <?php } ?>
 
-        <?php     } ?>
+        <?php } ?>
 
         <p style="font-weight: bold;margin-bottom: 1px">PLAN Y ORDENES MÉDICAS</p>
-
+        <!--<p><?= print_r($nota) ?></p>-->
         <?php if ($plan['dieta'] == '0') {
             $nutricion = 'Ayuno';
         } else if ($plan['dieta'] == '1') {
@@ -368,15 +556,44 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
                 </tr>
             </table>
         <?php } ?>
+        <!--<p>
+           <br /><br /><br /><br /><br /><br /><br />
+        </p>-->
     </div>
-    
+    <page_footer>
+        <?php 
+            $top = 935;
+            $empleado_roles = explode(",",$_SESSION["empleado_roles"]);
+            $mostrar_residentes = 0;
+            for($i = 0;$i< count($empleado_roles);$i++){
+                if($empleado_roles[$i] == "77"){
+                    $mostrar_residentes = 1;
+                    $top = 900;
+                }
+            } 
+            ?>
+            <div style="position: absolute;top: <?= $top ?>px;left: 30px;right: 5px;font-size: 10px; text-align:right;">
+                <b>Dr. <?= $medicoTratante['empleado_apellidos'] ?> <?= $medicoTratante['empleado_nombre'] ?> médico Adscrito del servicio <?= $Servicio["especialidad_nombre"]?> MATRICULA: <?= $medicoTratante['empleado_matricula'] ?></b>
+            </div>
+            <?php if($mostrar_residentes == 1){
+                if (!empty($residentes)) { ?>
+                    <div style="position: absolute;top: <?=$top+15?>px;width:730px;right: 5px;font-size: 10px;text-align: right;">
+                        <b>
+                            <?php foreach ($residentes as $value){?>
+                            Dr. <?=$value['apellido_residente']?>  <?=$value['nombre_residente']?> médico residente del servicio <?= $ServicioM["especialidad_nombre"]?> Matricula <?=$value['cedulap_residente']?> Grado <?=$value['grado']?>;
+                            <?php }?>  
+                        </b>
+                    </div>
+        <?php }} ?>
+    </page_footer>
 </page>
-<?php
 
+<?php
 $html =  ob_get_clean();
 $pdf = new HTML2PDF('P', 'A4', 'fr', 'UTF-8');
+$pdf->setTestTdInOnePage(false);
 $pdf->writeHTML($html);
-// $pdf->pdf->IncludeJS("print(true);");
+$pdf->pdf->IncludeJS("print(true);");
 $pdf->pdf->SetTitle('NOTA DE INGRESO ');
 $pdf->Output($Nota['notas_tipo'] . '.pdf');
 
