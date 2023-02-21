@@ -31,16 +31,6 @@
       <div style="position: absolute;margin-left: 950px;margin-top: 125px;width: 770px;text-transform: uppercase;font-size: 11px;">
         <b>TURNO: <?= Modules::run('Config/ObtenerTurno') ?></b>
       </div>
-      <!--<p>print_r($page_cu)</p>
-      <p><?php print_r($page_cu)?></p>
-      <p><?php echo $page_cu ?></p>
-      <p><?php echo gettype($page_cu) ?></p>
-      <p><?php echo var_dump($page_cu) ?></p>
-      <p>print_r($page_nb)</p>
-      <p><?php print_r($page_nb)?></p>
-      <p><?php echo $page_nb ?></p>
-      <p><?php echo gettype($page_nb) ?></p>
-      <p><?php echo var_dump($page_nb) ?></p>-->
     </div>
   </page_header>
 
@@ -305,9 +295,6 @@
 $html =  ob_get_clean();
 $pdf = new HTML2PDF('L', 'A4', 'en', true, 'UTF-8');
 $pdf->writeHTML($html);
-if ($pdf->pdf->getPage() == 1) {
-  $pdf->writeHTML('<page pageset="old"></page>');
-};
 $pdf->pdf->SetTitle("INFORME DE ESTADO DE SALUD DE PACIENTES HOSPITALIZADOS");
 $pdf->Output('INFORME DE ESTADO DE SALUD DE PACIENTES HOSPITALIZADOS.pdf');
 ?>
