@@ -420,7 +420,6 @@
           <div class="col-sm-12" id="divNutricion" >
             <div class="seccion-plan-ordenes">
               <div class="col-sm-3" style="padding:0" id="divRadioNutricion">
-                
                 <?php
                 // Declara estado original del radio cuando se realiza nueva nota
                 $checkAyuno = '';
@@ -429,24 +428,47 @@
                 $select_dietas = '0';
                 $otraDieta = '';
                 $divOtraDieta = 'hidden';
-                if($_GET['a'] == 'edit'){
-                  if($Nota['nota_nutricion'] == '0'){
-                    $checkAyuno = 'checked';
-                  }else if($Nota['nota_nutricion'] == '1' || $Nota['nota_nutricion'] == '2'
-                  || $Nota['nota_nutricion'] == '3'|| $Nota['nota_nutricion'] == '4'|| $Nota['nota_nutricion'] == '5'
-                  || $Nota['nota_nutricion'] == '6'|| $Nota['nota_nutricion'] == '7'|| $Nota['nota_nutricion'] == '8'
-                  || $Nota['nota_nutricion'] == '9'|| $Nota['nota_nutricion'] == '10'|| $Nota['nota_nutricion'] == '11'
-                  || $Nota['nota_nutricion'] == '12'){
-                    $checkDieta = 'checked';
-                    $divSelectDietas = '';
-                    $select_dietas = $Nota['nota_nutricion'];
-                  }else{
-                    $divSelectDietas = '';
-                    $checkDieta = 'checked';
-                    $divOtraDieta = '';
-                    $select_dietas = '13';
-                    $otraDieta = $Nota['nota_nutricion'];
+                $aux = null;
+                if(!empty($Nota)){
+                  if($_GET['a'] == 'edit'){
+                    if($Nota['nota_nutricion'] == '0'){
+                      $checkAyuno = 'checked';
+                    }else if($Nota['nota_nutricion'] == '1' || $Nota['nota_nutricion'] == '2'
+                    || $Nota['nota_nutricion'] == '3'|| $Nota['nota_nutricion'] == '4'|| $Nota['nota_nutricion'] == '5'
+                    || $Nota['nota_nutricion'] == '6'|| $Nota['nota_nutricion'] == '7'|| $Nota['nota_nutricion'] == '8'
+                    || $Nota['nota_nutricion'] == '9'|| $Nota['nota_nutricion'] == '10'|| $Nota['nota_nutricion'] == '11'
+                    || $Nota['nota_nutricion'] == '12'){
+                      $checkDieta = 'checked';
+                      $divSelectDietas = '';
+                      $select_dietas = $Nota['nota_nutricion'];
+                    }else{
+                      $divSelectDietas = '';
+                      $checkDieta = 'checked';
+                      $divOtraDieta = '';
+                      $select_dietas = '13';
+                      $otraDieta = $Nota['nota_nutricion'];
+                    }
                   }
+                }else{
+                    if ($plan[0]['dieta'] == '0') {
+                        $checkAyuno = 'checked';
+                    } else if (
+                        $plan[0]['dieta'] == '1' || $plan[0]['dieta'] == '2'
+                        || $plan[0]['dieta'] == '3' || $plan[0]['dieta'] == '4' || $plan[0]['dieta'] == '5'
+                        || $plan[0]['dieta'] == '6' || $plan[0]['dieta'] == '7' || $plan[0]['dieta'] == '8'
+                        || $plan[0]['dieta'] == '9' || $plan[0]['dieta'] == '10' || $plan[0]['dieta'] == '11'
+                        || $plan[0]['dieta'] == '12'
+                    ) {
+                        $checkDieta = 'checked';
+                        $divSelectDietas = '';
+                        $select_dietas = $plan[0]['dieta'];
+                    } else {
+                        $divSelectDietas = '';
+                        $checkDieta = 'checked';
+                        $divOtraDieta = '';
+                        $select_dietas = '13';
+                        $otraDieta = $plan[0]['dieta'];
+                    }
                 }
                 ?>
                 <div class="form-group radio">
@@ -496,13 +518,23 @@
               $select_signos = 0;
               $otras_indicaciones = 'hidden';
               // El estado de las variables cambia al realizar un cambio, esto para determinar si el valor corresponde al select o textarea
-              if($_GET['a'] == 'edit'){
-                if($Nota['nota_svycuidados'] == '0' || $Nota['nota_svycuidados'] == '1' || $Nota['nota_svycuidados'] == '2' ){
-                  $select_signos = $Nota['nota_svycuidados'];
-                }else{
-                  $select_signos = "3";
-                  $otras_indicaciones = '';
+              if(!empty($Nota)){
+                if($_GET['a'] == 'edit'){
+                  if($Nota['nota_svycuidados'] == '0' || $Nota['nota_svycuidados'] == '1' || $Nota['nota_svycuidados'] == '2' ){
+                    $select_signos = $Nota['nota_svycuidados'];
+                  }else{
+                    $select_signos = "3";
+                    $otras_indicaciones = '';
+                  }
                 }
+              }else{
+                // El estado de las variables cambia al realizar un cambio, esto para determinar si el valor corresponde al select o textarea
+                    if ($plan[0]['toma_signos_vitales'] == '0' || $plan[0]['toma_signos_vitales'] == '1' || $plan[0]['toma_signos_vitales'] == '2') {
+                        $select_signos = $plan[0]['toma_signos_vitales'];
+                    } else {
+                        $select_signos = "3";
+                        $otras_indicaciones = '';
+                    }
               }
             ?>
 
@@ -533,10 +565,18 @@
                     $labelCheck = 'SI';
                     $hiddenCheck = 'hidden';
                     // Al editar, modifica el estado del checkbox
-                    if($Nota['nota_cgenfermeria'] == 1){
-                      $check_generales = 'checked';
-                      $labelCheck = '';
-                      $hiddenCheck = '';
+                    if(!empty($Nota)){
+                      if($Nota['nota_cgenfermeria'] == 1){
+                        $check_generales = 'checked';
+                        $labelCheck = '';
+                        $hiddenCheck = '';
+                      }
+                    }else{
+                      if ($plan[0]['cuidados_genfermeria'] == 1) {
+                        $check_generales = 'checked';
+                        $labelCheck = '';
+                        $hiddenCheck = '';
+                      }
                     }
                     ?>
                   <input type="checkbox" id="checkCuidadosGenerales" name="nota_cgenfermeria" value="1" <?= $check_generales ?> > -
@@ -1053,7 +1093,10 @@
             <h5><span>Estado de Salud</span></h5>
             <div class="form-group">
                 <label class="md-check">
-                    <input type="radio" name="nota_estadosalud" data-value="<?=$Nota['nota_estadosalud']?>" class="has-value" value="Delicado"><i class="red"></i>Delicado
+                    <input type="radio" name="nota_estadosalud" data-value="<?=$Nota['nota_estadosalud']?>" class="has-value" value="Estable" required><i class="red" ></i>Estable
+                </label>&nbsp;&nbsp;&nbsp;
+                <label class="md-check">
+                    <input type="radio" name="nota_estadosalud" data-value="<?=$Nota['nota_estadosalud']?>" class="has-value" value="Delicado" required><i class="red" ></i>Delicado
                 </label>&nbsp;&nbsp;&nbsp;
                 <label class="md-check">
                     <input type="radio" name="nota_estadosalud" data-value="<?=$Nota['nota_estadosalud']?>" class="has-value" value="Muy Delicado"><i class="red"></i>Muy Delicado
@@ -1155,31 +1198,19 @@
         <div class="panel-heading"><h4>Médico Tratante</h4></div>
         <div class="panel-body">
           <div class="col-md-12">
-              <?php 
+          <?php 
+                  $medicoRol = -1;
+                  $medicoRoles = null;
                   foreach ($Usuario as $value) {
-                    $medicoRol = $value['empleado_roles'];
+                    $medicoRoles = $value['empleado_roles'];
                   } 
-                  if($medicoRol == 2) {?>                                  
-                      <div class="col-md-12" style="background: white; padding: 25px 15px 15px 15px">
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label><b>NOMBRE</b></label>
-                                    <input type="text" name="medicoTratante" value="<?=$value['empleado_nombre'].' '.$value['empleado_apellidos']?>" readonly="" class="form-control">
-                                </div>
-                                <div class="col-md-3">
-                                    <label><b>MATRICULA</b></label>
-                                    <input type="text" name="MedicoTratante" value="<?=$value['empleado_matricula']?>" readonly="" class="form-control">
-                                </div>
-                                <div class="col-md-3">
-                                  <label><b>CEDULA PROFESIONAL</b></label>
-                                  <input type="text" name="cedulaMedico" value="<?=$value['empleado_cedula']?>" readonly="" class="form-control">
-                              </div>
-                            </div>
-                        </div>
-                      </div>                      
-              <?php }else {?>   
-
+                  $empleado_roles = explode(",",$medicoRoles);
+                  for($i = 0;$i< count($empleado_roles);$i++){
+                      if($empleado_roles[$i] == "77"){
+                          $medicoRol = 77;
+                      }
+                  }
+                  if($medicoRol == 77) {?>   
                       <div class="col-sm-12 col-md-12" style="padding-bottom: 10px">
                           <div style="background: white; border-bottom: 2px solid #E6E9ED">
                               <h4>MÉDICO TRATANTE <small>NOMBRE DE MEDICOS RESIDENTES</small></h4>
@@ -1187,12 +1218,13 @@
                           <div class="form-group">
                               <div class="col-sm-8 col-ms-8">
                                 <label>Nombre de supervisor Médico de Base:</label>
-                                <input class="form-control" name="medicosBase" id="medicosBase" placeholder="Tecleé apellidos del médico y seleccione" value="<?=$medicoTratante['empleado_apellidos'].' '.$medicoTratante['empleado_nombre'];?>" autocomplete="off" required>     
-                                <input type="hidden" name="medicoTratante" id="id_medico_tratante" value="<?=$notaIngreso[0]['id_medico_tratante']?>"> 
+                                <?php $medicoTratante = $Nota['notas_medicotratante'] =='' ? '': $medicoTratante['empleado_apellidos'].' '.$medicoTratante['empleado_nombre']; ?>
+                                <input class="form-control" name="medicosBase" id="medicosBase" placeholder="Tecleé apellidos del médico y seleccione" value="<?=$medicoTratante?>" autocomplete="off" required>     
+                                <input type="hidden" name="medicoTratante" id="id_medico_tratante" value="<?=$Nota['notas_medicotratante']?>"> 
                               </div>
                               <div class="col-sm-3 col-md-3">
                                 <label>Matricula </label>           
-                                  <input class="form-control" id="medicoMatricula" type="text" name="medicoMatricula" placeholder="Matrícula Medico" value="<?=$medicoTratante[0]['empleado_matricula']?>"  readonly>  
+                                  <input class="form-control" id="medicoMatricula" type="text" name="medicoMatricula" value="<?=$medicoTratante['empleado_matricula']?>"  readonly>  
                               </div>
                           </div>
                       </div>
@@ -1217,7 +1249,7 @@
                             </div>
                             <div class="col-sm-1 col-md-1">
                               <label>Agregar +</label>
-                              <a href='#' class="btn btn-success btn-xs " style="width:100%;height:100%;padding:7px;" id="add_otro_residente" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
+                              <a href='#' class="btn btn-success btn-xs " style="width:100%;height:100%;padding:7px;" id="add_otro_residente2" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
                             </div>
                         
                           </div>
@@ -1240,9 +1272,31 @@
                                  <div class="col-sm-2 col-md-2">
                                   <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[$i]['grado']?>" required>
                                   </div>
+                                  <div class=col-sm-1 >
+                                    <a href="#" class="btn btn-danger delete btn-xs" style="width:100%;height:100%;padding:7px;" id="quitar_residente"><span class="glyphicon glyphicon-remove"></span></a>
+                                  </div>
                               </div>
                           <?php }?>
                       </div>
+              <?php }else {?>                                  
+                      <div class="col-md-12" style="background: white; padding: 25px 15px 15px 15px">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                  <label><b>NOMBRE</b></label>
+                                  <input type="text" name="medicoTratante" value="<?=$value['empleado_nombre'].' '.$value['empleado_apellidos']?>" readonly="" class="form-control">
+                                </div>
+                                <div class="col-md-3">
+                                    <label><b>MATRICULA</b></label>
+                                    <input type="text" name="MedicoTratante" value="<?=$value['empleado_matricula']?>" readonly="" class="form-control">
+                                </div>
+                                <div class="col-md-3">
+                                  <label><b>CEDULA PROFESIONAL</b></label>
+                                  <input type="text" name="cedulaMedico" value="<?=$value['empleado_cedula']?>" readonly="" class="form-control">
+                              </div>
+                            </div>
+                        </div>
+                      </div>                      
               <?php }?>               
           </div>
         </div>

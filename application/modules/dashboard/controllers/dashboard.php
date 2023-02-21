@@ -18,11 +18,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         $this->output->set_content_type('application/json')->set_output(json_encode($json));
     } 
     public function AdmisionContinua() {
-
-        $this->load->view('dashboard_ac');
+        $this->load->view('dashboard_ac_airport');
+    }
+    public function AdmisionContinuaCamas() {
+        $this->load->view('dashboard_ac_camas');
     }
     public function AjaxDashboard_ac() {
-    	$checkCamas=  $this->config_mdl->_query("SELECT * FROM os_camas WHERE  area_id='1' AND cama_status='Ocupado'");
+    	$checkCamas=  $this->config_mdl->_query("SELECT * FROM os_camas WHERE  area_id='1' AND cama_estado='Ocupado'");
         $checkConsultorios =  $this->config_mdl->_query("SELECT * FROM os_consultorios_especialidad WHERE  ce_hf='Observación corta estancia'");
         $fecha_hoy = date("Y-m-d");
         $checkAsignados=  $this->config_mdl->_query("SELECT * FROM os_asistentesmedicas WHERE  asistentesmedicas_fecha='$fecha_hoy'");

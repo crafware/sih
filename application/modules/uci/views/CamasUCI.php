@@ -177,11 +177,9 @@ function getServerIp()
 		left: calc(0);
 	}
 
-
 	/* ------------------------- */
 	/* Mediaqueries */
 	/* ------------------------- */
-
 
 </style>
 <div class="box-row">
@@ -189,13 +187,11 @@ function getServerIp()
 		<div class="box-inner col-md-12" style="padding: 30px">
 			<!-- Panel de indicadores -->
 			<div class="" role="main">
-				<div class="title text-center">
-					<h4>Visor de Camas Hospitalización <?= $this->UMAE_AREA ?> Hospital de Especialiades del CMN siglo XXI</h4>
-				</div>
 				<div class="col-md-12">
 					<div class="panel panel-default" style="margin-top: 10px">
 						<div class="panel-heading p teal-900 back-imss">
-							<span style="font-size: 15px;font-weight: 500;text-transform: uppercase">PACIENTES EN ÁREA DE UCI (<?= count($Gestion) ?> PACIENTES)</span>
+							<span style="font-size: 15px;font-weight: 500;text-transform: uppercase">PACIENTES EN ÁREA DE <?= $this->UMAE_AREA ?></span>			
+							<span style="font-size: 15px;font-weight: 500;">Menú inicial</span>
 						</div>
 						<div class="panel-body b-b b-light">
 							<p><input type="checkbox" id="ocultartablaPaciente" checked="True"> Mostrar pacientes ingresados</p>
@@ -244,7 +240,7 @@ function getServerIp()
 																<th data-sort-ignore="true">FECHA INGRESO</th>
 																<th data-sort-ignore="true">NOMBRE</th>
 																<th data-sort-ignore="true">NSS</th>
-																<th data-sort-ignore="true">COPIAR FOLIO</th>
+																<th data-sort-ignore="true">ACCIONES</th>
 															</tr>
 														</thead>
 														<tbody>
@@ -336,7 +332,7 @@ function getServerIp()
 		</div>
 	</div>
 </div>
-<input type="hidden" name="area" value="<?= $this->UMAE_AREA ?>">
+<input type="hidden" id="area" name="area" value="<?= $this->UMAE_AREA ?>">
 </div>
 <?= modules::run('Sections/Menu/footer'); ?>
 <script src="<?= base_url() ?>assets/libs/bootstrap-popper/popper.min.js"></script>

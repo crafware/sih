@@ -54,7 +54,7 @@ $(document).ready(function () {
             buttons: {
                 cancel: {
                     label: 'Cancelar',
-                    className: 'back-imss'
+                    className: 'btn-imss-cancel'
                 }, confirm: {
                     label: 'Ver Expediente',
                     className: 'back-imss'
@@ -85,7 +85,7 @@ $(document).ready(function () {
             buttons: {
                 cancel: {
                     label: 'Cancelar',
-                    className: 'back-imss'
+                    className: 'btn-imss-cancel'
                 }, confirm: {
                     label: 'Agregar a Consultorio',
                     className: 'back-imss'
@@ -131,7 +131,7 @@ $(document).ready(function () {
             buttons: {
                 cancel: {
                     label: 'Cancelar',
-                    className: 'back-imss'
+                    className: 'btn-imss-cancel'
                 }, confirm: {
                     label: 'Agregar a Consultorio',
                     className: 'back-imss'
@@ -269,7 +269,7 @@ $(document).ready(function () {
                         buttons: {
                             cancel: {
                                 label: 'Cancelar',
-                                className: 'back-imss'
+                                className: 'btn-imss-cancel'
                             }, confirm: {
                                 label: 'Confirmar',
                                 className: 'back-imss'
@@ -301,7 +301,7 @@ $(document).ready(function () {
                                             triage_id: data.info.triage_id,
                                             servicio_solicitado_id: servicio,
                                             motivo: motivo,
-                                            dx_registrado: data.id_dx_reg,
+                                            dx_registrado: data.id_dx,
                                             csrf_token: csrf_token
                                         },
                                         beforeSend: function (xhr) {
@@ -376,7 +376,7 @@ $(document).ready(function () {
                         buttons: {
                             cancel: {
                                 label: 'Cancelar',
-                                className: 'back-imss'
+                                className: 'btn-imss-cancel'
                             }, confirm: {
                                 label: 'Confirmar',
                                 className: 'back-imss'
@@ -408,7 +408,7 @@ $(document).ready(function () {
                                             triage_id: data.info.triage_id,
                                             servicio_solicitado_id: servicio,
                                             motivo: motivo,
-                                            dx_registrado: data.id_dx_reg,
+                                            dx_registrado: data.id_dx,
                                             csrf_token: csrf_token
                                         },
                                         beforeSend: function (xhr) {
@@ -670,7 +670,7 @@ $(document).ready(function () {
                     className: 'back-imss'
                 }, cancel: {
                     label: 'Cancelar',
-                    className: 'back-imss'
+                    className: 'btn-imss-cancel'
                 }
             }, callback: function (response) {
                 if (response == true) {

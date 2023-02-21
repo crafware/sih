@@ -18,15 +18,15 @@ class Hospitalizacion extends Config{
         $this->VerificarSession();
     }
     public function index() {
-        
-        $this->load->view('index',$sql);
+        $this->load->view('index');
     }
     public function DivisionDeCalidad() {
         $sql['Piso'] = $this->config_mdl->_get_data('os_camas');    
         $this->load->view('DivisionDeCalidad', $sql);
     }
     public function DireccionEnfermeria() {
-        $sql['Piso'] = $this->config_mdl->_get_data('os_camas');    
+        $sql['Piso'] = $this->config_mdl->_get_data('os_camas');
+        $sql['Especialidades'] = $this->config_mdl->_get_data('um_especialidades');
         $this->load->view('DireccionEnfermeria', $sql);
     }
     
@@ -36,45 +36,28 @@ class Hospitalizacion extends Config{
     }
 
     public function Limpiezaehigiene(){
-        $this->load->view('Limpiezaehigiene', $sql);
+        $this->load->view('Limpiezaehigiene');
     }
 
     public function Pacientes() {
-        //$Atributos='os_triage.triage_id, fecha_ingreso, hora_atencion, triage_nombre, triage_nombre_ap, id_servicio, estado, pum_nss, pum_nss_agregado';
+        $hoy = date('Y-m-d');
+        //$fecha_de_ingreso = date('Y-m-d', strtotime( $fecha));
         $Atributos='os_triage.triage_id, fecha_ingreso, hora_atencion, triage_nombre, triage_nombre_ap, triage_nombre_am, id_servicio, estado, pum_nss, pum_nss_agregado';
-        if($this->UMAE_AREA == 'Médico COVID') {
-            
-            $sql['Gestion']=$this->config_mdl->_query("SELECT $Atributos
-            FROM
-                um_ingresos_hospitalario,
-                um_ingresos_hospitalario_llamada,
-                os_triage,
-                paciente_info
-            WHERE
-                um_ingresos_hospitalario.id = um_ingresos_hospitalario_llamada.id_ingreso
-            AND um_ingresos_hospitalario.triage_id = os_triage.triage_id
-            AND um_ingresos_hospitalario.estado != 'Salida'
-            AND os_triage.triage_id = paciente_info.triage_id
-            ORDER BY
-                um_ingresos_hospitalario_llamada.id DESC LIMIT 100");
-        }else { 
-            $sql['Gestion']=$this->config_mdl->_query("SELECT $Atributos
-            FROM um_ingresos_hospitalario, um_ingresos_hospitalario_llamada, os_triage, paciente_info
+        $sql['Gestion']=$this->config_mdl->_query("SELECT $Atributos
+            FROM um_ingresos_hospitalario,
+                 um_ingresos_hospitalario_llamada, 
+                 os_triage, 
+                 paciente_info
             WHERE um_ingresos_hospitalario.id=um_ingresos_hospitalario_llamada.id_ingreso AND
                     um_ingresos_hospitalario.triage_id=os_triage.triage_id AND
                     um_ingresos_hospitalario.estado!='Salida' AND
-                    os_triage.triage_id=paciente_info.triage_id AND
-                    um_ingresos_hospitalario.id_servicio=".Modules::run('Config/ObtenerEspecialidadID',array('Usuario'=>$this->UMAE_USER))." ORDER BY um_ingresos_hospitalario_llamada.id LIMIT 100");
-        }
+                    os_triage.triage_id=paciente_info.triage_id AND 
+                    um_ingresos_hospitalario.id_servicio=".Modules::run('Config/ObtenerEspecialidadID',array('Usuario'=>$this->UMAE_USER))." ORDER BY fecha_ingreso DESC LIMIT 100");
 
-        $sql['PINFO']= $this->config_mdl->_get_data_condition('paciente_info',array(
-            'triage_id'=>$paciente
-        ))[0];
-        
         $sqlMedico= $this->config_mdl->sqlGetDataCondition('os_empleados',array(
             'empleado_id'=> $this->UMAE_USER
         ));
-        
+        $sql['Medico'] = $sqlMedico[0];
         $especialidad = $this->config_mdl->_get_data_condition("um_especialidades",array(
                         'especialidad_id'=>$sqlMedico[0]['empleado_servicio']))[0];
 
@@ -83,6 +66,7 @@ class Hospitalizacion extends Config{
             WHERE
                 doc_43051.triage_id = os_triage.triage_id AND
                 doc_43051.estado_ingreso_med = 'Esperando' AND
+                fecha_ingreso = '$hoy' AND
                 doc_43051.ingreso_servicio ='".$especialidad['especialidad_id']."' ORDER BY id DESC LIMIT 70");
         
         $this->load->view('pacientes', $sql);
@@ -91,32 +75,28 @@ class Hospitalizacion extends Config{
     public function AjaxObtenerPaciente() {
         $sqlHosp    = $this->config_mdl->_query("SELECT * FROM um_ingresos_hospitalario WHERE triage_id=".$this->input->post('triage_id'));
         $sqlPaciente= $this->config_mdl->_query("SELECT * FROM os_triage WHERE triage_id=".$this->input->post('triage_id'))[0];
+        
         if($sqlPaciente['triage_crea_am']!=''){
             if(!empty($sqlHosp)){
-                $sql= $this->config_mdl->_query("SELECT * FROM  um_ingresos_hospitalario
-                                                WHERE
-                                                um_ingresos_hospitalario.estado='En Espera' AND
-                                                um_ingresos_hospitalario.triage_id=".$this->input->post('triage_id'));
-                if(!empty($sql)){
-                    $this->setOutput(array('paciente'=>$sqlPaciente,'accion'=>'NO_ASIGNADO'));
-                }else{
-                    $Interconsulta= $this->config_mdl->_get_data_condition('doc_430200',array(
-                        'triage_id'=> $this->input->post('triage_id')
-                    ));
-                    $Medico= $this->config_mdl->_get_data_condition('os_empleados',array(
-                        'empleado_id'=>$sqlHosp[0]['id_medico']
-                    ));
-                    $this->setOutput(array('paciente'=>$sqlPaciente,'ce'=>$sqlHosp[0],'medico'=>$Medico[0],'accion'=>'ASIGNADO','TieneInterconsulta'=>$Interconsulta));
-                }
+                $medico= $this->config_mdl->_get_data_condition('os_empleados',array(
+                    'empleado_id'=>$sqlHosp[0]['id_medico']
+                ));
+                $this->setOutput(array('paciente'=> $sqlPaciente,
+                                       'hosp'    => $sqlHosp[0],
+                                       'servicio'=> Modules::run('Config/ObtenerNombreServicio',array('servicio_id'=>$sqlHosp[0]['id_servicio'])),
+                                       'medico'  => $medico[0],
+                                       'accion'  => 'ASIGNADO'));
             }else{
+                
                 $this->setOutput(array('accion'=>'NO_EXISTE_EN_HOSP','paciente'=>$sqlPaciente));
             }
         }else{
-            $this->setOutput(array('accion'=>'NO_AM'));
+                $this->setOutput(array('accion'=>'NO_AM'));
         }
+        
     }
 
-    /* Funion para agregar paceinte al servicio en area Hospitalización */
+    /* Funcion para agregar paciente al servicio en area Hospitalización */
      public function AjaxAgregarIngreso() {
         $triage_id = $this->input->post('triage_id');
         if($triage_id == NULL){
@@ -216,21 +196,8 @@ class Hospitalizacion extends Config{
         $this->config_mdl->_update_data('um_ingresos_hospitalario',$data,array(
             'triage_id'=>  $this->input->post('triage_id')
         ));
-        $ce=$this->config_mdl->sqlGetDataCondition('os_consultorios_especialidad',array(
-            'triage_id'=>  $this->input->post('triage_id')
-        ),'ce_id,ce_hf')[0];
-        if($ce['ce_hf']=='Alta a Domicilio'){
-            $this->config_mdl->_insert('doc_43029',array(
-                'doc_fecha'=> date('Y-m-d'),
-                'doc_hora'=> date('H:i:s'),
-                'doc_turno'=>Modules::run('Config/ObtenerTurno'),
-                'doc_destino'=> 'Domicilio',
-                'doc_tipo'=>'Egreso',
-                'empleado_id'=> $this->UMAE_USER,
-                'triage_id'=>  $this->input->post('triage_id')
-            ));
-        }
-        $this->AccesosUsuarios(array('acceso_tipo'=>'Alta de Consultorio','triage_id'=>$this->input->post('triage_id'),'areas_id'=>$ce['ce_id']));
+        
+        $this->AccesosUsuarios(array('acceso_tipo'=>'Alta de Consultorio','triage_id'=>$this->input->post('triage_id')));
         $this->setOutput(array('accion'=>'1'));
     }
 
@@ -263,8 +230,10 @@ class Hospitalizacion extends Config{
         $disponibles= $this->totalCamasEstado($pisoSelect, 'Disponible'); //Esta Vestida
         $ocupadas = $this->totalCamasEstado($pisoSelect, 'Ocupado');
         $sucias= $this->totalCamasEstado($pisoSelect, 'Sucia');   // Esta sucia
-        $descompuestas = $this->totalCamasEstado($pisoSelect, 'Descompuesta');        // Esta descompuesta
-        $prealtas= $this->totalCamasEstado($pisoSelect, 'Prealta'); // Esta descompuesta
+        $descompuestas = $this->totalCamasEstado($pisoSelect, 'Descompuesta'); 
+        $contaminadas = $this->totalCamasEstado($pisoSelect, 'Contaminada');        // Esta descompuesta
+        $prealtas = $this->totalCamasEstado($pisoSelect, 'Prealta'); // Esta descompuesta
+        $limpias = $this->totalCamasEstado($pisoSelect, 'Limpia');
         $Notas = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 0");
         $NotasDes = $this->config_mdl->_query("SELECT * FROM os_camas_notas WHERE estado = 0 and tipo_nota = 1");
         $col = '';
@@ -335,6 +304,7 @@ class Hospitalizacion extends Config{
              $col.='</div>';
         $col .='</div>'; 
         $col .='<link href="'.base_url().'assets/libs/css/tooltip.css" rel="stylesheet" type="text/css" />';
+        
         //$col .='<script src="'.base_url('assets/js/AdmisionHospitalariaSocket/AdmisionHospitalariaSocketClient.js?'). md5(microtime()).'" type="text/javascript"></script>';
         $this->setOutput(array('accion'=>'1',
                 'Col'           => $col,
@@ -344,7 +314,9 @@ class Hospitalizacion extends Config{
                 'Ocupadas'      => $ocupadas,
                 'Sucias'        => $sucias,
                 'Descompuestas' => $descompuestas,
-                'Prealtas'      => $prealtas
+                'Contaminadas'  => $contaminadas,
+                'Prealtas'      => $prealtas,
+                'Limpias'       => $limpias
             ));
 
     }
@@ -440,8 +412,11 @@ class Hospitalizacion extends Config{
             $status = 'Ingreso';
             $botones = '<span class="label label-success btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="1">Recibir paciente</span>';
         }elseif($cama['cama_estado'] == 'Ocupado'){
-            $botones = '<span class="label label-default btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="3">Sucia</span>
+            /*$botones = '<span class="label label-default btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="3">Sucia</span>
                         <span class="label label-danger btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="4">Contaminada</span>
+                        <span class="label label-warning btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="5">Descompuesta</span>';
+            */
+            $botones = '<span class="label label-danger btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="4">Contaminada</span>
                         <span class="label label-warning btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="5">Descompuesta</span>';
             $status = 'Ocupada';
         }elseif($cama['cama_estado'] == 'Limpia') {
@@ -450,8 +425,11 @@ class Hospitalizacion extends Config{
             }else {$botones = '<span class="label label-success btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="2">Ocupado</span>';}
             $status = 'Limpia';
         }elseif($cama['cama_estado'] == 'Reparada') {
-            $botones = '<span class="label label-default btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="3">Sucia</span>
+            /*$botones = '<span class="label label-default btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="3">Sucia</span>
                         <span class="label label-success btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="7">Vestida o Ocupada</span>';
+            */
+            $botones = '<span class="label label-success btnAccion" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'" data-accion="7">Vestida o Ocupada</span>';
+       
         }
 
         if($pacienteInfo[0]['triage_paciente_sexo']=='HOMBRE'){
@@ -502,11 +480,6 @@ class Hospitalizacion extends Config{
         $triage_id = $this->input->post('triage_id');
         $estado_paciente = $this->input->post('estadoPaciente');
         $cama_display = "0";
-        /*$this->setOutput(array(
-            'accion'        => "5",
-            'cama_id'       => $cama_id
-        ));
-        return 0;¨*/
         /* acciones de botones en camas */
         /* 1=Reservado,
            2=Ocupado,
@@ -517,8 +490,6 @@ class Hospitalizacion extends Config{
            7=vestida=Disponible   
            Acciones de la camas de Limpieza e Higiene y Conservacion 
            Clicck en Cama Sucia  => acccion = 6
-        
-
            */
         
         switch ($accion) {
@@ -528,8 +499,8 @@ class Hospitalizacion extends Config{
                     $this->RegistroEstadosCamas($accion,$cama_id,$triage_id,$estado,$descripcion);
                     /* Hace cambio de botones */
                     $botones = '<span class="label label-default sucia" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'">Sucia</span>
-                        <span class="label label-danger contaminada" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'">Contaminada</span>
-                        <span class="label label-warning descompuesta" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'">Descompuesta</span>';
+                                <span class="label label-danger contaminada" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'">Contaminada</span>
+                                <span class="label label-warning descompuesta" data-cama="'.$cama_id.'" data-folio="'.$triage_id.'">Descompuesta</span>';
 
                     $this->config_mdl->_update_data('doc_43051', array(
                                         'estado_cama'               => 'Asignada',
@@ -578,24 +549,28 @@ class Hospitalizacion extends Config{
                     $this->config_mdl->_update_data('os_camas_notas', array(
                         'estado'        => "1"), array(
                         'cama_id'       => $cama_id));
+                    $this->config_mdl->_update_data('os_camas', array(
+                        'proceso'        => "0"), array(
+                        'cama_id'       => $cama_id));
                 break;
             case 7: 
                     $cama=$this->config_mdl->sqlGetDataCondition('os_camas',array(
                         'cama_id' => $cama_id))[0];
-                    if(($cama['proceso'] == '2' && $cama['cama_estado'] =='Limpia') || $cama['cama_estado']=='Limpia'){
-                          $estado = 'Disponible';
-                           $this->config_mdl->_update_data('um_reporte_egresos_hospital', array(
-                                        'fecha_h_cama_vestida' => date('Y-m-d H:i')), array(
-                                        'idcama'         => $cama_id));
-                           $this->config_mdl->_update_data('os_camas', array(
-                                        'triage_id'       => Null,
-                                        'cama_estado'     => $estado,
-                                        'proceso'         => 0,
-                                        'cama_genero'     => 'Sin Especificar',
-                                        'cama_ingreso_f'  => '',
-                                        'cama_ingreso_h'  => '',
-                                        'cama_fh_estatus' => date('Y-m-d H:i')), array(
-                                        'cama_id'         => $this->input->post('cama_id')));
+                        //if(($cama['proceso'] == '2' && $cama['cama_estado'] =='Limpia')){
+                        if($cama['cama_estado'] =='Limpia'){
+                            $estado = 'Disponible';
+                            $this->config_mdl->_update_data('um_reporte_egresos_hospital', array(
+                                        'fecha_h_cama_vestida'  => date('Y-m-d H:i')), array(
+                                        'idcama'                => $cama_id));
+                            $this->config_mdl->_update_data('os_camas', array(
+                                        'triage_id'             => Null,
+                                        'cama_estado'           => $estado,
+                                        'proceso'               => 0,
+                                        'cama_genero'           => 'Sin Especificar',
+                                        'cama_ingreso_f'        => '',
+                                        'cama_ingreso_h'        => '',
+                                        'cama_fh_estatus'       => date('Y-m-d H:i')), array(
+                                        'cama_id'               => $this->input->post('cama_id')));
                     $descripcion = 'Enfermeria cambia a vestida';       
 
                     }else {
@@ -718,5 +693,57 @@ class Hospitalizacion extends Config{
             $tr .= '<tr> <td colspan="5" class="text-center mayus-bold"><i class="fa fa-frown-o fa-3x" style="color:#256659"></i><br>No se encontro ningún registro</td><tr>';
             $this->setOutput(array('accion' => '1', 'tr' => $tr, 'sql' => $sql, "area" => $this->UMAE_AREA, "inputSearch" => $_POST['inputSearch'] ));
         }
+    }
+    public function BorraPacienteIngreso(){
+        $data=array(
+            'estado_ingreso_med' => 'Borrado'
+         );
+        $this->config_mdl->_update_data('doc_43051',$data,array(
+            'triage_id'=>  $this->input->post('triage_id')
+        ));
+        
+        //$this->AccesosUsuarios(array('acceso_tipo'=>'Borrado','triage_id'=>$this->input->post('triage_id'),'areas_id'=>'Hospitalización'));
+        $this->setOutput(array('accion'=>'1'));
+    }
+
+    public function BuscarPacientesPendientes (){
+        
+    }
+
+    public function ProcesoDeAltaPorMedico() {
+
+        $infoPaciente = $this->config_mdl->_query("SELECT id,
+                                                   triage_nombre,
+                                                   triage_nombre_ap,
+                                                   triage_nombre_am,
+                                                   fecha_ingreso,
+                                                   hora_ingreso,
+                                                   fecha_asignacion,
+                                                   tipo_ingreso,
+                                                   pum_nss,
+                                                   pum_nss_agregado,
+                                                   ingreso_servicio                                                
+                                            FROM
+                                                os_triage
+                                                INNER JOIN doc_43051
+                                                INNER JOIN paciente_info
+                                            WHERE
+                                                os_triage.triage_id = doc_43051.triage_id
+                                                AND paciente_info.triage_id = os_triage.triage_id
+                                                AND os_triage.triage_id =".$this->input->post('folio'))[0];
+
+        $sqlMotivoEgreso=$this->config_mdl->sqlGetData('um_motivo_egreso');
+            
+        $motivoEgreso .= '<option value="0" disable>Selecciona</option>';;
+        foreach ($sqlMotivoEgreso as $value) {           
+            $motivoEgreso.='<option value="'.$value['id'].'">'.$value['nombre'].'</option>';
+        }
+
+                $this->setOutput(array('accion'      => '1',
+                                       'infoPaciente'=> $infoPaciente,
+                                        
+                                       'motivoEgreso'=> $motivoEgreso
+                                        ));
+            
     }
 }

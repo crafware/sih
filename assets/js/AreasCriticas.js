@@ -8,11 +8,11 @@ $(document).ready(function () {
     }
     function AjaxCamasAreasCriticas() {
         $.ajax({
-            url: base_url + "uci/AjaxVisorCamasUCI_UTR_UTMO",
+            url: base_url + "Areascriticas/AjaxVisorCamasUCI_UTR_UTMO",
             type: 'GET',
             dataType: 'json',
             data: {
-                area: 6,
+                area: $area,
                 csrf_token: csrf_token
             }, beforeSend: function (xhr) {
                 msj_loading();
@@ -42,12 +42,12 @@ $(document).ready(function () {
             buttons: {
                 confirm: {
                     label: 'Aceptar',
-                    className: 'btn-success'
+                    className: 'back-imss'
                 },
 
                 cancel: {
                     label: 'Cancelar',
-                    className: 'btn-danger'
+                    className: 'btn-imss-cancel'
                 }
             },
             callback: function (res) {
@@ -91,7 +91,7 @@ $(document).ready(function () {
 
     function ModalAltaPaciente(folio) {
         $.ajax({
-            url: base_url + "uci/ProcesoDeAlta",
+            url: base_url + "Areascriticas/ProcesoDeAlta",
             dataType: 'json',
             type: 'POST',
             data: { folio: folio, csrf_token: csrf_token },
@@ -124,7 +124,7 @@ $(document).ready(function () {
                         buttons: {
                             cancel: {
                                 label: 'Cancelar',
-                                className: 'red'
+                                className: 'btn-imss-cancel'
                             }, confirm: {
                                 label: 'Confirmar',
                                 className: 'back-imss'
@@ -133,7 +133,7 @@ $(document).ready(function () {
                         callback: function (result) {
                             if (result) {
                                 $.ajax({
-                                    url: base_url + "uci/ConfirmarAltaCamaAsistenteMedica",
+                                    url: base_url + "Areascriticas/ConfirmarAltaCamaAsistenteMedica",
                                     type: 'POST',
                                     dataType: 'json',
                                     data: {
@@ -182,7 +182,7 @@ $(document).ready(function () {
             })
         }
     });
- 
+
     /* =========================================================
         Asignacion de Cama
         ========================================================= */
@@ -190,7 +190,7 @@ $(document).ready(function () {
     $('.form-asignacion-cama').submit(function (e) {
         e.preventDefault();
         $.ajax({
-            url: base_url + "uci/AjaxAsignarCama_v2",
+            url: base_url + "Areascriticas/AjaxAsignarCama_v2",
             type: 'POST',
             dataType: 'json',
             data: $(this).serialize(),
@@ -234,7 +234,7 @@ $(document).ready(function () {
     function getTooltip() {
         let returnValue = '';
         $.ajax({
-            url: base_url + "uci/ToooltipInfoPaciente/",
+            url: base_url + "Areascriticas/ToooltipInfoPaciente/",
             type: 'POST',
             dataType: 'json',
             data: {
@@ -254,29 +254,35 @@ $(document).ready(function () {
         });
         return returnValue;
     }
-    
 
-    function abrirExpediente(triage_id){
+
+    function abrirExpediente(triage_id) {
+        var area = document.getElementById("area").value;
         $.ajax({
-            url: base_url + "uci/getPacienteUCI/",
+            url: base_url + "Areascriticas/getPacienteUCI/",
             type: "POST",
             dataType: "json",
             data: {
-                triage_id:triage_id,
+                area:area,
+                triage_id: triage_id,
                 csrf_token: csrf_token
             },
             async: false,
-            success: function(data){
+            success: function (data) {
                 console.log(data)
                 console.log(data.accion)
-                if(data.accion == "NOT_EXIST"){
+                if (data.accion == "NOT_EXIST") {
                     msj_error_noti("El paciente no ha sido agregado, o ya ha sido egresado.");
-                }else if(data.accion == "EXIST"){
-                    var url = 'http://'+window.location.host+'/sih/Sections/Documentos/Expediente/'+triage_id+'/?tipo=Hospitalizacion'
+                } else if (data.accion == "EXIST") {
+                    var host = window.location.host
+                    if ("11.47.37.14:8080" != host) {
+                        host += '/sih'
+                    }
+                    var url = 'http://' + host + '/Sections/Documentos/Expediente/' + triage_id + '/?tipo=Hospitalizacion'
                     window.open(url);
                 }
             },
-            error: function(e){
+            error: function (e) {
 
             }
         });
@@ -292,7 +298,7 @@ $(document).ready(function () {
     $('.btn-buscar-ingresos').click(function (e) {
         var input_fecha = $('input[name=input_fecha]').val();
         $.ajax({
-            url: base_url + "uci/Bucaringresos/",
+            url: base_url + "Areascriticas/Bucaringresos/",
             type: 'POST',
             dataType: 'json',
             data: {
@@ -336,7 +342,7 @@ $(document).ready(function () {
         e.preventDefault();
         if ($('input[name=inputSearch]').val() != '' || selectFecha != "") {
             $.ajax({
-                url: base_url + "uci/BuscarPacienteDoc",
+                url: base_url + "Areascriticas/BuscarPacienteDoc",
                 type: 'POST',
                 dataType: 'json',
                 data: data
@@ -364,6 +370,7 @@ $(document).ready(function () {
         }
     });
     $('body').on('click', '.agregar-paciente', function (e) {
+        var area = $('input[name=area]').val()
         var inputSelect = "POR_NUMERO";
         var inputSearch = $(this).attr('data-folio');
         var data = {
@@ -374,7 +381,7 @@ $(document).ready(function () {
         e.preventDefault();
         if ($('input[name=inputSearch]').val() != '') {
             $.ajax({
-                url: base_url + "uci/BuscarPacienteData",
+                url: base_url + "Areascriticas/BuscarPacienteData",
                 type: 'POST',
                 dataType: 'json',
                 data: data
@@ -384,7 +391,7 @@ $(document).ready(function () {
                     bootbox.hideAll();
                     console.log(data)
                     bootbox.confirm({
-                        title: "<h5>AGREGAR PACIENTE A UCI</h5>",
+                        title: "<h5>AGREGAR PACIENTE A "+area+"</h5>",
                         message: '<div class="row" style="margin-top:-10px">' +
                             '<div class="col-md-12 ">' +
                             '<div style="height:10px;width:100%;margin-top:10px" class="' + 2 + '"></div>' +
@@ -398,33 +405,37 @@ $(document).ready(function () {
                         buttons: {
                             cancel: {
                                 label: 'Cancelar',
-                                className: 'back-imss'
+                                className: 'btn-imss-cancel'
                             }, confirm: {
-                                label: 'Agregar a UCI',
+                                label: 'Agregar a '+area,
                                 className: 'back-imss'
                             }
                         },
                         callback: function (result) {
                             if (result) {
                                 var input = $(this);
+                                console.log(2);
+                                console.log(area);
                                 $.ajax({
-                                    url: base_url + "uci/AjaxGetPacienteUCI",
+                                    url: base_url + "Areascriticas/AjaxGetPacienteUCI",
                                     type: 'POST',
                                     dataType: 'json',
                                     data: {
                                         triage_id: inputSearch,
+                                        area:area,
                                         csrf_token: csrf_token
                                     }, beforeSend: function (xhr) {
                                         msj_loading();
                                     }, success: function (data, textStatus, jqXHR) {
                                         bootbox.hideAll();
-                                        console.log(data)
+                                        console.log(1);
+                                        console.log(data);
                                         if (data.accion == 'NO_ASIGNADO') {
                                             msj_error_noti("A ocurrido un error, el paciente no ha sido asignado")
                                         } else if (data.accion == 'EXIST') {
                                             msj_error_noti("El paciente ya ha sido asignado")
                                         } else if (data.accion == 'ASIGNADO') {
-                                            $('#tableResultSearch').css("display","none");
+                                            $('#tableResultSearch').css("display", "none");
                                             $('input[name=inputSearch]').val('');
                                             msj_success_noti('Paciente asignado');
                                         }
@@ -460,11 +471,11 @@ $(document).ready(function () {
         };
         e.preventDefault();
         $.ajax({
-            url: base_url + "uci/BuscarPacienteData",
+            url: base_url + "Areascriticas/BuscarPacienteData",
             type: 'POST',
             dataType: 'json',
             data: data
-            ,beforeSend: function (xhr) {
+            , beforeSend: function (xhr) {
                 msj_loading('Espere por favor esto puede tardar un momento');
             }, success: function (data, textStatus, jqXHR) {
                 bootbox.hideAll();
@@ -492,18 +503,22 @@ $(document).ready(function () {
                     },
                     callback: function (result) {
                         var input = $(this);
-                        console.log(result)
-                        if(result){
+                        var area = document.getElementById("area").value;
+                        console.log(result);
+                        console.log(1);
+                        if (result) {
                             $.ajax({
-                                url: base_url + "uci/AjaxDarDeAltaPacienteUCI",
+                                url: base_url + "Areascriticas/AjaxDarDeAltaPacienteUCI",
                                 type: 'POST',
                                 dataType: 'json',
                                 data: {
+                                    area:area,
                                     triage_id: inputSearch,
                                     csrf_token: csrf_token
                                 }, beforeSend: function (xhr) {
                                     msj_loading();
                                 }, success: function (data, textStatus, jqXHR) {
+                                    console.log(2)
                                     bootbox.hideAll();
                                     console.log(data)
                                     if (data.accion == 'NO_ASIGNADO') {
@@ -517,8 +532,8 @@ $(document).ready(function () {
                                 }
                             })
                             input.val('');
-                        }else{
-                             msj_error_noti('Opción Cancelada')
+                        } else {
+                            msj_error_noti('Opción Cancelada')
                         }
                     }
                 });
@@ -531,14 +546,15 @@ $(document).ready(function () {
 
     $('body').on('click', '.mostrar-expediente', function () {
         var triage_id = $(this).attr('data-folio');
+        var area = document.getElementById("area").value;
         var input = $(this);
         if (triage_id.length == 11 && triage_id != '') {
             $.ajax({
-                url: base_url + "uci/AjaxGetPacienteUCI",
+                url: base_url + "Areascriticas/AjaxGetPacienteUCI",
                 type: 'GET',
                 dataType: 'json',
                 data: {
-                    tipo: "UCI",
+                    tipo: area,
                     triage_id: triage_id,
                     csrf_token: csrf_token
                 }, beforeSend: function (xhr) {

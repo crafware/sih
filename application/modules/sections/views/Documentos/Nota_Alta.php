@@ -285,7 +285,7 @@
       
       <!-- Confirmación de Alta Paciente -->
       <div class="panel panel-default panel-y">
-        <div class="panel-heading"><h4>Confirmación de Alta de Paciente</h4></div>
+        <div class="panel-heading"><h4>Estado de Alta de Paciente</h4></div>
         <div class="panel-body">
           <?php if($NotaAlta['prealta']==1){
                   $estado="Pre-alta";  ?>
@@ -294,7 +294,7 @@
                 </div>
           <?php }?>
           <div class="col-md-12">
-            <?php if($_GET['a']=='add' || $NotaAlta['prealta']!='0' && $NotaAlta['proceso']!='1'){?>
+            
                 <div class="col-md-2" id="prealta">
                   <div class="form-group">
                     <label class="md-check">
@@ -302,7 +302,7 @@
                     </label>
                   </div>
                 </div>
-            <?php }?> 
+            
             <?php if($_GET['a']=='add' || $NotaAlta['alta']=='1' || $NotaAlta['alta']=='0'){?>
                 <div class="col-md-2" id="alta">
                   <div class="form-group">
@@ -344,10 +344,101 @@
         <div class="panel-body">
           <div class="col-md-12">
               <?php 
+                  $medicoRol = -1;
                   foreach ($Usuario as $value) {
                     $medicoRol = $value['empleado_roles'];
                   } 
-                  if($medicoRol == 2) {?>                                  
+                  $empleado_roles = explode(",",$medicoRol);
+                  for($i = 0;$i< count($empleado_roles);$i++){
+                      if($empleado_roles[$i] == "77"){
+                          $medicoRol = 77;
+                      }
+                  }
+                  if ($medicoRol == 77){?>   
+
+                    <div class="col-sm-12 col-md-12" style="padding-bottom: 10px">
+                        <div style="background: white; border-bottom: 2px solid #E6E9ED">
+                            <h4>MÉDICO TRATANTE <small>NOMBRE DE MEDICOS RESIDENTES</small></h4>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-8 col-ms-8">
+                              <label>Nombre de supervisor Médico de Base:</label>
+                              <input class="form-control" name="medicosBase" id="medicosBase" placeholder="Tecleé apellidos del médico y seleccione" value="<?=$medicoTratante['empleado_apellidos'].' '.$medicoTratante['empleado_nombre'];?>" autocomplete="off" required>     
+                              <input type="hidden" name="medicoTratante" id="id_medico_tratante" value="<?=$NotaAlta['notas_medicotratante']?>"> 
+                            </div>
+                            <div class="col-sm-3 col-md-3">
+                              <label>Matricula</label>           
+                                <input class="form-control" id="medicoMatricula" type="text" name="medicoMatricula" placeholder="Matrícula Medico" value="<?=$medicoTratante['empleado_matricula']?>"  readonly>  
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 disabled" style="padding-bottom: 12px">        
+                        <div class="form-group">
+                           
+                          <div class="col-sm-4 col-md-3"> 
+                            <label>Nombre(s) de médico(s) residente(s):</label>  
+                            <input type="text" required class="form-control" id="" name="nombre_residente[]" placeholder="Nombre(s)" value="<?=$Residentes[0]['nombre_residente']?>" >
+                          </div>
+                          <div class="col-sm-3">
+                            <label>Apellido paterno y materno </label>
+                               <input type="text" class="form-control" id="medico<?=$i ?>" name="apellido_residente[]" placeholder="Apellidos" value="<?=$Residentes[0]['apellido_residente']?>" required>
+                             </div>                             
+                          <div class="col-sm-3 col-md-3">
+                            <label>Matricula</label>
+                            <input class="form-control" id="residenteCedula" type="text" name="cedula_residente[]" placeholder="Matricula" value="<?=$Residentes[0]['cedulap_residente']?>" required>
+                          </div>
+                          <div class="col-sm-2 col-md-2">
+                            <label>Grado</label>
+                            <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[0]['grado']?>" required>
+                          </div>
+                          <div class="col-sm-1 col-md-1">
+                            <label>Agregar +</label>
+                            <a href='#' class="btn btn-success btn-xs" onclick=medicoResidente()  style="width:100%;height:100%;padding:7px;" id="add_otro_residente17" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
+                          </div>
+                      
+                        </div>
+                    </div>
+                    <div id="medicoResidente" style="padding-top: 10px;">
+                        <?php for($i = 1; $i < count($Residentes); $i++){?>
+                            <div class="col-sm-12 form-group" name ="medicoResidenteX" id="areaResidentes<?=$i ?>">
+                               <div class="col-sm-4 col-md-3">                    
+                                 <input type="text" class="form-control" id="medico<?=$i ?>" name="nombre_residente[]" placeholder="Nombre(s)" value="<?=$Residentes[$i]['nombre_residente']?>"  >
+                               </div>
+                               <div class="col-sm-4 col-md-3">                                  
+                                 <input type="text" class="form-control" id="medico<?=$i ?>" name="apellido_residente[]" placeholder="Apellidos" value="<?=$Residentes[$i]['apellido_residente']?>"  >
+                               </div>
+                               <div class="col-sm-3 col-md-3">                                 
+                                 <input type="text" class="form-control" id="medico<?=$i ?>" name="cedula_residente[]" placeholder="Matricula" value="<?=$Residentes[$i]['cedulap_residente']?>"  >
+                               </div>
+                               <div class="col-sm-2 col-md-2">
+                                <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[$i]['grado']?>" required>
+                              </div>
+                              <div class=col-sm-1 >
+                                <a href="#" onclick=quitarResidenteFormulario(<?=$i ?>) class="btn btn-danger delete btn-xs" style="width:100%;height:100%;padding:7px;" id="quitar_residente"><span class="glyphicon glyphicon-remove"></span></a>
+                              </div>
+                            </div>
+                        <?php }?>
+                        <?php for($i = 1; $i < 4-count($Residentes); $i++){?>
+                            <div class="col-sm-12 form-group" name ="medicoResidenteX" id="areaResidentes<?=$i ?>"  style='display:none'>
+                               <div class="col-sm-4 col-md-3">                    
+                                 <input type="text" class="form-control" id="medico<?=$i ?>" name="nombre_residente[]" placeholder="Nombre(s)" value="<?=$Residentes[$i]['nombre_residente']?>"  >
+                               </div>
+                               <div class="col-sm-4 col-md-3">                                  
+                                 <input type="text" class="form-control" id="medico<?=$i ?>" name="apellido_residente[]" placeholder="Apellidos" value="<?=$Residentes[$i]['apellido_residente']?>"  >
+                               </div>
+                               <div class="col-sm-3 col-md-3">                                 
+                                 <input type="text" class="form-control" id="medico<?=$i ?>" name="cedula_residente[]" placeholder="Matricula" value="<?=$Residentes[$i]['cedulap_residente']?>"  >
+                               </div>
+                               <div class="col-sm-2 col-md-2">
+                                <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[$i]['grado']?>">
+                              </div>
+                              <div class=col-sm-1 >
+                                <a href="#" onclick=quitarResidenteFormulario(<?=$i ?>) class="btn btn-danger delete btn-xs" style="width:100%;height:100%;padding:7px;" id="quitar_residente"><span class="glyphicon glyphicon-remove"></span></a>
+                              </div>
+                            </div>
+                        <?php }?>
+                    </div>
+            <?php }else{?>
                       <div class="col-md-12" style="background: white; padding: 25px 15px 15px 15px">
                         <div class="form-group">
                             <div class="row">
@@ -366,73 +457,10 @@
                             </div>
                         </div>
                       </div>                      
-              <?php }else {?>   
-
-                      <div class="col-sm-12 col-md-12" style="padding-bottom: 10px">
-                          <div style="background: white; border-bottom: 2px solid #E6E9ED">
-                              <h4>MÉDICO TRATANTE <small>NOMBRE DE MEDICOS RESIDENTES</small></h4>
-                          </div>
-                          <div class="form-group">
-                              <div class="col-sm-8 col-ms-8">
-                                <label>Nombre de supervisor Médico de Base:</label>
-                                <input class="form-control" name="medicosBase" id="medicosBase" placeholder="Tecleé apellidos del médico y seleccione" value="<?=$medicoTratante['empleado_apellidos'].' '.$medicoTratante['empleado_nombre'];?>" autocomplete="off" required>     
-                                <input type="hidden" name="medicoTratante" id="id_medico_tratante" value="<?=$NotaAlta['notas_medicotratante']?>"> 
-                              </div>
-                              <div class="col-sm-3 col-md-3">
-                                <label>Matricula</label>           
-                                  <input class="form-control" id="medicoMatricula" type="text" name="medicoMatricula" placeholder="Matrícula Medico" value="<?=$medicoTratante['empleado_matricula']?>"  readonly>  
-                              </div>
-                          </div>
-                      </div>
-                      <div class="col-sm-12 col-md-12 disabled" style="padding-bottom: 12px">        
-                          <div class="form-group">
-                             
-                            <div class="col-sm-4 col-md-3"> 
-                              <label>Nombre(s) de médico(s) residente(s):</label>  
-                              <input type="text" required class="form-control" id="" name="nombre_residente[]" placeholder="Nombre(s)" value="<?=$Residentes[0]['nombre_residente']?>" >
-                            </div>
-                            <div class="col-sm-3">
-                              <label>Apellido paterno y materno </label>
-                                 <input type="text" class="form-control" id="medico<?=$i ?>" name="apellido_residente[]" placeholder="Apellidos" value="<?=$Residentes[0]['apellido_residente']?>" required>
-                               </div>                             
-                            <div class="col-sm-3 col-md-3">
-                              <label>Matricula</label>
-                              <input class="form-control" id="residenteCedula" type="text" name="cedula_residente[]" placeholder="Matricula" value="<?=$Residentes[0]['cedulap_residente']?>" required>
-                            </div>
-                            <div class="col-sm-2 col-md-2">
-                              <label>Grado</label>
-                              <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[0]['grado']?>" required>
-                            </div>
-                            <div class="col-sm-1 col-md-1">
-                              <label>Agregar +</label>
-                              <a href='#' class="btn btn-success btn-xs " style="width:100%;height:100%;padding:7px;" id="add_otro_residente" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
-                            </div>
-                        
-                          </div>
-                      </div>
-                      <div id="medicoResidente" style="padding-top: 10px">
-                          <?php for($i = 1; $i < count($Residentes); $i++){?>
-                              <div class="col-sm-12 form-group">
-                                 <div class="col-sm-4 col-md-3">                    
-                                   <input type="text" class="form-control" id="medico<?=$i ?>" name="nombre_residente[]" placeholder="Nombre(s)" value="<?=$Residentes[$i]['nombre_residente']?>"  >
-                                 </div>
-                                 <div class="col-sm-4 col-md-3">                                  
-                                   <input type="text" class="form-control" id="medico<?=$i ?>" name="apellido_residente[]" placeholder="Apellidos" value="<?=$Residentes[$i]['apellido_residente']?>"  >
-                                 </div>
-                                 <div class="col-sm-3 col-md-3">                                 
-                                   <input type="text" class="form-control" id="medico<?=$i ?>" name="cedula_residente[]" placeholder="Matricula" value="<?=$Residentes[$i]['cedulap_residente']?>"  >
-                                 </div>
-                                 <div class="col-sm-2 col-md-2">
-                                  <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[$i]['grado']?>" required>
-                                  </div>
-                              </div>
-                          <?php }?>
-                      </div>
-              <?php }?>               
+              <?php } ?>               
           </div>
         </div>
       </div>
-        
       <div class="row">
         <div class="col-md-offset-8 col-md-2">
             <button type="button" class="btn btn-imms-cancel btn-block" onclick="window.top.close()">Cancelar</button>
@@ -467,6 +495,27 @@
 <script src="<?= base_url('assets/libs/jodit-3.2.43/assets/app.js')?>"></script>
 <script src="<?= base_url('assets/js/Doc_imagenes_estilo_letra.js?md5=') . md5(microtime()) ?>" type="text/javascript"></script>
 <script>
+    function quitarResidenteFormulario(residente) {
+      $('#areaResidentes' + residente).hide();
+      $('#areaResidentes' + residente).find("input").val("");
+      $('#areaResidentes' + residente).attr("required",false)
+    }
+    console.log(<?=json_encode($Residentes)?>);
+    function medicoResidente(){
+      var medicoResidente = document.getElementsByName("medicoResidenteX");
+      console.log(medicoResidente)
+      for(var i = 0; i<3;i++){
+        console.log(medicoResidente[i])
+        if(medicoResidente[i].style.display == 'none'){
+          medicoResidente[i].style.display = "";
+          medicoResidente[i].required = true
+          console.log(i)
+          return 0
+        }
+      }
+    }
+
+
     var editors = [].slice.call(document.querySelectorAll('.editor'));
     editors.forEach(function (textarea) {
         //textarea.addEventListener('click', function (e) {

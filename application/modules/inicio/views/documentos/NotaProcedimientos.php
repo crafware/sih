@@ -1,13 +1,13 @@
 <?php ob_start();
 //El margen se modifica dependiendo el número de residentes en la nota
-$margenBajo = "50mm";
-if(count($Residentes) == 3){
+$margenBajo = "55mm";
+/*if(count($Residentes) == 3){
   $margenBajo = "78mm";
 }else if(count($Residentes) == 2){
   $margenBajo = "71mm";
 }else if(count($Residentes) == 1){
   $margenBajo = "60mm";
-}
+}*/
 ?>
 <page backtop="80mm" backbottom="<?=$margenBajo ?>" backleft="49" backright="5mm">
   <page_header>
@@ -160,13 +160,15 @@ if(count($Residentes) == 3){
       <h5 style="margin-bottom: -6px">RESUMEN</h5>
         <p class="contenido"><?= $notaProcedimientos['resumen_procedimiento'] ?></p>     
     </div>
-    
     <page_footer>
-       <?php
+        <?php 
             $sqlMedico=$this->config_mdl->sqlGetDataCondition('os_empleados',array(
-                'empleado_id'=>$notaProcedimientos['empleado_id']
+              'empleado_id'=>$notaProcedimientos['empleado_id']
             ))[0];
-            if(count($MedicoBase) > 0){
+            if(count($medicoTratante) > 0){
+              $NombreMedico=$medicoTratante['empleado_nombre'].' '.$medicoTratante['empleado_apellidos'];
+              $MatriculaMedico=$medicoTratante['empleado_matricula'];
+            }elseif(count($MedicoBase) > 0){
               $NombreMedico=$MedicoBase['empleado_nombre'].' '.$MedicoBase['empleado_apellidos'];
               $MatriculaMedico=$MedicoBase['empleado_matricula'];
             }else{
@@ -178,54 +180,29 @@ if(count($Residentes) == 3){
                   $MatriculaMedico=$sqlMedico['empleado_matricula'];
               }
             }
+            $top = 935;
+            $empleado_roles = explode(",",$_SESSION["empleado_roles"]);
+            $mostrar_residentes = 0;
+            for($i = 0;$i< count($empleado_roles);$i++){
+                if($empleado_roles[$i] == "77"){
+                    $mostrar_residentes = 1;
+                    $top = 895;
+                }
+            } 
             ?>
-            <?php
-            if(count($Residentes) > 0){ 
-               if(count($Residentes) == 3){
-                $top = 783;
-              }else if( count($Residentes) == 2){
-                $top = 813;
-              }else if( count($Residentes) == 1){
-                $top = 853;
-              }?>     
-          
-            <div style="position: absolute;top: <?=$top?>px;left: 215px;width: 250px;font-size: 10px;text-align: center">
-            <b>NOMBRE MÉDICO RESIDENTE</b><br><br>
-            <?php foreach ($Residentes as $value){?>
-                  <?=$value['nombre_residente']?> <?=$value['apellido_residente']?><br><br><br>
-            <?php } ?>
-
+            <div style="position: absolute;top: <?= $top ?>px;left: 30px;right: 5px;font-size: 10px; text-align:right;">
+                <b>Dr. <?= $NombreMedico?> médico Adscrito del servicio <?= $ServicioM["especialidad_nombre"]?> MATRICULA: <?= $MatriculaMedico ?></b>
             </div>
-            <div style="position: absolute;top: <?=$top?>px;left: 480px;width: 110px;font-size: 10px;text-align: center">
-            <b>CEDULA</b><br><br>
-
-            <?php foreach ($Residentes as $value){?>
-                  <?=$value['cedulap_residente']?><br><br><br>
-            <?php } ?>
-
-            </div>
-            <div style="position: absolute;top: <?=$top?>px;left: 590px;width: 110px;font-size: 10px;text-align: center">
-              <b>FIRMA</b><br><br>
-            <?php for($i = 0; $i < count($Residentes); $i++){ ?>
-              _________________<br><br><br>
-            <?php }?>
-            </div>   
-            <?php }?>
-            <div style="position: absolute;top: 922px;left: 215px;width: 250px;font-size: 10px;text-align: center">
-                <?=$NombreMedico?><br>
-                <span style="margin-top: -6px;margin-bottom: -8px"></span><br>
-                <b>NOMBRE DEL MÉDICO TRATANTE</b>
-            </div>
-            <div style="position: absolute;top: 922px;left: 480px;width: 110px;font-size: 11px;text-align: center">
-                <?=$MatriculaMedico?> <br>
-                <span style="margin-top: -6px;margin-bottom: -8px"></span><br>
-                <b>MATRICULA</b>
-            </div>
-            <div style="position: absolute;top: 922px;left: 590px;width: 110px;font-size: 11px;text-align: center">
-                <br>
-                <span style="margin-top: -6px;margin-bottom: -8px">_________________</span><br>
-                <b>FIRMA</b>
-            </div>
+            <?php if($mostrar_residentes == 1){
+              if (!empty($Residentes)) { ?>
+                <div style="position: absolute;top: <?=$top+15?>px;width:590px;right: 5px;font-size: 10px;text-align: right;">
+                  <b>
+                    <?php foreach ($Residentes as $value){?>
+                      Dr. <?=$value['apellido_residente']?>  <?=$value['nombre_residente']?> médico residente del servicio <?= $ServicioM["especialidad_nombre"]?> Matricula <?=$value['cedulap_residente']?> Grado <?=$value['grado']?>;
+                    <?php }?>  
+                  </b>
+                </div>
+        <?php }} ?>
     </page_footer>
 </page>
 <?php

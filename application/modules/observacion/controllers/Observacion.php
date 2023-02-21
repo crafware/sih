@@ -434,6 +434,7 @@ class Observacion extends Config{
             'cama_ingreso_h'=> '',
             'cama_fh_estatus'=> date('Y-m-d H:i:s'),
             'triage_id'=>0,
+            'estado_salud'=> "En valoración"
         ),array(
             'triage_id' => $this->input->post('triage_id'),
             'cama_id'   => $this->input->post('observacion_cama')

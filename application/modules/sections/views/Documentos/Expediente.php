@@ -65,40 +65,52 @@
                 <a md-ink-ripple data-toggle="dropdown" class="md-btn md-fab red md-btn-circle tip" data-original-title="Realizar Documento" data-placement="bottom">
                   <i class="mdi-social-person-add i-24 "></i>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-scale pull-right pull-up top text-color"> <?php
-                                                                                                  if (isset($_GET['url'])) { ?>
-                    <li class="disabled">
-                      <a href="#">NO PERMITIDO</a>
-                    </li> <?php
-                                                                                                  } else if ($this->UMAE_AREA == 'Trabajo Social') { ?>
-                    <li class="">
-                      <a href="<?= base_url() ?>Sections/Documentos/NotaTrabajosocial/0/?TipoNota=Nota de Trabajo Social&folio=<?= $this->uri->segment(4) ?>" target="_blank" rel="opener">Nota de Trabajo Social</a>
-                    </li>
-                  <?php } else { ?>
-                    <?php if ($_GET['tipo'] == 'Choque') { ?>
-                      <li class="<?= $info['triage_fecha_clasifica'] != '' ? 'disabled' : '' ?>">
-                        <a <?php if ($info['triage_fecha_clasifica'] == '') { ?>href="<?= base_url() ?>Sections/Documentos/HojaClasificacion/<?= $this->uri->segment(4) ?>/?tipo=<?= $_GET['tipo'] ?>" target="_blank" <?php } ?>>Hoja de Clasificación</a>
+                <ul class="dropdown-menu dropdown-menu-scale pull-right pull-up top text-color"> 
+                  <?php
+                    if(isset($_GET['url'])) {?>
+                      <li class="disabled">
+                        <a href="#">NO PERMITIDO</a>
+                      </li> 
+                      <?php
+                    }else if($this->UMAE_AREA == 'Trabajo Social') {?>
+                      <li class="">
+                        <a href="<?= base_url() ?>Sections/Documentos/NotaTrabajosocial/0/?TipoNota=Nota de Trabajo Social&folio=<?= $this->uri->segment(4) ?>" target="_blank" rel="opener">Nota de Trabajo Social</a>
                       </li>
-                    <?php } ?>
-                    <?php if (!empty($DocumentosHoja) && !isset($_GET['via'])) { /* Si existe Hoja Frontal en pc_docuemtos */ ?>
-                      <?php if ($this->ConfigHojaInicialAbierta == 'No') { ?>
-                        <li class="<?= !empty($HojasFrontales)  ? 'disabled' : '' ?>">
-                          <a <?php if (empty($HojasFrontales)) { ?>href="<?= base_url() ?>Sections/Documentos/HojaFrontal?hf=0&TipoNota=Nota Inicial&a=add&folio=<?= $this->uri->segment(4) ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener">Generar Inicial (Hoja Frontal)<?php } ?></a>
+                      <?php 
+                    }else {?>
+                      <?php 
+                      if($_GET['tipo'] == 'Choque') {?>
+                        <li class="<?= $info['triage_fecha_clasifica'] != '' ? 'disabled' : '' ?>">
+                          <a <?php if ($info['triage_fecha_clasifica'] == '') { ?>href="<?= base_url() ?>Sections/Documentos/HojaClasificacion/<?= $this->uri->segment(4) ?>/?tipo=<?= $_GET['tipo'] ?>" target="_blank" <?php } ?>>Hoja de Clasificación</a>
                         </li>
-                      <?php } else if ($this->UMAE_AREA != 'Médico Hospitalización' && $_GET['tipo'] != 'Hospitalizacion') { /* SI NO SE HA  GENERADO HOJA INICIAL ABIERTO*/ ?>
-                        <li class="<?= !empty($HojasFrontales)  ? 'disabled' : '' ?>">
-                          <a <?php if (empty($HojasFrontales)) { ?>href="<?= base_url() ?>Sections/Documentos/HojaInicialAbierto?hf=0&TipoNota=Nota Inicial&a=add&folio=<?= $this->uri->segment(4) ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener" <?php } ?>><b>Generar "Nota Inicial"</b></a>
-                        </li>
-                      <?php } else if ($this->UMAE_AREA == 'Médico Hospitalización' || $this->UMAE_AREA == 'UCI') { ?>
-                        <li class="<?= !empty($NotaIngresoPorServicio)  ? 'disabled' : '' ?>">
-                          <a <?php if (empty($NotaIngresoPorServicio)) { ?>href="<?= base_url() ?>Sections/Documentos/NotaIngresoHospitalario?idnota=0&TipoNota=Nota Inicial&a=add&folio=<?= $this->uri->segment(4) ?>&via=<?= $this->UMAE_AREA ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener" <?php } ?>><b>Generar "Nota de Ingreso"</b></a>
-                        </li>
-                      <?php } ?>
-                    <?php } /* Fin de if((!empty($DocumentosHoja) */ ?>
+                        <?php 
+                      }?>
+                      <?php
+                      /* Si existe Hoja Frontal en pc_docuemtos */
+                      if (!empty($DocumentosHoja) && !isset($_GET['via'])) {  ?>
+                        <?php 
+                        if($this->ConfigHojaInicialAbierta == 'No') {?>
+                          <li class="<?= !empty($HojasFrontales)  ? 'disabled' : '' ?>">
+                            <a <?php if (empty($HojasFrontales)) { ?>href="<?= base_url() ?>Sections/Documentos/HojaFrontal?hf=0&TipoNota=Nota Inicial&a=add&folio=<?= $this->uri->segment(4) ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener">Generar Inicial (Hoja Frontal)<?php } ?></a>
+                          </li>
+                        <?php 
+                        }else if($_GET['tipo'] == 'Consultorios' || $this->UMAE_AREA == 'Médico Observación') { /* SI NO SE HA  GENERADO HOJA INICIAL ABIERTO*/ ?>
+                            <li class="<?= !empty($HojasFrontales)  ? 'disabled' : '' ?>">
+                              <a <?php if (empty($HojasFrontales)) { ?>href="<?= base_url() ?>Sections/Documentos/HojaInicialAbierto?hf=0&TipoNota=Nota Inicial&a=add&folio=<?= $this->uri->segment(4) ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener" <?php } ?>><b>Generar "Nota Inicial"</b></a>
+                            </li>
+                        <?php 
+                        }else if($this->UMAE_AREA == 'Médico Hospitalización' || $this->UMAE_AREA == 'UCI'|| $this->UMAE_AREA == 'UTR'|| $this->UMAE_AREA == 'UTMO') { ?>
+                          <li class="<?= !empty($NotaIngresoPorServicio)  ? 'disabled' : '' ?>">
+                            <a <?php if (empty($NotaIngresoPorServicio)) { ?>href="<?= base_url() ?>Sections/Documentos/NotaIngresoHospitalario?idnota=0&TipoNota=Nota Inicial&a=add&folio=<?= $this->uri->segment(4) ?>&via=<?= $this->UMAE_AREA ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener" <?php } ?>><b>Generar "Nota de Ingreso"</b></a>
+                          </li>
+                        <?php 
+                        }?>
+                        <?php 
+                      } /* Fin de if((!empty($DocumentosHoja) */ ?>
 
 
-                    <?php if (!empty($DocumentosNotas)) {
-                                                                                                      if ($this->UMAE_AREA != 'Médico Hospitalización' && $_GET['tipo'] != 'Hospitalizacion') { ?>
+                    <?php if (!empty($DocumentosHoja)) {
+                            if ($this->UMAE_AREA != 'Médico Hospitalización' && $_GET['tipo'] != 'Hospitalizacion') { ?>
 
                         <li class="<?= empty($HojasFrontales)  ? 'disabled' : '' ?>">
                           <a <?php if (!empty($HojasFrontales)) { ?>href="<?= base_url() ?>Sections/Documentos/Notas/0/?a=add&TipoNota=Nota de Evolución&folio=<?= $this->uri->segment(4) ?>&via=<?= $_GET['via'] ?>&doc_id=<?= $_GET['doc_id'] ?>&inputVia=<?= $_GET['tipo'] ?>" target="_blank" rel="opener" <?php } ?>><b>Generar "Nota de Evolución"</b></a>
@@ -277,27 +289,37 @@
                               </td>
                               <td><?= $value['especialidad_nombre'] ?>
                               </td>
-                              <td><?= $value['empleado_nombre'] ?> <?= $value['empleado_apellidos'] ?></td>
+                              <?php if($value['id_medico_tratante']== 0){ 
+                                      $medico = $value['empleado_apellidos'].' '.$value['empleado_nombre'];
+                                    }else {
+                                      $queryMedico = $this->config_mdl->_get_data_condition('os_empleados',array(
+                                        'empleado_id' => $value['id_medico_tratante']
+                                      ))[0];
+                                      $medico = $queryMedico['empleado_apellidos'].' '.$queryMedico['empleado_nombre'];
+                                    }?>
+                              <td><?= $medico ?></td>
                               <td>
 
-                                <i class="fa fa-file-pdf-o icono-accion tip pointer" onclick="AbrirDocumento(base_url+'Inicio/Documentos/NotaIngresoHosp/<?= $value['triage_id'] ?>')" data-original-title="Ver Nota de Ingreso"></i>&nbsp;
+                                <i class="fa fa-file-pdf-o icono-accion tip pointer" onclick="AbrirDocumento(base_url+'Inicio/Documentos/NotaIngresoHosp/<?= $value['id_nota'] ?>')" data-original-title="Ver Nota de Ingreso"></i>&nbsp;
 
                                 <i class="glyphicon glyphicon-list-alt icono-accion tip pointer" onclick="AbrirDocumento(base_url+'Inicio/Documentos/IndicacionesMedicasEnNota/<?= $value['id_nota'] ?>?inputVia=<?= $_GET['tipo'] ?>&indicaciones=1')" data-original-title="Indicaciones médicas <?= $value['notas_tipo'] ?>"></i>
                                 &nbsp;
 
                                 <?php
-                                $solicitud_laboratorio = $this->config_mdl->_query("SELECT * FROM um_solicitud_laboratorio WHERE input_via = '" . $_GET['tipo'] . "' AND tipo_nota='Nota Inicial' AND id_nota= '" . $value['id_nota'] . "' AND  triage_id = '" . $this->uri->segment(4) . "'")[0];
-                                if ($solicitud_laboratorio['solicitud_id'] && $solicitud_laboratorio['estudios'] != "{}") { ?>
-                                  <i class="fa fa-file-pdf-o icono-accion tip pointer" onclick="AbrirDocumento(base_url+'Inicio/Documentos/OrdenLaboratorio/<?= $value['triage_id'] ?>?id_nota=<?= $value['id_nota'] ?>&TipoNota=Nota Inicial&a=edit&folio=<?= $this->uri->segment(4) ?>&tipo=<?= $_GET['tipo'] ?>')" data-original-title="Generar Orden de Laboratorio"></i>
-                                  &nbsp;
-                                <?php } ?>
+                                  $solicitud_laboratorio = $this->config_mdl->_query("SELECT * FROM um_solicitud_laboratorio WHERE input_via = '" . $_GET['tipo'] . "' AND tipo_nota='Nota Inicial' AND id_nota= '" . $value['id_nota'] . "' AND  triage_id = '" . $this->uri->segment(4) . "'")[0];
+                                  if ($solicitud_laboratorio['solicitud_id'] && $solicitud_laboratorio['estudios'] != "{}") { ?>
+                                    <i class="fa fa-file-pdf-o icono-accion tip pointer" onclick="AbrirDocumento(base_url+'Inicio/Documentos/OrdenLaboratorio/<?= $value['triage_id'] ?>?id_nota=<?= $value['id_nota'] ?>&TipoNota=Nota Inicial&a=edit&folio=<?= $this->uri->segment(4) ?>&tipo=<?= $_GET['tipo'] ?>')" data-original-title="Generar Orden de Laboratorio"></i>
+                                    &nbsp;
+                                <?php }?>
+                                <?php if($value['id_medico'] == $_SESSION['UMAE_USER']) { ?>
 
-                                <a style="display:none;" id="<?= $value['id_nota'] . "EditId_nota" ?>" href="<?= base_url() ?>Sections/Documentos/NotaIngresoHospitalario?idnota=<?= $value['id_nota'] ?>&TipoNota=Nota Inicial&a=edit&folio=<?= $this->uri->segment(4) ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener">
-                                  <i class="fa fa-pencil icono-accion tip pointer" data-original-title="Editar Nota"></i>
-                                </a>&nbsp;
-                                <i class="fa fa-trash-o icono-accion pointer" style="opacity: 0.4"></i>
-                                <p class="demo2" id=<?= $value['id_nota'] . "expiredTimeId_nota" ?>></p>
+                                  <a style="display:none;" id="<?= $value['id_nota'] . "EditId_nota" ?>" href="<?= base_url() ?>Sections/Documentos/NotaIngresoHospitalario?idnota=<?= $value['id_nota'] ?>&TipoNota=Nota Inicial&a=edit&folio=<?= $this->uri->segment(4) ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener">
+                                    <i class="fa fa-pencil icono-accion tip pointer" data-original-title="Editar Nota"></i>
+                                  </a>&nbsp;
+                                  <i class="fa fa-trash-o icono-accion pointer" style="opacity: 0.4"></i>
+                                  <p class="demo2" id=<?= $value['id_nota'] . "expiredTimeId_nota" ?>></p>
                               </td>
+                              <?php }?>
                             </tr>
                           <?php } ?>
                           <!-- Genera las notas de evolución, Interconsulta, Valoración, Egreso etc-->
@@ -342,7 +364,7 @@
                                 <?php } ?>
 
                                 <?php if ($value['empleado_id'] == $_SESSION['UMAE_USER']) { ?>
-                                  <a style="display:none;" id="<?= $value['notas_id'] . "EditNotas_id" ?>" href="<?= base_url() ?>Sections/Documentos/Notas/<?= $value['notas_id'] ?>/?a=edit&TipoNota=<?= $value['notas_tipo'] ?>&folio=<?= $this->uri->segment(4) ?>&via=<?= $value['notas_via'] ?>&doc_id=<?= $_GET['doc_id'] ?>&inputVia=<?= $_GET['tipo'] ?>" target="_blank" rel="opener"><i class="fa fa-pencil icono-accion tip pointer" data-original-title="Editar Nota"></i>
+                                  <a style="display:none;" id="<?= $value['notas_id']."EditNotas_id" ?>" href="<?= base_url() ?>Sections/Documentos/Notas/<?= $value['notas_id'] ?>/?a=edit&TipoNota=<?= $value['notas_tipo'] ?>&folio=<?= $this->uri->segment(4) ?>&via=<?= $value['notas_via'] ?>&doc_id=<?= $_GET['doc_id'] ?>&inputVia=<?= $_GET['tipo'] ?>" target="_blank" rel="opener"><i class="fa fa-pencil icono-accion tip pointer" data-original-title="Editar Nota"></i>
                                   </a>&nbsp;
                                   <p class="demo3" id=<?= $value['notas_id'] . "expiredTimeNotas_id" ?>></p>
                                 <?php } ?>
@@ -567,7 +589,10 @@
     }
     for (var i = 0; i < NotasAllTime.length; i++) {
       if (NotasAllTime[i] - now + limitTime > 0) {
-        document.getElementById(NotasAll[i]['notas_id'] + "EditNotas_id").style.display = "";
+        let n = document.getElementById(NotasAll[i]['notas_id'] + "EditNotas_id")
+        if(n != null){
+          n .style.display = "";
+        }
       }
     }
     for (var i = 0; i < HojasFrontalesTime.length; i++) {
@@ -577,7 +602,13 @@
     }
     for (var i = 0; i < NotaIngresoHospitalTime.length; i++) {
       if (NotaIngresoHospitalTime[i] - now + limitTime > 0) {
-        document.getElementById(NotaIngresoHospital[i]['id_nota'] + "EditId_nota").style.display = "";
+        //document.getElementById(NotaIngresoHospital[i]['id_nota'] + "EditId_nota").style.display = "";
+        let n = document.getElementById(NotaIngresoHospital[i]['id_nota'] + "EditId_nota")
+        //console.log(n);
+        if(n != null){
+          n .style.display = "";
+        }
+        
       }
     }
 

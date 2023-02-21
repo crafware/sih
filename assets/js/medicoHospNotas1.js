@@ -83,7 +83,7 @@ $(document).ready(function () {
             buttons: {
                 cancel: {
                     label: 'Cancelar',
-                    className: 'back-imss'
+                    className: 'btn-imss-cancel'
                 },confirm: {
                     label: 'Ver Expediente',
                     className: 'back-imss'
@@ -114,7 +114,7 @@ $(document).ready(function () {
             buttons: {
                 cancel: {
                     label: 'Cancelar',
-                    className: 'back-imss'
+                    className: 'btn-imss-cancel'
                 },confirm: {
                     label: 'Agregar a Consultorio',
                     className: 'back-imss'
@@ -160,7 +160,7 @@ $(document).ready(function () {
             buttons: {
                 cancel: {
                     label: 'Cancelar',
-                    className: 'back-imss'
+                    className: 'btn-imss-cancel'
                 },confirm: {
                     label: 'Agregar',
                     className: 'back-imss'
@@ -421,7 +421,7 @@ $(document).ready(function () {
                     className:'back-imss'
                 },cancel:{
                     label:'Cancelar',
-                    className:'back-imss'
+                    className:'btn-imss-cancel'
                 }
             },callback:function (response) {
                 if(response==true){

@@ -11,8 +11,6 @@ function getServerIp(){
     }
 }
 ?>
-<script               src="<?= "http://".getServerIp().':3001/socket.io/socket.io.js'?>"> type="text/javascript"></script>
-<script type="module" src="<?= base_url('assets/js/AdmisionHospitalariaSocket/AdmisionHospitalariaSocketClient.js?'). md5(microtime())?>" type="text/javascript"></script>
 
 
 <style type="text/css">
@@ -38,7 +36,33 @@ function getServerIp(){
     margin-top: -7px;
     padding: 3px;
 }
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3 {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    outline: 0;
+}
+
+.widget-long .info-camas {
+    padding: 0px 0px 0px 5px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
 .label {cursor: pointer;}
+.title-bedstado{display:inline-block}
 </style>
 <link href="<?= base_url()?>assets/styles/beds.css" rel="stylesheet" type="text/css" />
 <div class="app-title mb-2">
@@ -57,60 +81,102 @@ function getServerIp(){
     <div class="widget-small primary">
       <div class="info">
        	<div class="form-group">
-              <label for="Ubicacion">Ubicación</label>
-              <select class="form-control" id="selectPiso" name="selectPiso">
-                <option value=" " disabled selected>Seleccinar Area</option>
-                <?php foreach ($Piso as $value) {?>
-                <option value="<?=$value['piso_id']?>"><?=$value['piso_nombre']?></option>
-                <?php }?>
-              </select>
-           </div> 
+          <label for="Ubicacion">Ubicación</label>
+            <select class="form-control" id="selectPiso" name="selectPiso">
+              <option value=" " disabled selected>Seleccionar Area</option>
+              <?php foreach ($Piso as $value) {?>
+              <option value="<?=$value['piso_id']?>"><?=$value['piso_nombre']?></option>
+              <?php }?>
+            </select>
+        </div> 
       </div>
     </div>
   </div>
   <div class="col-md-9">
     <div class="widget-long">
-      <div class="col-md-2 info-camas"> 
-          <span class="count_top"><i class="fa fa-bed"></i> Total</span>
-          <div class="count text-dark" id="camasTotal"></div>
+      <div class="col-md-1 info-camas"> 
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td><span class="count_top"><i class="fa fa-bed"></i> Total</span></td> <td> </td> 
+          </tr>
+          <tr>
+            <td><div class="count text-dark" id="camasTotal"></div></td> <td></td>
+          </tr>
+        </table>
       </div>
       <div class="col-md-2 info-camas">
-        
-          <span class="count_top"><i class="fa fa-bed"></i> Diponibles</span>
-          <div class="count text-success" id="camasDisponibles"></div>
-          <span class="count_bottom"><i class="green">4% </i></span>
-      
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td><div class="bed-status green color-white title-bedstado"><i class="fa fa-bed"></i></div></td> <td> <div class="title-bedstado">Diponibles</div></td> 
+          </tr>
+          <tr>
+            <td><div class="count text-success" id="camasDisponibles"></div></td> <td></td>
+          </tr>
+        </table>
       </div>
       <div class="col-md-2 info-camas">
-        
-          <span class="count_top"><i class="fa fa-bed"></i> Ocupadas</span>
-          <div class="count text-primary" id="camasOcupadas"></div>
-          <span class="count_bottom"><i class="green">4% </i></span>
-        
+          <table cellspacing="0" cellpadding="0" style="border-collapse:collapse">
+          <tr>
+            <td> 
+                <div class="bed-status blue-700 color-white title-bedstado"><i class="fa fa-bed"></i></div>
+					      <div class="bed-status pink-A100 color-white title-bedstado"><i class="fa fa-bed"></i></div>
+            </td> 
+            <td> <div class="title-bedstado">Ocupadas</div></td> 
+          </tr>
+          <tr>
+            <td><div class="count text-primary" id="camasOcupadas"></div></td> <td></td>
+          </tr>
+        </table>
       </div>
       <div class="col-md-2 info-camas">
-        
-          <span class="count_top"><i class="fa fa-bed"></i> Sucias</span>
-          <div class="count text-danger" id="camasSucias"></div>
-          <span class="count_bottom"><i class="green">4% </i></span>
-        
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td> <div class="bed-status grey-900 color-white title-bedstado"><i class="fa fa-bed"></i></div></td> <td> <div class="title-bedstado">Sucias</div></td> 
+          </tr>
+          <tr>
+            <td><div class="count text-danger" id="camasSucias"></div></td> <td></td>
+          </tr>
+        </table>
       </div>
       <div class="col-md-2 info-camas">
-        
-          <span class="count_top"><i class="fa fa-bed"></i> Descompuestas</span>
-          <div class="count text-info" id="camasDescompuestas"></div>
-          <span class="count_bottom"><i class="green">4% </i></span>
-        
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td> <div class="bed-status red color-white title-bedstado"><i class="fa fa-bed"></i></div></td> <td> <div class="title-bedstado">Contaminadas</div></td> 
+          </tr>
+          <tr>
+            <td><div class="count text-danger" id="camasContaminadas"></div></td> <td></td>
+          </tr>
+        </table>
+      </div> 
+      <div class="col-md-2 info-camas">
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td> <div class="bed-status yellow-600 color-white title-bedstado"><i class="fa fa-bed"></i></div></td> <td> <div class="title-bedstado">Descompuestas</div></td> 
+          </tr>
+          <tr>
+            <td><div class="count text-info" id="camasDescompuestas"></div></td> <td></td>
+          </tr>
+        </table>
       </div>
       <div class="col-md-2 info-camas">
-         <?php 
-              /*$prealtas=count($this->config_mdl->_query("SELECT os_camas.cama_id FROM os_camas, os_areas, os_pisos, os_pisos_camas
-                                            WHERE os_areas.area_id=os_camas.area_id AND os_pisos_camas.cama_id=os_camas.cama_id AND
-                                            os_camas.proceso=1 AND
-                                            os_pisos_camas.piso_id=os_pisos.piso_id AND os_pisos.piso_id=".$Piso));   */
-          ?>
-          <span class="count_top"><i class="fa fa-bed"></i> Pre-Altas</span>
-          <div class="count text-warning blink_me" id="camasPrealta"></div>
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td><div class="bed-status cyan-400  color-white title-bedstado"><i class="fa fa-bed"></i></div></td> <td><div class="title-bedstado">Limpias</div></td> 
+          </tr>
+          <tr>
+            <td><div class="count text-info" id="camasLimpias"></div></td> <td></td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-md-1 info-camas">
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td><span class="count_top"><i class="fa fa-bed"></i> Pre-Altas</span></td> <td> </td> 
+          </tr>
+          <tr>
+            <td><div class="count text-warning blink_me" id="camasPrealta"></div></td> <td></td>
+          </tr>
+        </table>
       </div>
     </div>
   </div> 
@@ -172,9 +238,13 @@ function getServerIp(){
         </div>
       </div>
     </div>
+    <div class="visor-camas" hidden></div>
   </div>
-  <input type="hidden" name="area" value="<?= $this->UMAE_AREA ?>">
+  <input type="hidden" name="infoEmpleado" value="<?= $this->UMAE_USER?>">
+	<input type="hidden" name="area" value="<?= $this->UMAE_AREA?>">
 </div>
 <?= modules::run('Sections/Menu/footer'); ?>
 <script src="<?= base_url('assets/js/EnfermeriaHosp.js?') . md5(microtime()) ?>" type="text/javascript"></script>
 <link href="<?=  base_url()?>assets/styles/tooltip.css" rel="stylesheet" type="text/css" />
+<script               src="<?= "http://".getServerIp().':3001/socket.io/socket.io.js'?>"> type="text/javascript"></script>
+<script type="module" src="<?= base_url('assets/js/AdmisionHospitalariaSocket/AdmisionHospitalariaSocketClient.js?'). md5(microtime())?>" type="text/javascript"></script>
