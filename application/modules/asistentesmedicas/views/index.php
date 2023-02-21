@@ -113,5 +113,4 @@ function getServerIp()
 </div>
 <input type="hidden" value="Asistente Médica" name="AsistenteMedicaTipo">
 <?= modules::run('Sections/Menu/footer'); ?>
-<script src="<?= "http://" . getServerIp() . ':3001/socket.io/socket.io.js' ?>" type="text/javascript"></script>
 <script src="<?= base_url('assets/js/Asistentemedica.js?'). md5(microtime())?>" type="text/javascript"></script> 

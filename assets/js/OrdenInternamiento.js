@@ -35,6 +35,8 @@
                      }
         });
     }
+<<<<<<< HEAD
+=======
     /*
     function modalOrdenInternamiento(triage_id) {
       $.ajax({ 
@@ -141,6 +143,7 @@
             });
     }*/
    
+>>>>>>> f59ef181d4b841819dd9b386dfd0172068845fa5
 
     function modalOrdenInternamiento(triage_id) {
         console.log(triage_id)
@@ -178,7 +181,11 @@
                         buttons: {
                             cancel: {
                                 label: 'Cancelar',
+<<<<<<< HEAD
+                                className: 'btn-danger'
+=======
                                 className: 'btn-imss-cancel'
+>>>>>>> f59ef181d4b841819dd9b386dfd0172068845fa5
                             }, confirm: {
                                 label: 'Confirmar',
                                 className: 'back-imss'
@@ -210,7 +217,7 @@
                                             triage_id: data.info.triage_id,
                                             servicio_solicitado_id: servicio,
                                             motivo: motivo,
-                                            dx_registrado: data.id_dx_reg,
+                                            dx_registrado: data.id_dx,
                                             csrf_token: csrf_token
                                         },
                                         beforeSend: function (xhr) {
@@ -275,7 +282,7 @@
                         buttons: {
                             cancel: {
                                 label: 'NO',
-                                className: 'btn-imss-cancel'
+                                className: 'btn-danger'
                             }, confirm: {
                                 label: 'SI',
                                 className: 'back-imss'
@@ -355,7 +362,11 @@
                         buttons: {
                             cancel: {
                                 label: 'Cancelar',
+<<<<<<< HEAD
+                                className: 'btn-danger'
+=======
                                 className: 'btn-imss-cancel'
+>>>>>>> f59ef181d4b841819dd9b386dfd0172068845fa5
                             }, confirm: {
                                 label: 'Confirmar',
                                 className: 'back-imss'
@@ -387,7 +398,7 @@
                                             triage_id: data.info.triage_id,
                                             servicio_solicitado_id: servicio,
                                             motivo: motivo,
-                                            dx_registrado: data.id_dx_reg,
+                                            dx_registrado: data.id_dx,
                                             csrf_token: csrf_token
                                         },
                                         beforeSend: function (xhr) {

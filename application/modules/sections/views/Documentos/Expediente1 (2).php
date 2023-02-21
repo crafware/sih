@@ -94,12 +94,12 @@
                             <a <?php if (empty($HojasFrontales)) { ?>href="<?= base_url() ?>Sections/Documentos/HojaFrontal?hf=0&TipoNota=Nota Inicial&a=add&folio=<?= $this->uri->segment(4) ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener">Generar Inicial (Hoja Frontal)<?php } ?></a>
                           </li>
                         <?php 
-                        }else if($_GET['tipo'] == 'Consultorios' || $this->UMAE_AREA == 'Médico Observación') { /* SI NO SE HA  GENERADO HOJA INICIAL ABIERTO*/ ?>
+                        }else if($this->UMAE_AREA != 'Médico Hospitalización' && $_GET['tipo'] != 'Hospitalizacion') { /* SI NO SE HA  GENERADO HOJA INICIAL ABIERTO*/ ?>
                             <li class="<?= !empty($HojasFrontales)  ? 'disabled' : '' ?>">
                               <a <?php if (empty($HojasFrontales)) { ?>href="<?= base_url() ?>Sections/Documentos/HojaInicialAbierto?hf=0&TipoNota=Nota Inicial&a=add&folio=<?= $this->uri->segment(4) ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener" <?php } ?>><b>Generar "Nota Inicial"</b></a>
                             </li>
                         <?php 
-                        }else if($this->UMAE_AREA == 'Médico Hospitalización' || $this->UMAE_AREA == 'UCI'|| $this->UMAE_AREA == 'UTR'|| $this->UMAE_AREA == 'UTMO') { ?>
+                        }else if($this->UMAE_AREA == 'Médico Hospitalización' || $this->UMAE_AREA == 'UCI') { ?>
                           <li class="<?= !empty($NotaIngresoPorServicio)  ? 'disabled' : '' ?>">
                             <a <?php if (empty($NotaIngresoPorServicio)) { ?>href="<?= base_url() ?>Sections/Documentos/NotaIngresoHospitalario?idnota=0&TipoNota=Nota Inicial&a=add&folio=<?= $this->uri->segment(4) ?>&via=<?= $this->UMAE_AREA ?>&tipo=<?= $_GET['tipo'] ?>" target="_blank" rel="opener" <?php } ?>><b>Generar "Nota de Ingreso"</b></a>
                           </li>

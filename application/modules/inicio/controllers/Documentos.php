@@ -1823,7 +1823,7 @@ class Documentos extends Config
             'idnota_ingresohosp' => $idNota
         ));
         $this->valueNotaIngresoHosp($sql);
-        $this->load->view('documentos/NotaIngresoHosp', $sql);
+        $this->load->view('documentos/NotaIngresoHosp2', $sql);
     }
 
     public function valueNotaIngresoHosp(&$sql)
@@ -2036,15 +2036,11 @@ class Documentos extends Config
             $nota['lim_3'] = $lim;
             $nombre = 'nota_auxiliaresd';
             $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
-
-
-
         
         <p style="font-weight: bold;margin-bottom: 1px">IMPRESIÓN DIAGNÓSTICA</p>
         <p style="margin-bottom: 1px">Diagnóstico de Ingreso</p>
         <p class="contenido"><?= $Diagnosticos[0]['cie10_clave'] ?> - <?= $Diagnosticos[0]['cie10_nombre'] ?></p>
         <p class="contenido"><?= ($Diagnosticos[0]['complemento'] == 'S/C') ? '' : $Diagnosticos[0]['complemento']; ?></p>
-
         <?php if (count($Diagnosticos) > 1) { ?>
             <h5 style="margin-bottom: -6px">Diagnosticos Secundarios</h5>
             <?php for ($x = 1; $x < count($Diagnosticos); $x++) { ?>
@@ -2060,7 +2056,6 @@ class Documentos extends Config
             <p style="font-weight: bold;margin-bottom: 1px">PRONÓSTICO</p>
             <p class="contenido"><?= $nota['pronostico'] ?></p>
         <?php } ?>
-
         <?php if ($nota['procedimientos'] != '') { ?>
             <h5 style="margin-bottom: -6px">PROCEDIMIENTOS REALIZADOS</h5>
             <?php $procedimiento = explode(',', $nota['procedimientos']);
@@ -2068,11 +2063,8 @@ class Documentos extends Config
                 $nombreProcedimiento = $this->config_mdl->_get_data_condition('um_procedimientos', array('procedimiento_id' => $procedimiento_id))[0];
             ?>
                 <p class="contenido"><?= $nombreProcedimiento['nombre'] ?></p>
-
             <?php } ?>
-
         <?php } ?>
-
         <p style="font-weight: bold;margin-bottom: 1px">PLAN Y ORDENES MÉDICAS</p>
         <!--<p><?= print_r($nota) ?></p>-->
         <?php if ($plan['dieta'] == '0') {
@@ -2106,7 +2098,6 @@ class Documentos extends Config
         ?>
         <!-- DIETA -->
         <p class="contenido"><b>Dieta:</b> <?= $nutricion ?> <?= $plan['dieta_indicaciones'] ?></p>
-
         <?php
         if ($plan['toma_signos_vitales'] == '1') {
             $toma_signos = 'Por turno';
@@ -2118,7 +2109,6 @@ class Documentos extends Config
         ?>
         <!-- SIGNBOS VITALES -->
         <p class="contenido"><b>Toma de Signos Vitales:</b> <?= $toma_signos ?></p>
-
         <?php if ($plan['cuidados_genfermeria'] == '1') { ?>
             <!-- CUIDADOS GENERALES DE ENFERMERIA -->
             <p class="contenido"><b>Cuidados Generales:</b><br>
@@ -2142,7 +2132,6 @@ class Documentos extends Config
             <p class="contenido"><b>Soluciones Parenterales:</b>
                 <?= $plan['soluciones_parenterales'] ?></p>
         <?php } ?>
-
         <!-- Alergia a medicamentos -->
         <!-- <?php echo (count($AlergiaMedicamentos) > 0) ? '<h5 style="margin-bottom: -6px">ALERGIA A MEDICAMENTOS</h5>' : ''; ?>
             <?php for ($x = 0; $x < count($AlergiaMedicamentos); $x++) { ?>

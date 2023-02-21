@@ -2681,7 +2681,7 @@ class Admisionhospitalaria extends Config{
         }else {
           $salidaServicio = $notaAlta['empleado_servicio_id'];
           $salidaMedico   = $notaAlta['notas_medicotratante'];
-          $motivoalta     = $notaAlta['motivo_egreso'];
+          $motivoAlta     = $notaAlta['motivo_egreso'];
           $fecha_prealta  = $notaAlta['fecha_nota'];
           $fecha_h_prealta= $notaAlta['fecha_nota'].' '.$notaAlta['hora_nota'];
           $fecha_h_alta_medico= $notaAlta['fecha_hora_alta'];

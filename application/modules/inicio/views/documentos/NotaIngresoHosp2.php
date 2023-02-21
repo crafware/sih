@@ -4,17 +4,41 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
     'Tiempo2' =>  $nota['fecha_elabora'] . ' ' . $nota['hora_elabora']
 ));
 ?>
-<page backtop="80mm" backbottom="30mm" backleft="48" backright="1mm">
-    <page_header>
-        <img src="<?= base_url() ?>assets/doc/DOC430128_HF.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
+<style type="text/css">
+        ul {
+            width: 550px;
+            text-align: justify;
+        }
 
+        ol {
+            width: 550px;
+            text-align: justify;
+        }
+
+        .contenidol {
+            width: 580px;
+            text-align: justify;
+            padding-top: 5px;
+            padding-bottom: 0px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+        .contenido {
+            width: 580px;
+            text-align: justify;
+            padding-top: 5px;
+            padding-bottom: 0px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+    </style>
+<?php $pagina = 1; ?>
+<page backtop="80mm" backbottom="30mm" backleft="48" backright="1mm" backimg="<?= base_url() ?>assets/doc/DOC430128_HF.png">
+    <page_header>
         <div style="position: absolute;margin-top: 15px">
-            <div style="position: absolute;top: 80px;left: 120px;width: 270px;">
-                <!--<b><?= _UM_CLASIFICACION ?> | <?= _UM_NOMBRE ?></b> -->
-            </div>
+            
             <div style="position: absolute;margin-left: 435px;margin-top: 50px;width: 270px;text-transform: uppercase;font-size: 11px;text-align: left;">
                 <b>NOMBRE DEL PACIENTE: </b>
-
             </div>
             <div style="position: absolute;margin-left: 435px;margin-top: 61px;width: 350px;text-transform: uppercase;font-size: 14px;text-align: left;">
                 <?= $info['triage_nombre'] ?> <?= $info['triage_nombre_ap'] ?> <?= $info['triage_nombre_am'] ?>
@@ -46,7 +70,6 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
                     <b>ATENCION:</b><?= $PINFO['pia_tipo_atencion'] ?>
                 </p>
             </div>
-
             <div style="position: absolute;margin-left: 437px;margin-top: 136px;width: 270px;text-transform: uppercase;font-size: 11px;">
                 <?php if ($PINFO['pia_procedencia_espontanea'] == 'No') { ?>
 
@@ -55,7 +78,6 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
                     </p>
                 <?php } ?>
             </div>
-
             <div style="position: absolute;margin-left: 437px;margin-top: 154px;width: 300px;text-transform: uppercase;font-size: 11px;">
                 <p style="margin-top: -10px">
                     <b>DOMICILIO: </b> <?= $DirPaciente['directorio_cn'] ?>, <?= $DirPaciente['directorio_colonia'] ?>, <?= $DirPaciente['directorio_cp'] ?>, <?= $DirPaciente['directorio_municipio'] ?>, <?= $DirPaciente['directorio_estado'] ?> <B>TEL:</B><?= $DirPaciente['directorio_telefono'] ?>
@@ -78,15 +100,12 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
                     <b>MEDICO TRATANTE:</b> <?= $medicoTratante['empleado_nombre'] ?> <?= $medicoTratante['empleado_apellidos'] ?>
                 </p>
             </div>
-
             <div style="position: absolute;margin-top: 263px;margin-left: 210px; width: 500px;text-transform: uppercase;font-size: 13px;text-align: center;">
                 <b>NOTA DE INGRESO DEL SERVICIO DE <?= $Servicio['especialidad_nombre'] ?></b>
             </div>
-
-
             <div style="position: absolute;margin-top:237px;margin-left: 360px ">:[[page_cu]]/[[page_nb]]</div>
+            <div style="position: absolute;margin-top:250px;margin-left: 360px "><?=$pagina?></div>
             <!-- fecha de  creacion del documento -->
-
             <div style="position: absolute;margin-left: 10px;margin-top: 270px;width: 150px;font-size: 12px;text-align: center;">
                 <h5><?= date("d/m/Y", strtotime($nota['fecha_elabora'])); ?> <?= $nota['hora_elabora'] ?></h5>
             </div>
@@ -136,35 +155,12 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
                     <p style="margin-top: -15px"><?= $nota['estado_salud'] ?></p>
                 <?php } ?>
             </div>
-
-
             <div style="margin-left: 280px;margin-top: 980px">
                 <barcode type="C128A" value="<?= $info['triage_id'] ?>" style="height: 40px;"></barcode>
             </div>
         </div>
     </page_header>
-    <style type="text/css">
-        ul {
-            width: 550px;
-            text-align: justify;
-        }
-
-        ol {
-            width: 550px;
-            text-align: justify;
-        }
-
-        .contenidol {
-            width: 580px;
-            text-align: justify;
-            padding-top: 5px;
-            padding-bottom: 0px;
-            margin-top: 0px;
-            margin-bottom: 0px;
-        }
-    </style>
-
-    <div style="position:absolute; left: 1px; margin-top: -10px; font-size: 12px;">
+    <div style="position:absolute; left: 1px; margin-top: -10px; font-size: 11px;">
         <p style="margin-bottom: -6px;"><b>TIPO DE INTERROGATORIO</b> <?= $nota['tipo_interrogatorio'] ?></p>
         <?php if ($nota['motivo_ingreso_p1'] == '1') { ?>
             <span style="margin-bottom: 0px;font-weight: bold;"><br>MOTIVO DE INGRESO</span>
@@ -220,115 +216,8 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
     </div>
 </page>
 
-<page backtop="80mm" backbottom="55mm" backleft="5mm" backright="1mm">
-    <page_header>
-        <img src="<?= base_url() ?>assets/doc/DOC4301282.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
-
-        <div style="position: absolute;margin-top: 15px">
-            <div style="position: absolute;top: 80px;left: 120px;width: 270px;">
-                <!--<b><?= _UM_CLASIFICACION ?> | <?= _UM_NOMBRE ?></b> -->
-            </div>
-            <div style="position: absolute;margin-left: 435px;margin-top: 50px;width: 270px;text-transform: uppercase;font-size: 11px;text-align: left;">
-                <b>NOMBRE DEL PACIENTE: </b>
-
-            </div>
-            <div style="position: absolute;margin-left: 435px;margin-top: 61px;width: 350px;text-transform: uppercase;font-size: 14px;text-align: left;">
-                <?= $info['triage_nombre'] ?> <?= $info['triage_nombre_ap'] ?> <?= $info['triage_nombre_am'] ?>
-            </div>
-            <div style="position: absolute;margin-left: 437px;margin-top: 75px;width: 270px;text-transform: uppercase;font-size: 13px;">
-                <b>N.S.S:</b> <?= $PINFO['pum_nss'] ?>-<?= $PINFO['pum_nss_agregado'] ?>
-            </div>
-            <?php $fecha = Modules::run('Config/ModCalcularEdad', array('fecha' => $info['triage_fecha_nac'])); ?>
-            <div style="position: absolute;margin-left: 437px;margin-top: 95px;width: 270px;text-transform: uppercase;font-size: 11px;">
-                <p style="margin-top: -2px">
-                    <b>EDAD:</b> <?= $fecha->y == 0 ? $fecha->m . ' MESES' : $fecha->y . ' AÑOS' ?>
-                </p>
-                <p style="margin-top: -10px">
-                    <b>UMF:</b> <?= $PINFO['pum_umf'] ?>/<?= $PINFO['pum_delegacion'] ?>
-                </p>
-                <p style="margin-top: -10px">
-                    <b><?= $hoja['hf_atencion'] ?></b>
-                </p>
-
-            </div>
-            <div style="position: absolute;margin-left: 540px;margin-top: 95px;width: 270px;text-transform: uppercase;font-size: 11px;">
-                <p style="margin-top: -2px">
-                    <b>GENERO:</b> <?= $info['triage_paciente_sexo'] ?>
-                </p>
-                <p style="margin-top: -10px">
-                    <b>PROCEDE:</b> <?= $PINFO['pia_procedencia_espontanea'] == 'Si' ? 'ESPONTANEO' : 'REFERENCIADO' ?>
-                </p>
-                <p style="margin-top: -10px">
-                    <b>ATENCION:</b><?= $PINFO['pia_tipo_atencion'] ?>
-                </p>
-            </div>
-
-            <div style="position: absolute;margin-left: 437px;margin-top: 136px;width: 270px;text-transform: uppercase;font-size: 11px;">
-                <?php if ($PINFO['pia_procedencia_espontanea'] == 'No') { ?>
-
-                    <p style="margin-top: -7px">
-                        <b>4-30-8/NM:</b> <?= $PINFO['pia_procedencia_hospital'] ?> <?= $PINFO['pia_procedencia_hospital_num'] ?>
-                    </p>
-                <?php } ?>
-            </div>
-
-            <div style="position: absolute;margin-left: 437px;margin-top: 154px;width: 300px;text-transform: uppercase;font-size: 11px;">
-                <p style="margin-top: -10px">
-                    <b>DOMICILIO: </b> <?= $DirPaciente['directorio_cn'] ?>, <?= $DirPaciente['directorio_colonia'] ?>, <?= $DirPaciente['directorio_cp'] ?>, <?= $DirPaciente['directorio_municipio'] ?>, <?= $DirPaciente['directorio_estado'] ?> <B>TEL:</B><?= $DirPaciente['directorio_telefono'] ?>
-                </p>
-            </div>
-            <div style="position: absolute;margin-left: 437px;margin-top: 185px;width: 300px;text-transform: uppercase;font-size: 11px;">
-                <p style="margin-top: -1px">
-                    <b>FOLIO:</b> <?= $info['triage_id'] ?>
-                </p>
-                <p style="margin-top: -10px">
-                    <b>FECHA DE INGRESO Y HORA CERO:</b> <?= date('d-m-Y', strtotime($info['triage_horacero_f'])) ?> <?= $info['triage_horacero_h'] ?>
-                </p>
-                <p style="margin-top: -7px">
-                    <b>CAMA:</b> <?= $infoCama['cama_nombre'] ?> - <?= $infoCama['piso_nombre_corto'] ?>
-                </p>
-                <p style="margin-top: -9px">
-                    <b>TIEMPO DE ESTANCIA:</b> <?= $tiempo_estancia->d ?> dias <?= $tiempo_estancia->h ?> hrs <?= $tiempo_estancia->i ?> min.
-                </p>
-                <p style="margin-top: -11px">
-                    <b>MEDICO TRATANTE:</b> <?= $medicoTratante['empleado_nombre'] ?> <?= $medicoTratante['empleado_apellidos'] ?>
-                </p>
-            </div>
-
-            <div style="position: absolute;margin-top: 263px;margin-left: 210px; width: 500px;text-transform: uppercase;font-size: 13px;text-align: center;">
-                <b>NOTA DE INGRESO DEL SERVICIO DE <?= $Servicio['especialidad_nombre'] ?></b>
-            </div>
-
-
-            <div style="position: absolute;margin-top:237px;margin-left: 360px ">:[[page_cu]]/[[page_nb]]</div>
-
-            <div style="margin-left: 280px;margin-top: 980px">
-                <barcode type="C128A" value="<?= $info['triage_id'] ?>" style="height: 40px;"></barcode>
-            </div>
-        </div>
-    </page_header>
-    <style type="text/css">
-        ul {
-            width: 500px;
-            text-align: justify;
-        }
-
-        ol {
-            width: 550px;
-            text-align: justify;
-        }
-
-        .contenido {
-            width: 580px;
-            text-align: justify;
-            padding-top: 5px;
-            padding-bottom: 0px;
-            margin-top: 0px;
-            margin-bottom: 0px;
-        }
-    </style>
-
-    <div style="position:absolute; left: 1px; margin-top: -10px; font-size: 12px;">
+<page pageset="new" backtop="80mm" backbottom="40mm" backleft="5mm" backright="1mm" backimg="<?= base_url() ?>assets/doc/DOC430128_BACK.png">  
+    <div style="position:absolute; left: 1px; margin-top: -10px; font-size: 11px;">
         <?php if ($nota['tipo_interrogatorio_p1'] == '2') { ?>
             <p style="margin-bottom: -6px;"><b>TIPO DE INTERROGATORIO</b> <?= $nota['tipo_interrogatorio'] ?></p>
         <?php } ?>
@@ -382,8 +271,7 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
             <p style="margin-bottom: 1px">Estudios de Gabinete</p>
             <p class="contenido"><?= $nota['estudios_gabinete'] ?></p>
         <?php } ?>
-        <p>Diagnosticos_p1: <?= print_r($Diagnosticos_p1)?></p>
-        <p>Diagnosticos: <?= print_r($Diagnosticos)?></p>
+
         <p style="font-weight: bold;margin-bottom: 1px">IMPRESIÓN DIAGNÓSTICA</p>
         <p style="margin-bottom: 1px">Diagnóstico de Ingreso</p>
         <p class="contenido"><?= $Diagnosticos[0]['cie10_clave'] ?> - <?= $Diagnosticos[0]['cie10_nombre'] ?></p>
@@ -698,19 +586,15 @@ $tiempo_estancia = Modules::run('Config/CalcularTiempoTranscurrido', array(
                     </div>
         <?php }} ?>
     </page_footer>
-    <!--<p><?= __DIR__?></p>-->
 </page>
 
 <?php
 $html =  ob_get_clean();
 $pdf = new HTML2PDF('P', 'A4', 'fr', 'UTF-8');
+$pdf->setTestTdInOnePage(false);
 $pdf->writeHTML($html);
 $pdf->pdf->IncludeJS("print(true);");
 $pdf->pdf->SetTitle('NOTA DE INGRESO ');
 $pdf->Output($Nota['notas_tipo'] . '.pdf');
-/*require __DIR__.'/vendor/autoload.php';
-use spipu\Html2Pdf\Html2Pdf;
-$html2pdf = new Html2Pdf();
-$html2pdf->writeHTML('<h1>HelloWorld</h1>This is my first test');
-$html2pdf->output();*/
+
 ?>

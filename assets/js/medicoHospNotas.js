@@ -239,6 +239,74 @@ $(document).ready(function () {
         })
         
     }
+
+    function ModalAltaPaciente(folio){
+        $.ajax({ 
+            url: base_url+"Hospitalizacion/ProcesoDeAltaPorMedico",
+            dataType: 'json',
+            type: 'POST',
+            data: {folio:folio, csrf_token:csrf_token},
+            success: function (data, textStatus, jqXHR) {
+                if(data.accion=='1') {
+                    console.log(data.accion)
+                    
+
+                    bootbox.confirm({
+                        title: "<h5>Información de Alta de Paciente</h5>",
+                        message: '<div class="row" style="margin-top:-10px">'+
+                                    '<div class="col-md-12">'+
+                                        '<h5 style="line-height: 1.4;margin-top:20px"><b>Paciente: </b>'+data.infoPaciente.triage_nombre+' '+data.infoPaciente.triage_nombre_ap+' '+data.infoPaciente.triage_nombre_am+'</h5>'+
+                                        '<h5 style="line-height: 1.4;margin-top:5px"><b>NSS: </b>'+data.infoPaciente.pum_nss+' '+data.infoPaciente.pum_nss_agregado+'</b></h5>'+
+                                        '<h5 style="line-height: 1.4;margin-top:5px"><b>Servicio de Egreso: </b></h5>'+ 
+                                        '<h5 style="line-height: 1.4;margin-top:5px"><b>Motivo de Alta: </b><select id="motivoEgreso" style="width:50%">'+data.motivoEgreso+'</select></h5>'+
+                                        '<h5 style="line-height: 1.4;margin-top:5px"><b>Fecha de Egreso: </b><input type="date" name="fechaEgreso" id="fechaEgreso" placeholder="Seleccionar fecha"></h5>'+                                                            
+                                    '</div>'+
+                                 '</div>',
+                        buttons: {
+                            cancel: {
+                                label: 'Cancelar',
+                                className: 'red'
+                            },confirm: {
+                                label: 'Confirmar',
+                                className: 'back-imss'
+                            }
+                        },
+                        callback: function (result) {
+                            if(result){
+                                console.log('selcciono alta');
+                                /*
+                                $.ajax({
+                                    url: base_url+"AdmisionHospitalaria/ConfirmarAltaCamaAsistenteMedica",
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: {
+                                        cama_id:cama_id,
+                                        folio:folio,
+                                        id_43051:id_43051,
+                                        csrf_token: csrf_token
+                                    },
+                                    beforeSend: function (xhr) {
+                                        //msj_loading();
+                                    },
+                                    success: function (data, textStatus, jqXHR) { 
+                                        bootbox.hideAll()
+                                        if(data.accion == 1){
+                                            location.reload();
+                                            msj_success_noti('Solicitud realizada');
+                                        }
+                                    },
+                                    error: function (e) {
+                                        bootbox.hideAll();
+                                        MsjError();
+                                    }
+                                });  */
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
     const fecha = $('#fecha').val();
     console.log(fecha);
     //passDate(fecha);
@@ -398,9 +466,29 @@ $(document).ready(function () {
     });
 
     $('body').on('click','.alta-paciente-servicio',function (e){
-        e.preventDefault();
-        var idp=$(this);
-        if(confirm('¿REPORTAR ALTA DEL PACIENTE EN EL SERVICIO?')){
+        //e.preventDefault();
+        let folio = $(this).attr('data-id');
+        bootbox.confirm({
+            message:'¿Desea dar de Alta al Paciente del Servicio?',
+            size:'small',
+            buttons:{
+                cancel:{
+                    label:'Cancelar',
+                    className:'btn-imss-cancel'
+                },confirm:{
+                    label:'Aceptar',
+                    className:'back-imss'
+                    }
+                },
+            callback:function (result) {
+                /* si se seleccinna un paciente */
+                if(result){
+                    ModalAltaPaciente(folio);
+                }
+            }
+        });
+
+        /*if(confirm('¿REPORTAR ALTA DEL PACIENTE EN EL SERVICIO?')){
                 $.ajax({
                 url: base_url+"Hospitalizacion/AjaxReportarAlta",
                 type: 'POST',
@@ -422,7 +510,7 @@ $(document).ready(function () {
                     
                 }
             })
-        }
+        }*/
     });   
     $('body').on('click','.borrar-paciente-ingreso',function (e){
        // e.preventDefault();
