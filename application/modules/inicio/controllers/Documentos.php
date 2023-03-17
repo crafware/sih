@@ -1104,8 +1104,7 @@ class Documentos extends Config
         ))[0];
         $this->load->view('documentos/DOC430200', $sql);
     }
-    public function GenerarNotas($Nota)
-    {
+    public function GenerarNotas($Nota){
         $sql['Nota'] = $this->config_mdl->_query("SELECT * FROM doc_notas, doc_nota WHERE
             doc_notas.notas_id=doc_nota.notas_id AND
             doc_notas.notas_id=" . $Nota)[0];
@@ -1124,7 +1123,8 @@ class Documentos extends Config
                                                 ( um_cie10.cie10_id ) cie10_id2,
                                                 cie10_clave,
                                                 cie10_nombre,
-                                                fecha_dx 
+                                                fecha_dx,
+                                                hora_dx
                                             FROM
                                                 paciente_diagnosticos
                                                 INNER JOIN um_cie10 ON paciente_diagnosticos.cie10_id = um_cie10.cie10_id 
@@ -1169,7 +1169,7 @@ class Documentos extends Config
                                                             INNER JOIN um_especialidades
                                                               ON doc_430200.doc_servicio_solicitado = um_especialidades.especialidad_id
                                                             WHERE doc_nota_id =" . $Nota . " AND doc_430200.doc_estatus!='Evaluado'");
-        $sql['Prescripcion'] = $this->config_mdl->_query(
+        /*$sql['Prescripcion'] = $this->config_mdl->_query(
             "SELECT fecha_prescripcion,CONCAT(empleado_nombre,empleado_apellidos)empleado,
           CONCAT(medicamento,' ',gramaje)medicamento, dosis, prescripcion.via AS via_administracion, frecuencia,
           aplicacion, fecha_inicio, tiempo, observacion,fecha_fin, estado,doc_notas.notas_id
@@ -1184,27 +1184,30 @@ class Documentos extends Config
             ON prescripcion.empleado_id = os_empleados.empleado_id
           WHERE prescripcion.triage_id = " . $sql['Nota']['triage_id'] . " AND doc_notas.notas_id = " . $Nota . "
           ORDER BY fecha_prescripcion DESC"
-        );
+        );*/
         /*
         Consulta para las prescripciones de cuadro basico
         antibioticos NPT y Oncologico o antimicrobiano
         */
         $sql['Prescripcion_Basico'] = $this->config_mdl->_query("SELECT * FROM catalogo_medicamentos
-                                                                 INNER JOIN prescripcion
-                                                                	 ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                                                 WHERE triage_id = " . $sql['Nota']['triage_id'] . " AND safe = 0;");
+                                                                INNER JOIN prescripcion
+                                                                    ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
+                                                                WHERE triage_id = " . $sql['Nota']['triage_id'] . " AND actual != 0 AND safe = 0 ORDER BY prescripcion_anterior_id;");
+        $this->filtrar_prescripciones($sql['Prescripcion_Basico'], $Nota);
         $sql['Prescripcion_NPT'] = $this->config_mdl->_query("SELECT * FROM catalogo_medicamentos
-                                                              INNER JOIN prescripcion
-                                                              	ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                                              INNER JOIN prescripcion_npt
-                                                              	ON prescripcion.prescripcion_id = prescripcion_npt.prescripcion_id
-                                                              WHERE triage_id = " . $sql['Nota']['triage_id'] . " AND safe = 1 AND categoria_safe = 'npt';");
+                                                                INNER JOIN prescripcion
+                                                                    ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
+                                                                INNER JOIN prescripcion_npt
+                                                                    ON prescripcion.prescripcion_anterior_id = prescripcion_npt.prescripcion_id
+                                                                WHERE triage_id = " . $sql['Nota']['triage_id'] . " AND actual != 0 AND safe = 1 AND categoria_safe = 'npt' ORDER BY prescripcion_anterior_id;");
+        $this->filtrar_prescripciones($sql['Prescripcion_NPT'], $Nota);
         $sql['Prescripcion_Onco_Anti'] = $this->config_mdl->_query("SELECT * FROM catalogo_medicamentos
-                                                                    INNER JOIN prescripcion
-                                                                    	ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                                                    INNER JOIN prescripcion_onco_antimicrobianos
-                                                                    	ON prescripcion.prescripcion_id = prescripcion_onco_antimicrobianos.prescripcion_id
-                                                                    WHERE triage_id = " . $sql['Nota']['triage_id'] . " AND safe = 1;");
+                                                                INNER JOIN prescripcion
+                                                                    ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
+                                                                INNER JOIN prescripcion_onco_antimicrobianos
+                                                                    ON prescripcion.prescripcion_anterior_id = prescripcion_onco_antimicrobianos.prescripcion_id
+                                                                WHERE triage_id = " . $sql['Nota']['triage_id'] . " AND actual != 0 AND safe = 1 ORDER BY prescripcion_anterior_id;");
+        $this->filtrar_prescripciones($sql['Prescripcion_Onco_Anti'], $Nota);
         $sql['valores'] = array($sql['Nota']['triage_id'], $Nota);
         // if($sqlSV[0]['sv_temp']!='' && !empty($sqlSV)){
         //     $sql['SignosVitales']=$sqlSV[0];
@@ -1226,18 +1229,31 @@ class Documentos extends Config
         $sql['residentes'] = $this->config_mdl->_get_data_condition('um_notas_residentes', array(
             'notas_id' => $sql['Nota']['notas_id']
         ));
-
+        $sql['infoCama'] = $this->config_mdl->_query("SELECT * FROM os_pisos, os_pisos_camas, os_camas WHERE 
+            os_pisos.piso_id = os_pisos_camas.piso_id AND os_pisos_camas.cama_id = os_camas.cama_id AND triage_id=" . $sql['Nota']['triage_id'])[0];
+        $procedimiento = explode(',', $sql["Nota"]['nota_procedimientos']);
+        $n = 0;
+        $procedimientosNombres = "";
+        foreach ($procedimiento as $value_p => $procedimiento_id) {
+            $n += 1;
+            $nombreProcedimiento = $this->config_mdl->_get_data_condition('um_procedimientos', array('procedimiento_id' => $procedimiento_id))[0];
+            if($n == 1){
+                $procedimientosNombres .= $nombreProcedimiento['nombre'];
+            } else {
+                $procedimientosNombres .= ", " . $nombreProcedimiento['nombre'];
+            }
+        }
+        $sql["Nota"]['procedimientosNombres'] = $procedimientosNombres;
         //print json_encode($sql);
         $this->valueGenerarNotas($sql);
-
         $this->load->view('documentos/Notas', $sql);
     }
-    public function valueGenerarNotas(&$sql) //Adactar
-    {
-        $limFila = 100;
-        $limColumna = 40;
+
+    public function valueGenerarNotas(&$sql){
+        $limFila = 115;
+        $limColumna = 60;
         $lim = 0;
-        $titulo_len = 2;
+        $titulo_len = 1.5;
         $nota = &$sql["Nota"];
         $Diagnosticos = &$sql["Diagnosticos"];
         $toma_signos = &$sql["toma_signos"];
@@ -1245,48 +1261,34 @@ class Documentos extends Config
             $this->valueTitleLen('INDICACIONES_Y_ORDENES_MEDICAS', $lim, $titulo_len, $limColumna, $nota, false);
         } else {
             $nombre = 'nota_problema';
-            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
-            $nota['lim_1'] = $lim;
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, true);
             $nombre = 'nota_interrogatorio';
             $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
-            $nota['lim_2'] = $lim;
             $nombre = 'nota_exploracionf';
             $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
-            $nota['lim_3'] = $lim;
             $nombre = 'nota_auxiliaresd';
             $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
-            $nombre = 'nota_procedimientos';
-            if (strlen(rtrim($nota[$nombre], " ")) != 0 && $nota[$nombre] != null) {
-                if ($lim > $limColumna) {
-                    $nota[$nombre . '_p1'] = "2";
-                } else {
-                    $aux = $titulo_len * 4;
-                    $procedimiento = explode(',', $nota['nota_procedimientos']);
-                    $aux += count($procedimiento) * $titulo_len;
-                    if (($lim + $aux) > $limColumna)
-                        $nota[$nombre . '_p1'] = "2";
-                    else
-                        $nota[$nombre . '_p1'] = "1";
-                    $lim += $aux;
-                }
-            }
+            $nombre = 'procedimientosNombres';
+            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
             $nombre = 'nota_analisis';
             $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
             $nombre = 'Diagnosticos';
-            if (!empty($Diagnosticos)) {
+            if ($Diagnosticos[0]) {
                 if ($lim > $limColumna) {
-                    $nota[$nombre . '_p1'] = "2";
+                    $sql[$nombre . '_p1'] = "2";
                 } else {
-                    $aux = 4 * $titulo_len;
+                    $aux = $titulo_len;
                     foreach ($Diagnosticos as $value) {
-                        if ($value['tipodiag'] == 1 || $value['tipodiag'] == 2) {
+                        if ($value['tipodiag'] == 0 || $value['tipodiag'] == 1 || $value['tipodiag'] == 2) {
                             $aux += $titulo_len;
+                            $aux += substr($value['complemento'] , "\n");
+                            $aux += ceil(strlen($value['complemento'] ) / $limFila);
                         }
                     }
                     if (($lim + $aux) > $limColumna)
-                        $nota[$nombre . '_p1'] = "2";
+                        $sql[$nombre . '_p1'] = "2";
                     else
-                        $nota[$nombre . '_p1'] = "1";
+                        $sql[$nombre . '_p1'] = "1";
                     $lim += $aux;
                 }
             }
@@ -1294,7 +1296,7 @@ class Documentos extends Config
             $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
             $PLAN_Y_ORDENES_M = $this->valueTitleLen('Dieta', $lim, $titulo_len, $limColumna, $nota, false);
             if ($nota['nota_svycuidados'] != 0) {
-                $PLAN_Y_ORDENES_M = $PLAN_Y_ORDENES_M || $this->valueTitleLen('nota_svycuidados', $lim, $titulo_len, $limColumna, $nota, false);
+                $PLAN_Y_ORDENES_M = $this->valueTitleLen('nota_svycuidados', $lim, $titulo_len, $limColumna, $nota, false) || $PLAN_Y_ORDENES_M;
             }
             $PLAN_Y_ORDENES_M = $PLAN_Y_ORDENES_M || $toma_signos != 0;
             if ($toma_signos != 0) {
@@ -1325,63 +1327,41 @@ class Documentos extends Config
                 }
             }
             $nombre = 'nota_cuidadosenfermeria';
-            $PLAN_Y_ORDENES_M = $PLAN_Y_ORDENES_M || $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $PLAN_Y_ORDENES_M = $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false) || $PLAN_Y_ORDENES_M;
             $nombre = 'nota_solucionesp';
-            $PLAN_Y_ORDENES_M = $PLAN_Y_ORDENES_M || $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+            $PLAN_Y_ORDENES_M = $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false) || $PLAN_Y_ORDENES_M;
             if ($PLAN_Y_ORDENES_M) {
                 $this->valueTitleLen('PLAN_Y_ORDENES_M', $lim, $titulo_len, $limColumna, $nota, false);
             }
         }
     }
 
-    public function valueTextArrayLen(&$nota, $keys, $nombre, &$lim, $limColumna, $titulo_len, $limFila, $first)
-    {
-        $aux = true;
+    public function valueTextArrayLen(&$nota, $key, $nombre, &$lim, $limColumna, $titulo_len, $limFila, $first){
         for ($i = 0; $i < count($nota[$nombre]); $i++) {
             $nota[$nombre . '_p1'][$i] = [];
-            if ($aux) {
-                for ($j = 0; $j < count($keys); $j++) {
-                    //$nota[$nombre . '_p1'][$i][$keys[$j]] = $nota[$nombre][$i][$keys[$j]];
-                    //$aux = $aux && $this->valueTextLen($nota[$nombre][$i][$keys[$j]], $keys[$j], $lim, $limColumna, $titulo_len, $limFila, $first);
-
-                    $text = $nota[$nombre][$i][$keys[$j]];
-                    $notaAux = &$nota[$nombre . '_p1'][$i][$keys[$j] . "_p1"];
-                    if (strlen(rtrim($text, " ")) != 0 && $text != null) {
-                        if ($lim > $limColumna) {
-                            $notaAux = "2";
-                            $aux = false;
-                        } else {
-                            $aux = $titulo_len;
-                            $aux += substr($text, "\n");
-                            $aux += ceil(strlen($text) / $limFila) + 1;
-                            if (($lim + $aux) > $limColumna) {
-                                $notaAux = "2";
-                                $aux = false;
-                            } else
-                                $notaAux = "1";
-                            $lim += $aux;
-                        }
-                        if ($first) {
-                            $notaAux = "1";
-                        }
-                    }
-                }
-            } else {
-                for ($j = 0; $j < count($keys); $j++) {
-                    $this->valueTextLen($nota[$nombre][$i], $keys[$j], $lim, $limColumna, $titulo_len, $limFila, false);
+            $text = $nota[$nombre][$i][$key]. $nota[$nombre][$i]['cie10_clave'];
+            $notaAux = &$nota[$nombre . '_p1'][$i][$key . "_p1"];
+            $nota[$nombre . '_p1'][$i]["_p1"] = $nota[$nombre][$i]['cie10_clave'];
+            if (strlen(rtrim($text, " ")) != 0 && $text != null) {
+                if ($lim > $limColumna) {
+                    $notaAux = "2";
+                } else {
+                    $aux = $titulo_len;
+                    $aux += substr($text, "\n");
+                    $aux += ceil(strlen($text) / ($limFila));
+                    if (($lim + $aux) > $limColumna) {
+                        $notaAux = "2";
+                    } else
+                        $notaAux = "1";
+                    $lim += $aux;
                 }
             }
         }
-        if (count($nota[$nombre . '_p1']) > 0) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
-    public function valueTextLen(&$nota, $nombre, &$lim, $limColumna, $titulo_len, $limFila, $first)
-    {
+    public function valueTextLen(&$nota, $nombre, &$lim, $limColumna, $titulo_len, $limFila, $first){
         if (strlen(rtrim($nota[$nombre], " ")) != 0 && $nota[$nombre] != null) {
+            
             if ($lim > $limColumna) {
                 $nota[$nombre . '_p1'] = "2";
             } else {
@@ -1392,6 +1372,7 @@ class Documentos extends Config
                     $nota[$nombre . '_p1'] = "2";
                 else
                     $nota[$nombre . '_p1'] = "1";
+                $nota[$nombre . '_len'] = $aux;
                 $lim += $aux;
             }
             if ($first) {
@@ -1573,8 +1554,7 @@ class Documentos extends Config
         $this->load->view('documentos/OrdenLaboratorio', $sql);
     }
 
-    public function GenerarNotaEgreso($Nota)
-    {
+    public function GenerarNotaEgreso($Nota){
         $datos =    'notas_id,
                      notas_fecha,
                      notas_hora,
@@ -1665,14 +1645,25 @@ class Documentos extends Config
                 'sv_tipo'=>'Triage'
             ))[0];*/
         }
-        $sql['Diagnosticos'] = $this->config_mdl->_query("SELECT fecha_dx, cie10_clave, complemento, cie10_nombre, diagnostico_notas.tipo_diagnostico AS tipodiag
-                                                          FROM diagnostico_notas
-                                                          INNER JOIN paciente_diagnosticos
-                                                            ON  diagnostico_notas.diagnostico_id = paciente_diagnosticos.diagnostico_id
-                                                          INNER JOIN um_cie10
-                                                            ON diagnostico_notas.cie10_id = um_cie10.cie10_id
-                                                          WHERE notas_id = " . $Nota . " ORDER BY tipodiag");
-
+        /*$sql['Diagnosticos'] = $this->config_mdl->_query("SELECT fecha_dx, hora_dx, cie10_clave, complemento, cie10_nombre, diagnostico_notas.tipo_diagnostico AS tipodiag
+                                                        FROM diagnostico_notas
+                                                        INNER JOIN paciente_diagnosticos
+                                                        ON  diagnostico_notas.diagnostico_id = paciente_diagnosticos.diagnostico_id
+                                                        INNER JOIN um_cie10
+                                                        ON diagnostico_notas.cie10_id = um_cie10.cie10_id
+                                                        WHERE triage_id = " . $sql['info']['triage_id'] . " ORDER BY tipodiag");*/
+        $sql['Diagnosticos'] = $this->config_mdl->_query("SELECT fecha_dx, hora_dx, cie10_clave, complemento, cie10_nombre, tipo_diagnostico AS tipodiag
+                                                        FROM paciente_diagnosticos
+                                                        INNER JOIN um_cie10
+                                                        ON paciente_diagnosticos.cie10_id = um_cie10.cie10_id
+                                                        WHERE triage_id =" . $sql['info']['triage_id'] . " ORDER BY tipodiag");
+        $sql["sql"] = "SELECT fecha_dx, hora_dx cie10_clave, complemento, cie10_nombre, diagnostico_notas.tipo_diagnostico AS tipodiag
+        FROM diagnostico_notas
+        INNER JOIN paciente_diagnosticos
+          ON  diagnostico_notas.diagnostico_id = paciente_diagnosticos.diagnostico_id
+        INNER JOIN um_cie10
+          ON diagnostico_notas.cie10_id = um_cie10.cie10_id
+        WHERE 'triage_id' = " . $sql['info']['triage_id'] . " ORDER BY tipodiag";
 
         if ($sql['notaEgreso']['notas_via'] == 'Hospitalizacion') {
             $this->valueNotaEgresoHosp($sql);
@@ -1684,11 +1675,11 @@ class Documentos extends Config
 
     public function valueNotaEgresoHosp(&$sql)
     {
-        $limFila = 100;
-        $limColumna = 52;
+        $limFila = 115;
+        $limColumna = 66;
         $lim = 0;
         $aux = 0;
-        $titulo_len = 2;
+        $titulo_len = 1.5;
         $nota = &$sql["nota"];
         $notaEgreso = &$sql["notaEgreso"];
         $Diagnosticos = &$sql["Diagnosticos"];
@@ -1696,10 +1687,12 @@ class Documentos extends Config
         $this->valueTitleLen('DIAGNÓSTICOS_ENCONTRADOS', $lim, $titulo_len, $limColumna, $nota, false);
         if (!empty($Diagnosticos)) {
             $nota["Diagnosticos_p1"] == "1";
-            $aux = 4 * $titulo_len;
+            $aux = 2 * $titulo_len;
             foreach ($Diagnosticos as $value) {
                 if ($value['tipodiag'] == 1 || $value['tipodiag'] == 2 || $value['tipodiag'] == 3) {
-                    $aux += $titulo_len;
+                    $aux += 2 * $titulo_len; //sub titulo
+                    $aux += substr($value['complemento'], "\n");
+                    $aux += ceil(strlen($value['complemento']) / $limFila);    
                 }
             }
             $lim += $aux;
@@ -1720,9 +1713,7 @@ class Documentos extends Config
         $nombre = 'comentarios';
         $this->valueTextLen($notaEgreso, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
     }
-    public function NotaIngresoHosp($idNota)
-    {
-
+    public function NotaIngresoHosp($idNota){
         $sql['nota'] =  $this->config_mdl->_get_data_condition('um_notas_ingresos_hospitalario', array(
             'id_nota' =>  $idNota
         ))[0];
@@ -1764,49 +1755,61 @@ class Documentos extends Config
             'sv_tipo'   =>  'Triage',
             'triage_id' =>  $Paciente
         ))[0];
-
-        $sql['Prescripcion'] = $this->config_mdl->_query("SELECT *
-          FROM prescripcion INNER JOIN nm_hojafrontal_prescripcion ON
-          prescripcion.prescripcion_id = nm_hojafrontal_prescripcion.prescripcion_id
-          INNER JOIN catalogo_medicamentos
-            ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-          WHERE triage_id = " . $Paciente);
+        $sql['Prescripcion'] = $this->config_mdl->_query("SELECT * FROM prescripcion
+                                                            INNER JOIN nm_hojafrontal_prescripcion ON prescripcion.prescripcion_anterior_id = nm_hojafrontal_prescripcion.prescripcion_id
+                                                            INNER JOIN catalogo_medicamentos ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id 
+                                                            WHERE actual = 1 AND notas_id = " . $idNota);
+        $this->filtrar_prescripciones($sql['Prescripcion'], $idNota);
         /*
         Consulta para las prescripciones de cuadro basico
         antibioticos NPT y Oncologico o antimicrobiano
         */
         $sql['Prescripcion_Basico'] = $this->config_mdl->_query("SELECT * FROM catalogo_medicamentos
-                                                                 INNER JOIN prescripcion
-                                                                     ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                                                 INNER JOIN nm_hojafrontal_prescripcion
-                                                                     ON prescripcion.prescripcion_id = nm_hojafrontal_prescripcion.prescripcion_id
-                                                                 WHERE triage_id =$Paciente AND safe = 0;");
-
+                                                            INNER JOIN prescripcion
+                                                            ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
+                                                            INNER JOIN nm_hojafrontal_prescripcion
+                                                            ON prescripcion.prescripcion_anterior_id = nm_hojafrontal_prescripcion.prescripcion_id
+                                                            WHERE notas_id = $idNota AND actual = 1 AND safe = 0 ORDER BY prescripcion_anterior_id;");
+        $this->filtrar_prescripciones($sql['Prescripcion_Basico'], $idNota);
         $sql['Prescripcion_NPT'] = $this->config_mdl->_query("SELECT * FROM catalogo_medicamentos
-                                                              INNER JOIN prescripcion
-                                                                ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                                              INNER JOIN prescripcion_npt
-                                                                ON prescripcion.prescripcion_id = prescripcion_npt.prescripcion_id
-                                                              INNER JOIN nm_hojafrontal_prescripcion
-                                                                ON prescripcion.prescripcion_id = nm_hojafrontal_prescripcion.prescripcion_id
-                                                              WHERE triage_id =$Paciente AND safe = 1 AND categoria_safe = 'npt';");
-
+                                                            INNER JOIN prescripcion
+                                                            ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
+                                                            INNER JOIN prescripcion_npt
+                                                            ON prescripcion.prescripcion_anterior_id = prescripcion_npt.prescripcion_id
+                                                            INNER JOIN nm_hojafrontal_prescripcion
+                                                            ON prescripcion.prescripcion_anterior_id = nm_hojafrontal_prescripcion.prescripcion_id
+                                                            WHERE notas_id = $idNota AND actual = 1 AND safe = 1 AND categoria_safe = 'npt' ORDER BY prescripcion_anterior_id;");
+        $this->filtrar_prescripciones($sql['Prescripcion_NPT'], $idNota);
         $sql['Prescripcion_Onco_Anti'] = $this->config_mdl->_query("SELECT * FROM catalogo_medicamentos
-                                                                    INNER JOIN prescripcion
-                                                                        ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
-                                                                    INNER JOIN prescripcion_onco_antimicrobianos
-                                                                        ON prescripcion.prescripcion_id = prescripcion_onco_antimicrobianos.prescripcion_id
-                                                                    INNER JOIN nm_hojafrontal_prescripcion
-                                                                        ON prescripcion.prescripcion_id = nm_hojafrontal_prescripcion.prescripcion_id
-                                                                    WHERE triage_id =$Paciente AND safe = 1;");
+                                                            INNER JOIN prescripcion
+                                                            ON prescripcion.medicamento_id = catalogo_medicamentos.medicamento_id
+                                                            INNER JOIN prescripcion_onco_antimicrobianos
+                                                            ON prescripcion.prescripcion_anterior_id = prescripcion_onco_antimicrobianos.prescripcion_id
+                                                            INNER JOIN nm_hojafrontal_prescripcion
+                                                            ON prescripcion.prescripcion_anterior_id = nm_hojafrontal_prescripcion.prescripcion_id
+                                                            WHERE notas_id = $idNota AND actual = 1 AND safe = 1 ORDER BY prescripcion_anterior_id;");
+        $this->filtrar_prescripciones($sql['Prescripcion_Onco_Anti'], $idNota);
         //fin consultas para la prescripción
 
-        $sql['Diagnosticos'] = $this->config_mdl->_query("SELECT cie10_clave, cie10_nombre, complemento, tipo_diagnostico FROM um_cie10
-                                    INNER JOIN paciente_diagnosticos
-                                        ON um_cie10.cie10_id = paciente_diagnosticos.cie10_id
+
+
+
+
+
+        $sql['Diagnosticos'] = $this->config_mdl->_query("SELECT cie10_clave, cie10_nombre, complemento, tipo_diagnostico, fecha_dx, hora_dx FROM um_cie10
+                                                            INNER JOIN paciente_diagnosticos
+                                                            ON um_cie10.cie10_id = paciente_diagnosticos.cie10_id
+                                                            WHERE  paciente_diagnosticos.triage_id =" . $Paciente . " ORDER BY tipo_diagnostico");
+
+
+        /*$sql['Diagnosticos'] = $this->config_mdl->_query("SELECT cie10_clave, cie10_nombre, complemento, tipo_diagnostico  FROM paciente_diagnosticos
                                     INNER JOIN diagnostico_hoja_frontal
                                         ON paciente_diagnosticos.diagnostico_id = diagnostico_hoja_frontal.diagnostico_id
-                                    WHERE  id_nota =" . $idNota);
+                                    INNER JOIN um_cie10
+                                        ON um_cie10.cie10_id = paciente_diagnosticos.cie10_id
+                                    WHERE triage_id = " . $_GET['folio'] . " ORDER BY tipo_diagnostico");*/
+
+
         $sql['Interconsultas'] = $this->config_mdl->_query("SELECT motivo_interconsulta, especialidad_id, especialidad_nombre FROM um_interconsultas_historial
             INNER JOIN doc_430200 ON um_interconsultas_historial.doc_id = doc_430200.doc_id
             INNER JOIN um_especialidades  ON doc_430200.doc_servicio_solicitado = um_especialidades.especialidad_id WHERE triage_id = $Paciente");
@@ -1826,13 +1829,36 @@ class Documentos extends Config
         $this->load->view('documentos/NotaIngresoHosp2', $sql);
     }
 
+    public function filtrar_prescripciones(&$prescripciones, $idNota){
+        $pres = $prescripciones;
+        $prescripciones = array();
+        $count_Pres = count($pres);
+        for($i = 0; $i<$count_Pres; $i++){
+            $guardar = true;
+            if($pres[$i]["estado"] == 1 && $pres[$i]["notas_id"] != $idNota){
+                for($j = 0; $j < $count_Pres; $j++){
+                    if($pres[$j]["estado"] == 0 && $pres[$j]["notas_id"] == $idNota && $pres[$i]["prescripcion_anterior_id"] == $pres[$j]["prescripcion_anterior_id"]){
+                        $guardar = false;
+                        break;
+                    }
+                }
+            }   
+            if($pres[$i]["estado"] == 0 && $pres[$i]["notas_id"] != $idNota){
+                $guardar = false;
+            }
+            if($guardar){
+                $prescripciones[] = $pres[$i];
+            }
+        }
+    }
+
     public function valueNotaIngresoHosp(&$sql)
     {
-        $limFila = 100;
-        $limColumna = 50;
+        $limFila = 115;
+        $limColumna = 65;
         $lim = 0;
         $aux = 0;
-        $titulo_len = 2;
+        $titulo_len = 1.5;
         $nota = &$sql["nota"];
         $nombre = 'tipo_interrogatorio';
         if (strlen(rtrim($nota[$nombre], " ")) != 0 && $nota[$nombre] != null) {
@@ -2002,61 +2028,19 @@ class Documentos extends Config
                 $lim += $aux;
             }
         }
-
-        $Diagnosticos = &$sql["Diagnosticos"];
-        $toma_signos = &$sql["toma_signos"];
+        //$Diagnosticos = &$sql["Diagnosticos"];
         $this->valueTitleLen('IMPRESION_DIAGNOSTICA', $lim, $titulo_len, $limColumna, $Diagnosticos, false);
-        $keys = array("cie10_clave", "cie10_nombre", "complemento");
+        $key = "complemento";
         $nombre = "Diagnosticos";
-        return 0;
-        $this->valueTextArrayLen($sql, $keys, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        $this->valueTextArrayLen($sql, $key, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
 
-        /*$this->valueTitleLen('Diagnostico_de_Ingreso', $lim, $titulo_len, $limColumna, $Diagnosticos, false);
-        $nombre = 'cie10_clave';
-        $this->valueTextLen($Diagnosticos, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
-        
-        
-        $limFila = 100;
-        $limColumna = 40;
-        $lim = 0;
-        $titulo_len = 2;
-        $nota = &$sql["Nota"];
-        
-        if ($sql['indicaciones'] == 1) {
-            
-        } else {
-            $nombre = 'nota_problema';
-            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
-            $nota['lim_1'] = $lim;
-            $nombre = 'nota_interrogatorio';
-            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
-            $nota['lim_2'] = $lim;
-            $nombre = 'nota_exploracionf';
-            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
-            $nota['lim_3'] = $lim;
-            $nombre = 'nota_auxiliaresd';
-            $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
-        
-        <p style="font-weight: bold;margin-bottom: 1px">IMPRESIÓN DIAGNÓSTICA</p>
-        <p style="margin-bottom: 1px">Diagnóstico de Ingreso</p>
-        <p class="contenido"><?= $Diagnosticos[0]['cie10_clave'] ?> - <?= $Diagnosticos[0]['cie10_nombre'] ?></p>
-        <p class="contenido"><?= ($Diagnosticos[0]['complemento'] == 'S/C') ? '' : $Diagnosticos[0]['complemento']; ?></p>
-        <?php if (count($Diagnosticos) > 1) { ?>
-            <h5 style="margin-bottom: -6px">Diagnosticos Secundarios</h5>
-            <?php for ($x = 1; $x < count($Diagnosticos); $x++) { ?>
-                <p class="contenido"><?= $Diagnosticos[$x]['cie10_clave'] ?> - <?= $Diagnosticos[$x]['cie10_nombre'] ?></p>
-                <p class="contenido"><?= ($Diagnosticos[$x]['complemento'] === 'S/C') ? '' : $Diagnosticos[$x]['complemento']; ?></p>
-            <?php } ?>
-        <?php } ?>
-        <?php if ($nota['comentario'] != '') { ?>
-            <p style="margin-bottom: 1px">Comentario</p>
-            <p class="contenido"><?= $nota['comentario'] ?></p>
-        <?php } ?>
-        <?php if ($nota['pronostico'] != '') { ?>
-            <p style="font-weight: bold;margin-bottom: 1px">PRONÓSTICO</p>
-            <p class="contenido"><?= $nota['pronostico'] ?></p>
-        <?php } ?>
-        <?php if ($nota['procedimientos'] != '') { ?>
+        $nombre = 'comentario';
+        $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        $nombre = 'pronostico';
+        $this->valueTextLen($nota, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        $nota["limColumna"] = $lim;
+        return 0;
+        /*<?php if ($nota['procedimientos'] != '') { ?>
             <h5 style="margin-bottom: -6px">PROCEDIMIENTOS REALIZADOS</h5>
             <?php $procedimiento = explode(',', $nota['procedimientos']);
             foreach ($procedimiento as $value_p => $procedimiento_id) {
@@ -2195,8 +2179,44 @@ class Documentos extends Config
         $sql['Residentes'] = $this->config_mdl->_get_data_condition('um_notas_residentes', array(
             'notas_id' => $Nota
         ));
-
+        $sql['infoCama'] = $this->config_mdl->_query("SELECT * FROM os_pisos, os_pisos_camas, os_camas WHERE 
+            os_pisos.piso_id = os_pisos_camas.piso_id AND os_pisos_camas.cama_id = os_camas.cama_id AND triage_id=" . $sql['notaProcedimientos']['triage_id'])[0];
+        $this->valueGenerarNotaProcedimientos($sql);
         $this->load->view('documentos/NotaProcedimientos', $sql);
+    }
+
+    public function valueGenerarNotaProcedimientos(&$sql){
+        $limFila = 115;
+        $limColumna = 65;
+        $lim = 0;
+        $aux = 0;
+        $titulo_len = 1.5;
+        $notaProcedimientos = &$sql["notaProcedimientos"];        
+        $procedimiento = array();
+        $procedimientoArray = explode(',', $notaProcedimientos['procedimientos']);
+        foreach($procedimientoArray as $value => $procedimiento_id) {
+            $nombreProcedimiento=$this->config_mdl->_get_data_condition('um_procedimientos', array('procedimiento_id'=>$procedimiento_id))[0];
+            $procedimiento[$procedimiento_id] = [];
+            $procedimiento[$procedimiento_id]['nombre'] = $nombreProcedimiento['nombre'];
+            if ($lim > $limColumna) {
+                $procedimiento[$procedimiento_id]['p1'] = "2";
+            } else {
+                $aux = 1.5;
+                if (($lim + $aux) > $limColumna)
+                    $procedimiento[$procedimiento_id]['p1'] = "2";
+                else
+                    $procedimiento[$procedimiento_id]['p1'] = "1";
+                $lim += $aux;
+            }
+        }
+        $sql["notaProcedimientos_p1"] = $procedimiento;
+        $this->valueTitleLen('RESUMEN', $lim, $titulo_len, $limColumna, $notaProcedimientos, false);
+        $nombre = 'resumen_procedimiento';
+        $this->valueTextLen($notaProcedimientos, $nombre, $lim, $limColumna, $titulo_len, $limFila, false);
+        $sql["p1"] = True;
+        if ($lim > $limColumna) {
+            $sql["p1"] = false;
+        }
     }
 
     public function GenerarNotasd($Nota)
@@ -2681,7 +2701,7 @@ class Documentos extends Config
             $sql["data"]["camas_vacias"] = "";
         }
         $sql["data"]["hoy"] = date('d/m/Y');
-        $sql["empleado"] = $this->config_mdl->_query("SELECT * FROM os_empleados WHERE empleado_id =".  $this->UMAE_USER)[0];
+        $sql["empleado"] = $this->config_mdl->_query("SELECT * FROM os_empleados WHERE empleado_id =" .  $this->UMAE_USER)[0];
         $sql["data"]["pacientes_Ing_Egr_dia"] = count($sql["egresos"]) + count($sql["ingresos"]);
         $this->load->view('Documentos/ReporteEstadoSaludPiso', $sql);
     }
@@ -2721,7 +2741,7 @@ class Documentos extends Config
                                                 WHERE
                                                     fecha_alta = DATE_FORMAT(now(),'%d-%m-%Y')
                                                     AND os_camas.area_id =" . $piso_id);
-        }else if ($especialidad_id != null) {
+        } else if ($especialidad_id != null) {
             $sql["ingresos"] = $this->config_mdl->_query("SELECT
                                                     os_camas.cama_nombre,
                                                     CONCAT(os_triage.triage_nombre_ap,' ',os_triage.triage_nombre_am,' ',os_triage.triage_nombre) nombre,
@@ -2754,7 +2774,7 @@ class Documentos extends Config
                                                     fecha_alta = DATE_FORMAT(now(),'%d-%m-%Y')
                                                     AND os_camas.id_servicio_trat = " . $especialidad_id);
         }
-        $sql["asistente"] = $this->config_mdl->_query("SELECT * FROM os_empleados WHERE empleado_id =".  $this->UMAE_USER)[0];
+        $sql["asistente"] = $this->config_mdl->_query("SELECT * FROM os_empleados WHERE empleado_id =" .  $this->UMAE_USER)[0];
         $sql["data"]["hoy"] = date('d/m/Y');
         $this->load->view('Documentos/reporteEstadoSaludPisoAdmisionHospitalaria', $sql);
     }

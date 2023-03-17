@@ -31,7 +31,7 @@ class Areascriticas extends Config
     {
         return count($this->config_mdl->_query("SELECT os_camas.cama_id FROM os_camas, os_areas, os_pisos, os_pisos_camas
                                             WHERE os_areas.area_id=os_camas.area_id AND os_pisos_camas.cama_id=os_camas.cama_id AND
-                                            os_camas.cama_estado = '.$Estado.' AND
+                                            os_camas.cama_estado='$Estado' AND
                                             os_pisos_camas.piso_id=os_pisos.piso_id AND os_pisos.piso_id=" . $Piso));
     }
     public function TotalCamasEstatus($Estado)
@@ -404,42 +404,16 @@ class Areascriticas extends Config
 
         $tr = "";
         if ($inputSelect == 'POR_NUMERO') {
-            $sql = $this->config_mdl->_query("SELECT
-                                                    os_triage.triage_id,
-                                                    doc_43051.fecha_ingreso,
-                                                    CONCAT_WS( ' ', triage_nombre_ap, triage_nombre_am, triage_nombre ) AS nombre_paciente,
-                                                    CONCAT_WS( ' ', pum_nss, pum_nss_agregado ) AS nss,
-                                                    pum_nss_armado 
-                                                FROM
-                                                    os_triage
-                                                    JOIN paciente_info ON paciente_info.triage_id = os_triage.triage_id,
-                                                    doc_43051
-                                                WHERE
-                                                    doc_43051.triage_id = os_triage.triage_id 
-                                                    AND paciente_info.triage_id = '" . $inputSearch . "'");
+            $sql = $this->config_mdl->_query("SELECT os_triage.triage_id, doc_43051.fecha_ingreso, CONCAT_WS(' ',triage_nombre_ap,triage_nombre_am,triage_nombre) AS nombre_paciente, CONCAT_WS(' ',pum_nss,pum_nss_agregado) AS nss, pum_nss_armado FROM os_triage, paciente_info, doc_43051 WHERE
+                                            paciente_info.triage_id = os_triage.triage_id AND
+                                            doc_43051.triage_id     = os_triage.triage_id AND
+                                            paciente_info.triage_id = '" . $inputSearch . "'");
         } else if ($inputSelect == 'POR_NOMBRE') {
-            $sql =  $this->config_mdl->_query("SELECT
-                                                    os_triage.triage_id,
-                                                    paciente_info.triage_id,
-                                                    doc_43051.fecha_ingreso,
-                                                    CONCAT_WS(
-                                                        ' ',
-                                                        TRIM( os_triage.triage_nombre_ap ),
-                                                        TRIM( os_triage.triage_nombre_am ),
-                                                    TRIM( os_triage.triage_nombre )) AS nombre_paciente,
-                                                    CONCAT_WS( ' ', pum_nss, pum_nss_agregado ) AS nss,
-                                                    pum_nss_armado 
-                                                FROM
-                                                    os_triage
-                                                    JOIN paciente_info ON paciente_info.triage_id = os_triage.triage_id,
-                                                    doc_43051 
-                                                WHERE
-                                                    doc_43051.triage_id = os_triage.triage_id 
-                                                HAVING
-                                                    nombre_paciente LIKE'%$inputSearch%'  LIMIT 100");
+            $sql =  $this->config_mdl->_query("SELECT os_triage.triage_id, paciente_info.triage_id, doc_43051.fecha_ingreso,CONCAT_WS(' ',TRIM(os_triage.triage_nombre_ap),TRIM(os_triage.triage_nombre_am),TRIM(os_triage.triage_nombre)) AS nombre_paciente, CONCAT_WS(' ',pum_nss,pum_nss_agregado) AS nss, pum_nss_armado FROM os_triage, paciente_info , doc_43051
+                                            WHERE doc_43051.triage_id  = os_triage.triage_id
+                                            HAVING os_triage.triage_id = paciente_info.triage_id AND nombre_paciente LIKE '%$inputSearch%' LIMIT 200");
         }else if ($inputSelect == 'POR_NSS') {
-            $sql = $this->config_mdl->_query("SELECT os_triage.triage_id, doc_43051.fecha_ingreso, CONCAT_WS(' ',triage_nombre_ap,triage_nombre_am,triage_nombre) AS nombre_paciente, CONCAT_WS(' ',pum_nss,pum_nss_agregado) AS nss, pum_nss_armado 
-                                            FROM os_triage, paciente_info, doc_43051 WHERE
+            $sql = $this->config_mdl->_query("SELECT os_triage.triage_id, doc_43051.fecha_ingreso, CONCAT_WS(' ',triage_nombre_ap,triage_nombre_am,triage_nombre) AS nombre_paciente, CONCAT_WS(' ',pum_nss,pum_nss_agregado) AS nss, pum_nss_armado FROM os_triage, paciente_info, doc_43051 WHERE
                                             paciente_info.triage_id = os_triage.triage_id AND
                                             doc_43051.triage_id     = os_triage.triage_id AND
                                             paciente_info.pum_nss   = '" . $inputSearch . "'");
@@ -526,21 +500,21 @@ class Areascriticas extends Config
 
     public function AjaxDarDeAltaPacienteUCI()
     {   
-        $area= strtolower($_POST['area']);
+        $uci= strtolower($_POST['area']);
         $triage_id = $this->input->post('triage_id');
         $sqlConsultorio = $this->config_mdl->_query("SELECT * FROM doc_43051, os_triage WHERE 
                                                     os_triage.triage_id = doc_43051.triage_id AND
                                                     os_triage.triage_id =" . $triage_id);
         if (!empty($sqlConsultorio)) {
-            $sqlPacienteUCI = $this->config_mdl->_query("SELECT TIMESTAMPDIFF( DAY, fecha_ingreso_".$area.", now()) AS dias_estancia_".$area.", paciente_".$area."_id
-                                                          FROM  um_pacientes_".$area." 
-                                                        WHERE  triage_id = " . $triage_id . " AND fecha_egreso_".$area." IS NULL");
+            $sqlPacienteUCI = $this->config_mdl->_query("SELECT TIMESTAMPDIFF( DAY, fecha_ingreso_".$uci.", now()) AS dias_estancia_".$uci.", paciente_".$uci."_id
+                                                          FROM  um_pacientes_".$uci." 
+                                                        WHERE  triage_id = " . $triage_id . " AND fecha_egreso_".$uci." IS NULL");
             if (!empty($sqlPacienteUCI)) {
-                $this->config_mdl->_update_data('um_pacientes_'.$area, array(
-                    "dias_estancia_".$area => $sqlPacienteUCI[0]["dias_estancia_".$area],
-                    "fecha_egreso_".$area  => date("Y-m-d H:i")
+                $this->config_mdl->_update_data('um_pacientes_'.$uci, array(
+                    "dias_estancia_".$uci => $sqlPacienteUCI[0]["dias_estancia_".$uci],
+                    "fecha_egreso_".$uci  => date("Y-m-d H:i")
                 ), array(
-                    'paciente_'.$area.'_id' => $sqlPacienteUCI[0]["paciente_".$area."_id"],
+                    'paciente_'.$uci.'_id' => $sqlPacienteUCI[0]["paciente_".$uci."_id"],
                 ));
                 $this->setOutput(array('accion' => 'ALTA_HECHA', "dias_estancia_uci" => $sqlPacienteUCI,"fecha_egreso_uci"  => date("Y-m-d H:i")));
             } else {
@@ -687,7 +661,7 @@ class Areascriticas extends Config
     }
     public function getPacienteUCI(){
         $triage_id  = $_POST["triage_id"];
-        $paciente   = $this->config_mdl->_query('SELECT * FROM um_pacientes_'.strtolower($_POST['area']).' WHERE fecha_egreso_'.strtolower($_POST['area']).' IS NULL AND triage_id ='.$triage_id);
+        $paciente   = $this->config_mdl->_query('SELECT * FROM um_pacientes_'.strtolower($_GET['tipo']).' WHERE fecha_egreso_'.strtolower($_GET['tipo']).' IS NULL AND triage_id ='.$triage_id);
         if (empty($paciente)) {
             $this->setOutput(array('accion' => 'NOT_EXIST', 'paciente' => $paciente, 'triage_id' => $triage_id));
         }else{

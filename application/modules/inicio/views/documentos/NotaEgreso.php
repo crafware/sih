@@ -167,7 +167,7 @@ if(count($Residentes) == 3){
           <table class="table table-condensed">
             <thead>
               <tr>
-                <th>Clave</th>
+                <th>Clave </th>
                 <th>Diagnóstico de Ingreso</th>
               </tr>
             </thead>
@@ -191,7 +191,7 @@ if(count($Residentes) == 3){
           <table class="table table-condensed">
             <thead>
               <tr>                     
-                <th>Clave</th>
+                <th>Clave </th>
                 <th>Diagnóstico de Egreso</th>
               </tr>
             </thead>

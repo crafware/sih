@@ -1,5 +1,5 @@
+var cont=0;
 $(document).ready(function () {
-  var cont=0;
   $('#add_otro_residente').click (function(e) {
   
       /*la varivable cont incrementa cada ves que se genera un nuevo médico residente
@@ -26,13 +26,12 @@ $(document).ready(function () {
         '<div class="col-sm-2 col-md-2">'+
         '<input id="grado'+ cont +'" class="form-control"  type="text" required name="grado[]" placeholder="Grado (ej. R3MI)">'+
         '</div>'+
-        '<div class=col-sm-1 >'+
-        '<a href="#" class="btn btn-danger delete btn-xs" style="width:100%;height:100%;padding:7px;" id="quitar_residente'+cont+'"><span class="glyphicon glyphicon-remove"></span></a>'+
+        '<div class="col-sm-1" >'+
+        '<a href="#" onclick=quitarResidenteFormulario('+cont+') class="t btn btn-danger delete btn-xs" style="width:100%;height:100%;padding:7px;" id="quitar_residente'+cont+'"><span class="glyphicon glyphicon-remove"></span></a>'+
         '</div>'+
         '</div>');
-   console.log(cont);
+        console.log(cont);
       } 
-
    /* $('body #quitar_residente'+cont).click(function (e) {
                 var didConfirm = confirm("Are you sure You want to delete");
                 if (didConfirm == true) {
@@ -43,8 +42,8 @@ $(document).ready(function () {
                     return false;
                 }
     });*/
-
   });
+
   $('#add_otro_residente2').click (function(e) {
   
     /*la varivable cont incrementa cada ves que se genera un nuevo médico residente
@@ -117,14 +116,25 @@ $(document).ready(function () {
 
   $('.notaProcedimientos').submit(function (e) {
         e.preventDefault();
-        SendAjax($(this).serialize(),'Sections/Documentos/AjaxNotaProcedimientos',function (response) {
+        SendAjax(
+          $(this).serialize(),
+          'Sections/Documentos/AjaxNotaProcedimientos',
+          function (response) {
+            console.log(response)
           if(response.accion=='1'){
             ActionCloseWindowsReload();
             AbrirDocumentoMultiple(base_url+'Inicio/Documentos/GenerarNotaProcedimientos/'+response.notas_id+'?inputVia='+$('input[name=inputVia]').val(),'NOTAS');
           }
         },'','No');
     });  
-
+  
+  console.log("response")
 
 });
-
+function quitarResidenteFormulario(residente){
+  $('#areaResidentes'+residente).remove();
+  cont -= 1;
+  console.log('#areaResidentes'+residente)
+  console.log(cont)
+}
+console.log("response")
