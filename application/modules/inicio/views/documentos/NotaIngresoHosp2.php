@@ -248,7 +248,7 @@ $m_b_s = "-4px";
     </div>
 </page>
 
-<page backtop="17mm" backbottom="47mm" backleft="5mm" backright="-1mm">
+<page backtop="17mm" backbottom="47mm" backleft="4mm" backright="-1mm">
     <page_header>
         <img src="<?= base_url() ?>assets/doc/DOC430128_BACK.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
 

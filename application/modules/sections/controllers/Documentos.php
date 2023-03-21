@@ -1777,6 +1777,14 @@ class Documentos extends Config
         $id_nota = '';
         $procedimientos = "";
         $last_id_notas =  null;
+        //Se comprueban errores en el ingreso de observaciones en prescripciones 
+        for ($x = 0; $x < count($this->input->post('observacion')); $x++) {
+            $observacion = $this->input->post("observacion[$x]");
+            if(strlen($observacion)>30 && !(is_numeric(strpos($observacion," ")))){
+                $this->setOutput(array('accion' => '2', 'observacion' => $observacion , "strpos" => strpos($observacion," ") ));
+                return 0;
+            }
+        }
         $sql['empleado'] = $this->config_mdl->_query("SELECT empleado_id, empleado_servicio
                                                         FROM os_empleados WHERE empleado_id = $this->UMAE_USER");
         foreach ($this->input->post('nota_interconsulta') as $interconsulta_select) {
