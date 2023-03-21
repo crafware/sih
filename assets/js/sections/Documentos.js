@@ -1416,6 +1416,8 @@ $(document).ready(function () {
             window.opener.location.reload();
             window.top.close();
             AbrirDocumentoMultiple(base_url+'Inicio/Documentos/GenerarNotas/'+response.notas_id+'?inputVia='+$('input[name=inputVia]').val(),'NOTAS');
+          }else if(response.accion == '2'){
+            alert("Error al capturar las observaciones de las prescripciones, inténtenlo de nuevo");
           }
         },'','No');
     });

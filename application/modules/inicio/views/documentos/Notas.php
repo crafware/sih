@@ -422,7 +422,7 @@ foreach ($Diagnosticos as $value) {
     <img src="<?= base_url() ?>assets/doc/DOC430128_BACK.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
     <div style="position: absolute;margin-top:19px;margin-left: 660px ">[[page_cu]]/[[page_nb]]</div>
     <div style="position: absolute;margin-top:19px;margin-left: 12px;text-transform: uppercase;font-size: 11px;">
-      <?= $Nota['notas_tipo'] ?> SERVICIO <?= mb_strtoupper($ServicioM[0]['especialidad_nombre'], 'UTF-8'); ?>
+      <b><?= $Nota['notas_tipo'] ?> SERVICIO <?= mb_strtoupper($ServicioM[0]['especialidad_nombre'], 'UTF-8'); ?></b>
     </div>
     <div style="position: absolute;margin-top:41px;margin-left:15px;width: 300px;text-transform: uppercase;font-size: 11px;">
       <?= $info['triage_nombre'] ?> <?= $info['triage_nombre_ap'] ?> <?= $info['triage_nombre_am'] ?>
