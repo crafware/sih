@@ -325,10 +325,10 @@ function AjaxGuardarDiagnostico(info){
                             accion:'cambiar_principal_a_secundario'
                         });
                     }
-                    var complemento=$('body textarea[name=complemento]').val();
-                    var triage_id=$('body input[name=triage_id]').val();
-                    var tipo_nota=$('body input[name=tipo_nota]').val();
-                    //var tipo_diagnostico = $('body input[name=tipo_diagnostico]').val();
+                    var complemento = $('body textarea[name=complemento]').val();
+                    var triage_id   = $('body input[name=triage_id]').val();
+                    var tipo_nota   = $('body input[name=tipo_nota]').val();
+                    var hf          = $('body input[name=hf]').val();
                     SendAjax({
                         accion:info.accion,
                         cie10_nombre:info.cie10_nombre,
@@ -338,7 +338,7 @@ function AjaxGuardarDiagnostico(info){
                         diagnostico_id:info.diagnostico_id,
                         tipo_nota:tipo_nota,
                         csrf_token:csrf_token
-                    },'Sections/Documentos/AjaxGuardarDiagnosticos',function(response) {
+                    },'Sections/Documentos/AjaxGuardarDiagnosticos?a='+ $('body input[name=accion]').val() +'&hf='+hf,function(response) {
                         console.log(response)
                         if(response.accion=='1'){
                             AjaxObtenerDiagnosticos();
@@ -543,4 +543,3 @@ function AjaxConvertirDxEgreso(info){
     },'');
     
 }
-

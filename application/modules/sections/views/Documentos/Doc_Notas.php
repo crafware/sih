@@ -1052,7 +1052,7 @@
                       <button type="button" class="btn back-imss btn-block"  onclick="agregarPrescripcion()"> AGREGAR </button>
                   </div>
                   <div class="btn_modificarPrescripcion" hidden>
-                      <button type="button" class="btn back-imss btn-block" data-value="" id="btn_modificar_prescripcion"> MODIFICAR </button>
+                      <button type="button" class="btn back-imss btn-block" data-value=""  data-value-anterior="" id="btn_modificar_prescripcion"> MODIFICAR </button>
                   </div>
                 </div>
               </div>
@@ -1112,9 +1112,9 @@
           <div class="col-md-12">
             <div class="form-group" id= 'area_editor_div_nota_pronosticos'>
                 <h5><span>Pronóstico</span></h5>
-                <textarea onchange="deleteTypeLetter('area_editor_div_nota_pronosticos');" class="form-control" name="nota_pronosticos" rows="2" placeholder="Anote diagnóstico y problemas clinicos"><?=$Nota['nota_pronosticos']?></textarea>
+                <textarea class="form-control" name="nota_pronosticos" rows="2" placeholder="Anote diagnóstico y problemas clinicos"><?=$Nota['nota_pronosticos']?></textarea>
             </div>
-          </div>                
+          </div>
         </div>
       </div>
 
@@ -1247,11 +1247,12 @@
                               <label>Grado</label>
                               <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[0]['grado']?>" required>
                             </div>
-                            <div class="col-sm-1 col-md-1">
-                              <label>Agregar +</label>
-                              <a href='#' class="btn btn-success btn-xs " style="width:100%;height:100%;padding:7px;" id="add_otro_residente2" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
-                            </div>
-                        
+                            <?php if(count($Residentes) == 0){?>
+                              <div class="col-sm-1 col-md-1">
+                                <label>Agregar +</label>
+                                <a href='#' class="btn btn-success btn-xs " style="width:100%;height:100%;padding:7px;" id="add_otro_residente2" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
+                              </div>
+                            <?php }?>
                           </div>
                       </div>
                       <div id="medicoResidente" style="padding-top: 10px">
@@ -1272,9 +1273,9 @@
                                  <div class="col-sm-2 col-md-2">
                                   <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[$i]['grado']?>" required>
                                   </div>
-                                  <div class=col-sm-1 >
+                                  <!--<div class=col-sm-1 >
                                     <a href="#" class="btn btn-danger delete btn-xs" style="width:100%;height:100%;padding:7px;" id="quitar_residente"><span class="glyphicon glyphicon-remove"></span></a>
-                                  </div>
+                                  </div>-->
                               </div>
                           <?php }?>
                       </div>

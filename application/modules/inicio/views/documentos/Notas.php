@@ -12,15 +12,66 @@ $width_p1 = 570;
 if ($Nota["Diagnosticos_p1"] != "1") {
   $width_p1 += 15;
 }
+$m_b = "-7px";
+$tipodiagDiagnostico = False;
+$tipodiagDiagnosticoSecundario = False;
+foreach ($Diagnosticos as $value) {
+    $tipodiagDiagnostico = $tipodiagDiagnostico || ($value['tipodiag'] == 1);
+    $tipodiagDiagnosticoSecundario = $tipodiagDiagnosticoSecundario || ($value['tipodiag'] == 2);
+}
 ?>
-<page backtop="80mm" backbottom="30" backleft="46" backright="1mm">
+  <style type="text/css">
+     ul {
+        width: 550px;
+        text-align: justify;
+        padding-top: 0px;
+        padding-bottom: -10px;
+        margin-top: -12px;
+        margin-bottom: -30px;
+    }
+
+    ol {
+        width: 550px;
+        text-align: justify;
+        padding-top: 0px;
+        padding-bottom: -10px;
+        margin-top: -12px;
+        margin-bottom: -30px;
+    }
+    .contenido {
+        width: 580px;
+        text-align: justify;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+    .margin_contenido_p2 {
+        margin-right: 25px;
+    }
+    .title-style{
+        margin-top: 0px;
+        margin-bottom: 0px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+    td, table, tr {
+      padding-top: 0px;
+      padding-bottom: 0px;
+      margin: 0%;
+      border: 0px solid black;
+      border-collapse: collapse;
+    }
+    
+  </style>
+<page backtop="79mm" backbottom="30" backleft="46" backright="-1mm">
   <page_header>
     <img src="<?= base_url() ?>assets/doc/DOC430128.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
     <div style="position: absolute;margin-top: 15px">
       <div style="position: absolute;margin-left: 435px;margin-top: 50px;width: 270px;text-transform: uppercase;font-size: 11px;text-align: left;">
         <b>NOMBRE DEL PACIENTE:</b>
       </div>
-      <div style="position: absolute;margin-left: 435px;margin-top: 62px;width: 300px;text-transform: uppercase;font-size: 14px;">
+      <div style="position: absolute;margin-left: 435px;margin-top: 62px;width: 300px;text-transform: uppercase;font-size: 11px;">
         <?= $info['triage_nombre'] ?> <?= $info['triage_nombre_ap'] ?> <?= $info['triage_nombre_am'] ?>
       </div>
       <div style="position: absolute;margin-left: 435px;margin-top: 77px;width: 270px;text-transform: uppercase;font-size: 11px;">
@@ -66,7 +117,7 @@ if ($Nota["Diagnosticos_p1"] != "1") {
           </p>
         <?php } ?>
       </div>
-      <div style="font-size: 10px; position: absolute;margin-top: 238px; margin-left: 13px ">
+      <div style="font-size: 11px; position: absolute;margin-top: 238px; margin-left: 13px;">
         <?php
         $sqlChoque = $this->config_mdl->sqlGetDataCondition('os_choque_v2', array(
           'triage_id' => $info['triage_id']
@@ -94,10 +145,10 @@ if ($Nota["Diagnosticos_p1"] != "1") {
         echo ($codigo_atencion != '') ? "<b>" . mb_strtoupper("Código", 'UTF-8') . ": " . mb_strtoupper($codigo_atencion) . "</b>" : "";
         ?>
       </div>
-      <div style="position: absolute;margin-left: 40px;margin-top: 290px;width: 270px;text-transform: uppercase;font-size: 12px;">
+      <div style="position: absolute;margin-left: 40px;margin-top: 290px;width: 270px;text-transform: uppercase;font-size: 11px;">
         <b><?= $Nota['notas_fecha'] ?> <?= $Nota['notas_hora'] ?></b><br>
       </div>
-      <div style="position: absolute;margin-left: 15px;margin-top: 300px;width: 130px;font-size: 12px;text-align: center">
+      <div style="position: absolute;margin-left: 15px;margin-top: 300px;width: 130px;font-size: 11px;text-align: center">
         <?php if ($SignosVitales['sv_peso'] != '') { ?>
           <h5 style="margin-top: 15px">Peso:</h5>
           <p style="margin-top: -28px;margin-left: 77"><?= $SignosVitales['sv_peso'] ?> Kg</p>
@@ -151,7 +202,7 @@ if ($Nota["Diagnosticos_p1"] != "1") {
           <p style="margin-top: -14px"><?= $Nota['nota_estadosalud'] ?></p>
         <?php } ?>
       </div>
-      <div style="rotate: 90; position: absolute;margin-left: 50px;margin-top: 336px;text-transform: uppercase;font-size: 12px;">
+      <div style="rotate: 90; position: absolute;margin-left: 50px;margin-top: 336px;text-transform: uppercase;font-size: 11px;">
         <?php $sqlEmpleadoSV = $this->config_mdl->sqlGetDataCondition('os_empleados', array(
           'empleado_id' => $SignosVitales['empleado_id']
         ), 'empleado_nombre,empleado_apellidos')[0]; ?>
@@ -162,38 +213,14 @@ if ($Nota["Diagnosticos_p1"] != "1") {
       <div style="margin-left: 280px;margin-top: 980px">
         <barcode type="C128A" value="<?= $info['triage_id'] ?>" style="height: 40px;"></barcode>
       </div>
-      <div style="position: absolute;top: 262px;;width: 500px;;left: 205px;font-size: 12px;text-transform: uppercase;text-align: center;font-weight: bold">
+      <div style="position: absolute;top: 262px;;width: 500px;;left: 205px;font-size: 11px;text-transform: uppercase;text-align: center;font-weight: bold">
         <?= $Nota['notas_tipo'] ?> SERVICIO <?= mb_strtoupper($ServicioM[0]['especialidad_nombre'], 'UTF-8'); ?>
       </div>
     </div>
   </page_header>
 
-  <style type="text/css">
-    ul {
-      width: 550px;
-      text-align: justify;
-      padding-top: 5px;
-      margin-top: 0px;
-    }
 
-    ol {
-      width: 550px;
-      text-align: justify;
-      padding-top: 5px;
-      margin-top: 0px;
-    }
-
-    .contenidos {
-      width: 570px;
-      text-align: justify;
-      padding-top: 5px;
-      padding-bottom: 0px;
-      margin-top: 0px;
-      margin-bottom: 0px;
-    }
-  </style>
-  <div style="width: <?= $width_p1?>px; text-align: justify;">
-    <!--<div style="position:absolute; left: -10px; margin-top: -17px; font-size: 12px;">-->
+  <div style="width: <?= $width_p1 ?>px; text-align: justify;  font-size: 11px;">
     <?php if ($Nota['notas_tipo'] == 'Nota de Evolución') {
       $label1 = "RESUMEN CLÍNICO (DIAGNÓSTICO Y SÍNTOMAS)";
       $label2 = "INTERROGATORIO";
@@ -208,43 +235,38 @@ if ($Nota["Diagnosticos_p1"] != "1") {
       <h4>INDICACIONES Y ORDENES MEDICAS</h4>
     <?php } else { ?> <!-- Informacion general de la nota evolucion -->
       <?php if ($Nota['nota_problema_p1'] == '1') { ?>
-        <h5 style="margin-bottom: -6px"><?= $label1 ?></h5>
+        <h6 class="title-style"><?= $label1 ?></h6>
         <p class="contenido"><?= $Nota['nota_problema'] ?></p>
-      <?php     } ?>
+      <?php  } ?>
       <?php if ($Nota['nota_interrogatorio_p1'] == '1') { ?>
-        <h5 style="margin-bottom: -6px"><?= $label2 ?></h5>
+        <h6 class="title-style"><?= $label2 ?></h6>
         <p class="contenido"><?= $Nota['nota_interrogatorio'] ?></p>
-      <?php     } ?>
+      <?php } ?>
       <?php if ($Nota['nota_exploracionf_p1'] == '1') { ?>
-        <h5 style="margin-bottom: -6px"><?= $label3 ?></h5>
+        <h6 class="title-style"><?= $label3 ?></h6>
         <p class="contenido"><?= $Nota['nota_exploracionf'] ?></p>
-      <?php     } ?>
+      <?php } ?>
       <?php if ($Nota['nota_auxiliaresd_p1'] == '1') { ?>
-        <h5 style="margin-bottom: -6px">RESULTADOS DE SERVICIOS AUXILIARES DE DIAGNÓSTICO</h5>
+        <h6 class="title-style">RESULTADOS DE SERVICIOS AUXILIARES DE DIAGNÓSTICO</h6>
         <p class="contenido"><?= $Nota['nota_auxiliaresd'] ?></p>
-      <?php     } ?>
-      <?php if ($Nota['nota_procedimientos_p1'] == '1') { ?>
-        <h5 style="margin-bottom: -6px">PROCEDIMIENTOS REALIZADOS</h5>
-        <?php $procedimiento = explode(',', $Nota['nota_procedimientos']);
-        foreach ($procedimiento as $value_p => $procedimiento_id) {
-          $nombreProcedimiento = $this->config_mdl->_get_data_condition('um_procedimientos', array('procedimiento_id' => $procedimiento_id))[0];
-        ?>
-          <p class="contenido">* <?= $nombreProcedimiento['nombre'] ?>.</p>
-
-        <?php       } ?>
-      <?php     } ?>
+      <?php } ?>
+      <?php if ($Nota['procedimientosNombres_p1'] == '1') { ?>
+        <h6 class="title-style">PROCEDIMIENTOS REALIZADOS</h6>
+        <p class="contenido"> <?= $Nota['procedimientosNombres'] ?></p>
+      <?php } ?>
       <?php if ($Nota['nota_analisis_p1'] == '1') { ?>
-        <h5 style="margin-bottom: -6px">ANÁLISIS</h5>
+        <h6 class="title-style">ANÁLISIS</h6>
         <p class="contenido"><?= $Nota['nota_analisis'] ?></p>
-      <?php     } ?>
-      <?php if ($Nota["Diagnosticos_p1"] == "1") { ?>
-        <p class="contenido">
-        <h5 style="margin-bottom: -6px">ACTUALIZACIÓN DE DIAGNÓSTICO(S) Y COMORBILIDADES</h5>
+      <?php } ?>
+      <?php if ($Diagnosticos_p1 == "1") { ?>
+        <h6 class="title-style">ACTUALIZACIÓN DE DIAGNÓSTICO(S) Y COMORBILIDADES</h6>
+      <?php } ?>
+      <?php if ($Diagnosticos_p1 == "1" && $tipodiagDiagnostico) { ?>
         <div class="table table-hover">
           <table class="table table-condensed">
             <thead>
               <tr>
-                <th>Clave</th>
+                <th>Clave </th>
                 <th>Diagnóstico Principal</th>
               </tr>
             </thead>
@@ -257,18 +279,46 @@ if ($Nota["Diagnosticos_p1"] != "1") {
                   </tr>
                   <tr>
                     <td></td>
-                    <td width="520"><?= $value['complemento'] ?></td>
+                    <td width="520"><?= $value['complemento'] ?> <span class="contenido" style="font-size:8px;">Agregado el <?= $value['fecha_dx'] ?> <?= $value['hora_dx'] ?> </span></td>
                   </tr>
               <?php }
               } ?>
             </tbody>
           </table>
-        </div><br>
+        </div>
+      <?php } ?>
+      <?php if ($Diagnosticos_p1 == "1" && !$tipodiagDiagnostico) { ?>
         <div class="table table-hover">
           <table class="table table-condensed">
             <thead>
               <tr>
-                <th>Clave</th>
+                <th>Clave </th>
+                <th>Diagnóstico Inicial</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($Diagnosticos as $value) {
+                if ($value['tipodiag'] == 0) { ?>
+                  <tr>
+                    <td><?= $value['cie10_clave'] ?></td>
+                    <td width="520"><?= $value['cie10_nombre'] ?></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td width="520"><?= $value['complemento'] ?> <span class="contenido" style="font-size:8px;">Agregado el <?= $value['fecha_dx'] ?> <?= $value['hora_dx'] ?> </span></td>
+                  </tr>
+              <?php }
+              } ?>
+            </tbody>
+          </table>
+        </div>
+      <?php } ?>
+      <?php if ($Diagnosticos_p1 == "1" && $tipodiagDiagnosticoSecundario) { ?>
+        <div class="table table-hover">
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>Clave </th>
                 <th>Diagnósticos Secundarios</th>
               </tr>
             </thead>
@@ -281,22 +331,21 @@ if ($Nota["Diagnosticos_p1"] != "1") {
                   </tr>
                   <tr>
                     <td></td>
-                    <td width="520"><?= $value['complemento'] ?></td>
+                    <td width="520"><?= $value['complemento'] ?> <span class="contenido" style="font-size:8px;">Agregado el <?= $value['fecha_dx'] ?> <?= $value['hora_dx'] ?> </span></td>
                   </tr>
               <?php }
               } ?>
             </tbody>
           </table>
         </div>
-        </p>
-      <?php     } ?>
+      <?php } ?>
       <?php if ($Nota["nota_pronosticos_p1"] == "1") { ?>
-        <h5 style="margin-bottom: -6px">PRONÓSTICO</h5>
+        <p class="title-style">PRONÓSTICO</p>
         <p class="contenido"><?= $Nota['nota_pronosticos'] ?></p>
-      <?php     } ?>
+      <?php } ?>
       <?php if ($Nota["PLAN_Y_ORDENES_M_p1"] == "1") { ?>
-        <h5 style="margin-bottom: -6px">PLAN Y ORDENES MÉDICAS</h5>
-      <?php     } ?>
+        <p class="title-style">PLAN Y ORDENES MÉDICAS</p>
+      <?php } ?>
       <?php if ($Nota['nota_nutricion'] == '0') {
         $nutricion = 'Ayuno';
       } else if ($Nota['nota_nutricion'] == '1') {
@@ -353,9 +402,8 @@ if ($Nota["Diagnosticos_p1"] != "1") {
           <label style="margin-left:20px;">h. Lavado de manos</label>
         </p>
       <?php } ?>
-
       <?php if ($Nota['nota_cuidadosenfermeria_p1'] == '1') { ?>
-        <p class="contenido"><b>Cuidados Especificos de Enfermeria:</b><br>
+        <p class="contenido"><b>Cuidados Especificos de Enfermeria:</b>
           <?= $Nota['nota_cuidadosenfermeria'] ?>
         </p>
       <?php } ?>
@@ -369,171 +417,60 @@ if ($Nota["Diagnosticos_p1"] != "1") {
   </div>
 </page>
 
-<page backtop="80mm" backbottom="<?= $margenBajo ?>" backleft="5mm" backright="9mm">
+<page backtop="17mm" backbottom="47mm" backleft="4mm" backright="-1mm">
   <page_header>
-    <img src="<?= base_url() ?>assets/doc/DOC4301282.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
-    <div style="position: absolute;margin-top: 15px">
-      <div style="position: absolute;margin-left: 435px;margin-top: 50px;width: 270px;text-transform: uppercase;font-size: 11px;text-align: left;">
-        <b>NOMBRE DEL PACIENTE:</b>
-      </div>
-      <div style="position: absolute;margin-left: 435px;margin-top: 62px;width: 300px;text-transform: uppercase;font-size: 14px;">
-        <?= $info['triage_nombre'] ?> <?= $info['triage_nombre_ap'] ?> <?= $info['triage_nombre_am'] ?>
-      </div>
-      <div style="position: absolute;margin-left: 435px;margin-top: 77px;width: 270px;text-transform: uppercase;font-size: 11px;">
-        <b>N.S.S:</b> <?= $PINFO['pum_nss'] ?> <?= $PINFO['pum_nss_agregado'] ?>
-      </div>
-      <?php $fecha = Modules::run('Config/ModCalcularEdad', array('fecha' => $info['triage_fecha_nac'])); ?>
-      <div style="position: absolute;margin-left: 435px;margin-top: 92px;width: 270px;text-transform: uppercase;font-size: 11px;">
-        <b>EDAD:</b> <?= $fecha->y == 0 ? $fecha->m . ' MESES' : $fecha->y . ' AÑOS' ?>
-      </div>
-      <div style="position: absolute;margin-left: 550px;margin-top: 92px;width: 270px;text-transform: uppercase;font-size: 11px;">
-        <b>GENERO:</b> <?= $info['triage_paciente_sexo'] ?>
-      </div>
-      <div style="position: absolute;margin-left: 435px;margin-top: 107px;width: 270px;text-transform: uppercase;font-size: 11px;">
-        <b>UMF:</b> <?= $PINFO['pum_umf'] ?>/<?= $PINFO['pum_delegacion'] ?>
-      </div>
-      <div style="position: absolute;margin-left: 550px;margin-top: 107px;width: 270px;text-transform: uppercase;font-size: 11px;">
-        <b>PROCEDENCIA:</b> <?= $PINFO['pia_procedencia_espontanea'] == 'Si' ? 'ESPONTANEO' : 'REFERENCIADO' ?>
-      </div>
-      <div style="position: absolute;margin-left: 550px;margin-top: 122px;width: 270px;text-transform: uppercase;font-size: 11px;">
-        <b>ATENCIÓN:</b> <?= $PINFO['pia_tipo_atencion'] ?>
-      </div>
-      <div style="position: absolute;margin-left: 437px;margin-top: 154px;width: 300px;text-transform: uppercase;font-size: 11px;">
-        <p style="margin-top: -10px">
-          <b>DOMICILIO: </b> <?= $DirPaciente['directorio_cn'] ?>, <?= $DirPaciente['directorio_colonia'] ?>, <?= $DirPaciente['directorio_cp'] ?>, <?= $DirPaciente['directorio_municipio'] ?>, <?= $DirPaciente['directorio_estado'] ?> <B>TEL:</B><?= $DirPaciente['directorio_telefono'] ?>
-        </p>
-      </div>
-      <div style="position: absolute;margin-left: 437px;margin-top: 185px;width: 300px;text-transform: uppercase;font-size: 11px;">
-        <p style="margin-top: -1px">
-          <b>FOLIO:</b> <?= $info['triage_id'] ?>
-        </p>
-        <p style="margin-top: -10px">
-          <b>HORA CERO:</b> <?= date('d-m-Y', strtotime($info['triage_horacero_f'])) ?> <?= $info['triage_horacero_h'] ?> hrs
-        </p>
-        <p style="margin-top: -7px">
-          <b>MÉD.:</b> <?= $Medico['empleado_nombre'] ?> <?= $Medico['empleado_apellidos'] ?>
-        </p>
-        <?php if ($_GET['inputVia'] != 'Hospitalizacion') { ?>
-          <p style="margin-top: -9px">
-            <b>AM:</b> <?= $AsistenteMedica['empleado_nombre'] ?> <?= $AsistenteMedica['empleado_apellidos'] ?>
-          </p>
-          <p style="margin-top: -11px">
-            <b>HORA A.M:</b> <?= $am['asistentesmedicas_fecha'] ?> <?= $am['asistentesmedicas_hora'] ?>
-          </p>
-        <?php } ?>
-      </div>
-      <div style="font-size: 10px; position: absolute;margin-top: 238px; margin-left: 13px ">
-        <?php
-        $sqlChoque = $this->config_mdl->sqlGetDataCondition('os_choque_v2', array(
-          'triage_id' => $info['triage_id']
-        ), 'cama_id');
-        $sqlObs = $this->config_mdl->sqlGetDataCondition('os_observacion', array(
-          'triage_id' => $info['triage_id']
-        ), 'observacion_cama');
-        if (empty($sqlChoque)) {
-          echo "UBICACIÓN ";
-          echo $this->config_mdl->sqlGetDataCondition('os_camas', array(
-            'cama_id' => $sqlObs[0]['observacion_cama']
-          ), 'cama_nombre')[0]['cama_nombre'];
-        } else {
-          echo "UBICACIÓN";
-          echo $this->config_mdl->sqlGetDataCondition('os_camas', array(
-            'cama_id' => $sqlChoque[0]['cama_id']
-          ), 'cama_nombre')[0]['cama_nombre'];
-        }
-        ?>
-      </div>
-      <div style="position: absolute;margin-top:238px;margin-left: 302px ">[[page_cu]]/[[page_nb]]</div>
-      <div style="position: absolute;margin-top:222px;margin-left: 12px ">
-        <?php
-        $codigo_atencion = Modules::run('Config/ConvertirCodigoAtencion', $info['triage_codigo_atencion']);
-        echo ($codigo_atencion != '') ? "<b>" . mb_strtoupper("Código", 'UTF-8') . ": " . mb_strtoupper($codigo_atencion) . "</b>" : "";
-        ?>
-      </div>
-      
-      <div style="rotate: 90; position: absolute;margin-left: 50px;margin-top: 336px;text-transform: uppercase;font-size: 12px;">
-        <?php $sqlEmpleadoSV = $this->config_mdl->sqlGetDataCondition('os_empleados', array(
-          'empleado_id' => $SignosVitales['empleado_id']
-        ), 'empleado_nombre,empleado_apellidos')[0]; ?>
-        <?php $sqlEmpleadoSV['empleado_nombre'] ?> <?php $sqlEmpleadoSV['empleado_apellidos'] ?> <?php $SignosVitales['sv_fecha'] ?> <?php $SignosVitales['sv_hora'] ?><br><br><br>
-      </div>
-
-
-      <div style="margin-left: 280px;margin-top: 980px">
+    <img src="<?= base_url() ?>assets/doc/DOC430128_BACK.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
+    <div style="position: absolute;margin-top:19px;margin-left: 660px ">[[page_cu]]/[[page_nb]]</div>
+    <div style="position: absolute;margin-top:19px;margin-left: 12px;text-transform: uppercase;font-size: 11px;">
+      <?= $Nota['notas_tipo'] ?> SERVICIO <?= mb_strtoupper($ServicioM[0]['especialidad_nombre'], 'UTF-8'); ?>
+    </div>
+    <div style="position: absolute;margin-top:41px;margin-left:15px;width: 300px;text-transform: uppercase;font-size: 11px;">
+      <?= $info['triage_nombre'] ?> <?= $info['triage_nombre_ap'] ?> <?= $info['triage_nombre_am'] ?>
+    </div>
+    <div style="position: absolute;margin-top:19px;margin-left:470px;text-transform: uppercase;font-size: 11px;">
+      <b>CAMA:</b> <?= $infoCama['cama_nombre'] ?> - <?= $infoCama['piso_nombre_corto'] ?>
+    </div>
+    <div style="position: absolute;margin-left: 280px;margin-top: 1020px;">
         <barcode type="C128A" value="<?= $info['triage_id'] ?>" style="height: 40px;"></barcode>
-      </div>
-      <div style="position: absolute;top: 262px;;width: 500px;;left: 205px;font-size: 12px;text-transform: uppercase;text-align: center;font-weight: bold">
-        <?= $Nota['notas_tipo'] ?> SERVICIO <?= mb_strtoupper($ServicioM[0]['especialidad_nombre'], 'UTF-8'); ?>
-      </div>
     </div>
   </page_header>
-  <style type="text/css">
-    ul {
-      width: 550px;
-      text-align: justify;
-      padding-top: 5px;
-      margin-top: 0px;
-    }
-
-    ol {
-      width: 550px;
-      text-align: justify;
-      padding-top: 5px;
-      margin-top: 0px;
-    }
-
-    .contenidos {
-      width: 570px;
-      text-align: justify;
-      padding-top: 5px;
-      padding-bottom: 0px;
-      margin-top: 0px;
-      margin-bottom: 0px;
-    }
-  </style>
- <div style="width: 740px; text-align: justify; ">
-    <!--<div style="position:absolute; left: -10px; margin-top: -17px; font-size: 12px;">-->
+  <div style="width: 740px; text-align: justify; font-size: 11px;">
     <?php if ($_GET['indicaciones'] == 1) { ?>
-      <h4>INDICACIONES Y ORDENES MEDICAS</h4>
-    <?php } else { ?> <!-- Informacion general de la nota evolucion -->
+      <h6 class="title-style">INDICACIONES Y ORDENES MEDICAS</h6>
+    <?php } else { ?>
       <?php if ($Nota['nota_problema_p1'] == '2') { ?>
-        <h5 style="margin-bottom: -6px"><?= $label1 ?></h5>
-        <p class="contenido"><?= $Nota['nota_problema'] ?></p>
+        <h6 class="title-style"><?= $label1 ?></h6>
+        <p class="contenido margin_contenido_p2"><?= $Nota['nota_problema'] ?></p>
       <?php     } ?>
       <?php if ($Nota['nota_interrogatorio_p1'] == '2') { ?>
-        <h5 style="margin-bottom: -6px"><?= $label2 ?></h5>
-        <p class="contenido"><?= $Nota['nota_interrogatorio'] ?></p>
+        <h6 class="title-style"><?= $label2 ?></h6>
+        <p class="contenido margin_contenido_p2"><?= $Nota['nota_interrogatorio'] ?></p>
       <?php     } ?>
       <?php if ($Nota['nota_exploracionf_p1'] == '2') { ?>
-        <h5 style="margin-bottom: -6px"><?= $label3 ?></h5>
-        <p class="contenido"><?= $Nota['nota_exploracionf'] ?></p>
+        <h6 class="title-style"><?= $label3 ?></h6>
+        <p class="contenido margin_contenido_p2"><?= $Nota['nota_exploracionf'] ?></p>
       <?php     } ?>
       <?php if ($Nota['nota_auxiliaresd_p1'] == '2') { ?>
-        <h5 style="margin-bottom: -6px">RESULTADOS DE SERVICIOS AUXILIARES DE DIAGNÓSTICO</h5>
-        <p class="contenido"><?= $Nota['nota_auxiliaresd'] ?></p>
+        <h6 class="title-style">RESULTADOS DE SERVICIOS AUXILIARES DE DIAGNÓSTICO</h6>
+        <p class="contenido margin_contenido_p2"><?= $Nota['nota_auxiliaresd'] ?></p>
       <?php     } ?>
-      <?php if ($Nota['nota_procedimientos_p1'] == '2') { ?>
-        <h5 style="margin-bottom: -6px">PROCEDIMIENTOS REALIZADOS</h5>
-        <?php $procedimiento = explode(',', $Nota['nota_procedimientos']);
-        foreach ($procedimiento as $value_p => $procedimiento_id) {
-          $nombreProcedimiento = $this->config_mdl->_get_data_condition('um_procedimientos', array('procedimiento_id' => $procedimiento_id))[0];
-        ?>
-          <p class="contenido">* <?= $nombreProcedimiento['nombre'] ?>.</p>
-
-        <?php       } ?>
-      <?php     } ?>
+      <?php if ($Nota['procedimientosNombres_p1'] == '2') { ?>
+        <h6 class="title-style">PROCEDIMIENTOS REALIZADOS</h6>
+        <p class="contenido margin_contenido_p2"> <?= $Nota['procedimientosNombres'] ?></p>
+      <?php } ?>
       <?php if ($Nota['nota_analisis_p1'] == '2') { ?>
-        <h5 style="margin-bottom: -6px">ANÁLISIS</h5>
-        <p class="contenido"><?= $Nota['nota_analisis'] ?></p>
+        <h6 class="title-style">ANÁLISIS</h6>
+        <p class="contenido margin_contenido_p2"><?= $Nota['nota_analisis'] ?></p>
       <?php     } ?>
-      <?php if ($Nota["Diagnosticos_p1"] == "2") { ?>
-        <p class="contenido">
-        <h5 style="margin-bottom: -6px">ACTUALIZACIÓN DE DIAGNÓSTICO(S) Y COMORBILIDADES</h5>
+      <?php if ($Diagnosticos_p1 == "2") { ?>
+        <h6 class="title-style">ACTUALIZACIÓN DE DIAGNÓSTICO(S) Y COMORBILIDADES</h6>
+      <?php } ?>
+      <?php if ($Diagnosticos_p1 == "2" && $tipodiagDiagnostico) { ?>
         <div class="table table-hover">
           <table class="table table-condensed">
             <thead>
               <tr>
-                <th>Clave</th>
+                <th>Clave </th>
                 <th>Diagnóstico Principal</th>
               </tr>
             </thead>
@@ -542,22 +479,52 @@ if ($Nota["Diagnosticos_p1"] != "1") {
                 if ($value['tipodiag'] == 1) { ?>
                   <tr>
                     <td><?= $value['cie10_clave'] ?></td>
-                    <td width="520"><?= $value['cie10_nombre'] ?></td>
+                    <td width="700"><?= $value['cie10_nombre'] ?></td>
                   </tr>
                   <tr>
                     <td></td>
-                    <td width="520"><?= $value['complemento'] ?></td>
+                    <td style="width: 350px;padding: 0 10px 0 0;"><?= $value['complemento'] ?> <span class="contenido" style="font-size:8px;">Agregado el <?= $value['fecha_dx'] ?> <?= $value['hora_dx'] ?></span></td>
                   </tr>
               <?php }
               } ?>
             </tbody>
           </table>
-        </div><br>
+        </div>
+      <?php } ?>
+      <?php if ($Diagnosticos_p1 == "2" && !$tipodiagDiagnostico) { ?>
+        <!--<div class="table table-hover">
+          <table class="table table-condensed" width="620">-->
+        <div style="margin-left: 0px;margin-top: 0px;width: 770px;font-size: 10px;">
+          <table style="table-layout: fixed;width: 880px;">
+            <thead>
+              <tr>
+                <th>Clave </th>
+                <th >Diagnóstico Inicial</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($Diagnosticos as $value) {
+                if ($value['tipodiag'] == 0) { ?>
+                  <tr>
+                    <td><?= $value['cie10_clave'] ?></td>
+                    <td style="width:60%"><?= $value['cie10_nombre'] ?></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td style="width: 350px;padding: 0 10px 0 0;"><?= $value['complemento'] ?> <span class="contenido" style="font-size:8px;">Agregado el <?= $value['fecha_dx'] ?> <?= $value['hora_dx'] ?> </span> </td>
+                  </tr>
+              <?php }
+              } ?>
+            </tbody>
+          </table>
+        </div>
+      <?php } ?>
+      <?php if ($Diagnosticos_p1 == "2" && $tipodiagDiagnosticoSecundario) { ?>
         <div class="table table-hover">
           <table class="table table-condensed">
             <thead>
               <tr>
-                <th>Clave</th>
+                <th>Clave </th>
                 <th>Diagnósticos Secundarios</th>
               </tr>
             </thead>
@@ -566,24 +533,23 @@ if ($Nota["Diagnosticos_p1"] != "1") {
                 if ($value['tipodiag'] == 2) { ?>
                   <tr>
                     <td><?= $value['cie10_clave'] ?></td>
-                    <td width="520"><?= $value['cie10_nombre'] ?></td>
+                    <td width="700"><?= $value['cie10_nombre'] ?></td>
                   </tr>
                   <tr>
                     <td></td>
-                    <td width="520"><?= $value['complemento'] ?></td>
+                    <td style="width: 350px;padding: 0 10px 0 0;"><?= $value['complemento'] ?> <span class="contenido" style="font-size:8px;">Agregado el <?= $value['fecha_dx'] ?> <?= $value['hora_dx'] ?> </span> </td>
                   </tr>
               <?php }
               } ?>
             </tbody>
           </table>
         </div>
-        </p>
-      <?php     } ?>
+      <?php } ?>
       <?php if ($Nota["nota_pronosticos_p1"] == "2") { ?>
-        <h5 style="margin-bottom: -6px">PRONÓSTICO</h5>
-        <p class="contenido"><?= $Nota['nota_pronosticos'] ?></p>
+        <p class="title-style">PRONÓSTICO</p>
+        <p class="contenido margin_contenido_p2"><?= $Nota['nota_pronosticos'] ?></p>
       <?php     } ?>
-      <h5 style="margin-bottom: -6px">PLAN Y ORDENES MÉDICAS</h5>
+      <p class="title-style">PLAN Y ORDENES MÉDICAS</p>
       <?php if ($Nota['nota_nutricion'] == '0') {
         $nutricion = 'Ayuno';
       } else if ($Nota['nota_nutricion'] == '1') {
@@ -615,7 +581,7 @@ if ($Nota["Diagnosticos_p1"] != "1") {
       }
       ?>
       <?php if ($Nota["Dieta_p1"] == "2") { ?>
-        <p class="contenido"><b>Dieta:</b> <?= $nutricion ?></p>
+        <p class="contenido margin_contenido_p2"><b>Dieta:</b> <?= $nutricion ?></p>
       <?php } ?>
       <?php if ($Nota['nota_svycuidados'] == '1') {
         $toma_signos = 'Por turno';
@@ -626,10 +592,10 @@ if ($Nota["Diagnosticos_p1"] != "1") {
       }
       ?>
       <?php if ($Nota["toma_signos_p1"] == "2") { ?>
-        <p class="contenido"><b>Toma de Signos Vitales:</b> <?= $toma_signos ?></p>
+        <p class="contenido margin_contenido_p2"><b>Toma de Signos Vitales:</b> <?= $toma_signos ?></p>
       <?php } ?>
       <?php if ($Nota['nota_cgenfermeria_p1'] == '2') { ?>
-        <p class="contenido"><b>Cuidados Generales de Enfermería:</b><br>
+        <p class="contenido margin_contenido_p2"><b>Cuidados Generales de Enfermería:</b><br>
           <label style="margin-left:20px;">a. Estado neurológico</label><br>
           <label style="margin-left:20px;">b. Cama con barandales</label><br>
           <label style="margin-left:20px;">c. Calificación del dolor</label><br>
@@ -642,17 +608,17 @@ if ($Nota["Diagnosticos_p1"] != "1") {
       <?php } ?>
 
       <?php if ($Nota['nota_cuidadosenfermeria_p1'] == '2') { ?>
-        <p class="contenido"><b>Cuidados Especificos de Enfermeria:</b><br>
+        <p class="contenido margin_contenido_p2"><b>Cuidados Especificos de Enfermeria:</b>
           <?= $Nota['nota_cuidadosenfermeria'] ?>
         </p>
       <?php } ?>
       <?php if ($Nota['nota_solucionesp_p1'] == '2') { ?>
-        <p class="contenido"><b>Soluciones Parenterales:</b>
+        <p class="contenido margin_contenido_p2"><b>Soluciones Parenterales:</b>
           <?= $Nota['nota_solucionesp'] ?>
         </p>
       <?php } ?>
-      <?php if (!empty($Prescripcion)) { ?>
-        <h5>Prescripción de Medicamentos</h5>
+      <?php /* if (!empty($Prescripcion)) { */?>
+        <p class="title-style"><b>Prescripción de Medicamentos</b></p>
         <?php
         $observacion = "";
         $medicamento = "";
@@ -666,26 +632,25 @@ if ($Nota["Diagnosticos_p1"] != "1") {
             $observacion = substr($observacion, (strpos($observacion, "-") + 1),  strlen($observacion));
           }
         ?>
+        <p class="contenido margin_contenido_p2">
           <strong><?= $x + 1 ?>) <?= $medicamento . " " . $Prescripcion_Basico[$x]['gramaje'] . " " . $Prescripcion_Basico[$x]['forma_farmaceutica'] ?>. </strong>
           Aplicar <?= $Prescripcion_Basico[$x]['dosis'] ?> via <?= strtolower($Prescripcion_Basico[$x]['via']); ?>, <?= ($Prescripcion_Basico[$x]['frecuencia'] == 'Dosis unica') ? '' : 'cada'; ?> <?= strtolower($Prescripcion_Basico[$x]['frecuencia']); ?>, en el siguiente horario: <?= $Prescripcion_Basico[$x]['aplicacion'] ?>. Iniciando el <?= $Prescripcion_Basico[$x]['fecha_inicio'] ?> hasta el <?= $Prescripcion_Basico[$x]['fecha_fin'] ?>.
           <?php if ($Prescripcion_Basico[$x]['observacion'] != 'Sin observaciones') { ?>
-            <br><strong>Observación</strong>
+            <strong>Observación</strong>
             <?= $observacion ?>
           <?php } ?>
-
-          <br><br><!-- Salto entre prescripciones -->
+        </p>
         <?php } ?>
 
-        <?= (count($Prescripcion_Onco_Anti) > 0) ? "<h5>Antimicrobiano</h5>" : ""; ?>
+        <?= (count($Prescripcion_Onco_Anti) > 0) ? "<p class='title-style'>Antimicrobiano</p>" : ""; ?>
 
         <?php for ($x = 0; $x < count($Prescripcion_Onco_Anti); $x++) { ?>
           <strong><?= $x + 1 ?>) <?= $Prescripcion_Onco_Anti[$x]['medicamento'] . " " . $Prescripcion_Onco_Anti[$x]['gramaje'] . " " . $Prescripcion_Onco_Anti[$x]['forma_farmaceutica'] ?>. </strong> Aplicar <?= $Prescripcion_Onco_Anti[$x]['dosis'] ?> via <?= strtolower($Prescripcion_Onco_Anti[$x]['via']); ?>, <?= ($Prescripcion_Onco_Anti[$x]['frecuencia'] == 'Dosis unica') ? '' : 'cada'; ?> <?= strtolower($Prescripcion_Onco_Anti[$x]['frecuencia']); ?>, en el siguiente horario: <?= $Prescripcion_Onco_Anti[$x]['aplicacion'] ?>.
           Iniciando el <?= $Prescripcion_Onco_Anti[$x]['fecha_inicio'] ?> hasta el <?= $Prescripcion_Onco_Anti[$x]['fecha_fin'] ?>.
-          <br>
           <strong>Diluyente: </strong><u>&nbsp; <?= $Prescripcion_Onco_Anti[$x]['diluente'] ?> &nbsp;</u>&nbsp;&nbsp;&nbsp;
           <strong>Vol. Diluyente: </strong><u>&nbsp; <?= $Prescripcion_Onco_Anti[$x]['vol_dilucion'] ?> ml.&nbsp;</u>
           <?php if ($Prescripcion_Onco_Anti[$x]['observacion'] != 'Sin observaciones') { ?>
-            <br><strong>Observación</strong>
+            <strong>Observación</strong>
             <?= $Prescripcion_Onco_Anti[$x]['observacion'] ?>
           <?php } ?>
           <br>
@@ -698,7 +663,6 @@ if ($Nota["Diagnosticos_p1"] != "1") {
           Aplicar <?= $Prescripcion_NPT[$x]['dosis'] ?> via <?= strtolower($Prescripcion_NPT[$x]['via']); ?>, <?= ($Prescripcion_NPT[$x]['frecuencia'] == 'Dosis unica') ? '' : 'cada'; ?> <?= strtolower($Prescripcion_NPT[$x]['frecuencia']); ?>,
           en el siguiente horario: <?= $Prescripcion_NPT[$x]['aplicacion'] ?>. Iniciando el <?= $Prescripcion_NPT[$x]['fecha_inicio'] ?>
           hasta el <?= $Prescripcion_NPT[$x]['fecha_fin'] ?>.
-          <br>
           <?php $totalvol = ($Prescripcion_NPT[$x]['aminoacido'] +
             $Prescripcion_NPT[$x]['dextrosa'] +
             $Prescripcion_NPT[$x]['lipidos'] +
@@ -717,8 +681,6 @@ if ($Nota["Diagnosticos_p1"] != "1") {
             $Prescripcion_NPT[$x]['vitamina']
           ); ?>
           <strong>OVERFILL:</strong><u>&nbsp; 20 &nbsp;</u>&nbsp;&nbsp;&nbsp;<strong>Vol. Total:</strong><u>&nbsp; <?= $totalvol ?> &nbsp;</u>
-          <br>
-          <!-- Consultar bases -->
           <?php if (
             $Prescripcion_NPT[$x]['aminoacido'] > 0 ||
             $Prescripcion_NPT[$x]['dextrosa'] > 0 ||
@@ -735,7 +697,6 @@ if ($Nota["Diagnosticos_p1"] != "1") {
 
           <?php } ?>
 
-          <!-- Consultar sales -->
           <?php if (
             $Prescripcion_NPT[$x]['cloruro_sodio'] > 0 ||
             $Prescripcion_NPT[$x]['sulfato'] > 0 ||
@@ -753,7 +714,6 @@ if ($Nota["Diagnosticos_p1"] != "1") {
             <?= ($Prescripcion_NPT[$x]['gluconato'] > 0) ? '<div>Gluconato de Calcio (0.465 mEq/ml) <u> &nbsp;&nbsp; ' . $Prescripcion_NPT[$x]['gluconato'] . ' ml &nbsp;&nbsp; </u></div>' : '' ?>
           <?php } ?>
 
-          <!-- Consultar aditivos -->
           <?php if (
             $Prescripcion_NPT[$x]['albumina'] > 0 ||
             $Prescripcion_NPT[$x]['heparina'] > 0 ||
@@ -776,14 +736,12 @@ if ($Nota["Diagnosticos_p1"] != "1") {
           <?php } ?>
 
           <?php if ($Prescripcion_NPT[$x]['observacion'] != 'Sin observaciones') { ?>
-            <br><strong>Observación</strong>
+            <strong>Observación</strong>
             <?= $Prescripcion_NPT[$x]['observacion'] ?><br>
           <?php } ?>
           <br>
         <?php } ?>
-        <!-- Fin prescripcion -->
-      <?php } ?>
-      <!-- Zona interconsultas -->
+      <?php /*}*/ ?>
       <?php if (count($Interconsultas) > 0 && $Interconsultas['doc_estatus'] != 'Evaluado') { ?>
         <h5>INTERCONSULTAS SOLICITADAS</h5>
         <strong>Servicios solicitados:</strong>
@@ -794,43 +752,42 @@ if ($Nota["Diagnosticos_p1"] != "1") {
         <?php } ?>
         <br><strong>Motivo:</strong> <?= $Interconsultas[0]['motivo_interconsulta'] ?>
       <?php } ?>
-      <!-- fin zona interconsultas -->
 
-    <?php  } /* FIN DEL else para ipimier inoidcaciones o nota medica */ ?>
+    <?php  }?>
   </div>
   <page_footer>
-        <?php 
-            $top = 935;
-            $empleado_roles = explode(",",$_SESSION["empleado_roles"]);
-            $mostrar_residentes = 0;
-            for($i = 0;$i< count($empleado_roles);$i++){
-                if($empleado_roles[$i] == "77"){
-                    $mostrar_residentes = 1;
-                    $top = 900;
-                }
-            } 
-            ?>
-            <div style="position: absolute;top: <?= $top ?>px;left: 30px;right: 5px;font-size: 10px; text-align:right;">
-                <b>Dr. <?= $medicoTratante['empleado_apellidos'] ?> <?= $medicoTratante['empleado_nombre'] ?> médico Adscrito del servicio <?= $ServicioM[0]["especialidad_nombre"]?> MATRICULA: <?= $medicoTratante['empleado_matricula'] ?></b>
-            </div>
-            <?php if($mostrar_residentes == 1){
-                if (!empty($residentes)) { ?>
-                    <div style="position: absolute;top: <?=$top+15?>px;width:730px;right: 5px;font-size: 10px;text-align: right;">
-                        <b>
-                            <?php foreach ($residentes as $value){?>
-                            Dr. <?=$value['apellido_residente']?>  <?=$value['nombre_residente']?> médico residente del servicio <?= $ServicioM[0]["especialidad_nombre"]?> Matricula <?=$value['cedulap_residente']?> Grado <?=$value['grado']?>;
-                            <?php }?>  
-                        </b>
-                    </div>
-        <?php }} ?>
-    </page_footer>
+    <?php
+    $top = 935;
+    $empleado_roles = explode(",", $_SESSION["empleado_roles"]);
+    $mostrar_residentes = 0;
+    for ($i = 0; $i < count($empleado_roles); $i++) {
+      if ($empleado_roles[$i] == "77") {
+        $mostrar_residentes = 1;
+        $top = 900;
+      }
+    }
+    ?>
+    <div style="position: absolute;top: <?= $top ?>px;left: 30px;right: -1px;font-size: 11px; text-align:right;">
+      <b>Dr. <?= $medicoTratante['empleado_apellidos'] ?> <?= $medicoTratante['empleado_nombre'] ?> médico Adscrito del servicio <?= $ServicioM[0]["especialidad_nombre"] ?> MATRICULA: <?= $medicoTratante['empleado_matricula'] ?></b>
+    </div>
+    <?php if ($mostrar_residentes == 1) {
+      if (!empty($residentes)) { ?>
+        <div style="position: absolute;top: <?= $top + 15 ?>px;width:730px;right: -1px;font-size: 11px;text-align: right;">
+          <b>
+            <?php foreach ($residentes as $value) { ?>
+              Dr. <?= $value['apellido_residente'] ?> <?= $value['nombre_residente'] ?> médico residente del servicio <?= $ServicioM[0]["especialidad_nombre"] ?> Matricula <?= $value['cedulap_residente'] ?> Grado <?= $value['grado'] ?>;
+            <?php } ?>
+          </b>
+        </div>
+    <?php }
+    } ?>
+
+  </page_footer>
 </page>
 <?php
 $html =  ob_get_clean();
 $pdf = new HTML2PDF('P', 'A4', 'en', true, 'UTF-8');
 $pdf->writeHTML($html);
-$pdf->pdf->IncludeJS("print(true);");
 $pdf->pdf->SetTitle($Nota['notas_tipo']);
 $pdf->Output($Nota['notas_tipo'] . '.pdf');
-
 ?>

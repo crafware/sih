@@ -7,7 +7,7 @@
   <div class="box-cell">
     <div class="col-xs-11 col-md-11 col-centered" style="margin-top: 10px">
       <div class="box-inner">
-          <div class="panel-heading p teal-900 back-imss text-center scroll-box" style=""> <!-- Cabecera de datos del paciente -->
+          <div class="panel-heading p teal-900 back-imss text-center scroll-box"> <!-- Cabecera de datos del paciente -->
             <div class="row" style="margin-top: -15px!important; padding-top: 12px;">
               <div style="position: relative;">
                 <!-- Color franja -->
@@ -815,7 +815,7 @@
                             <li>
                               <a class="collapse show" id="acordeon_prescripciones_activas">
                                   Prescripciones activas:
-                                  <label id="label_total_activas"><?= $Prescripciones_activas[0]['activas'] ?></label>
+                                  <label id="label_total_activas"></label>
                               </a>
                             </li>
                             <!--
@@ -1220,11 +1220,11 @@
                         <?php
                             $interconsulta_solicitada = "";
                             for ($x=0; $x < count($Interconsultas); $x++) {
-                                if($x == 0){
+                              if($x == 0){
                                 $interconsulta_solicitada = $Interconsultas[$x]['doc_servicio_solicitado'];
-                            }else{
-                              $interconsulta_solicitada = $interconsulta_solicitada.",".$Interconsultas[$x]['doc_servicio_solicitado'];
-                                }
+                              }else{
+                                $interconsulta_solicitada = $interconsulta_solicitada.",".$Interconsultas[$x]['doc_servicio_solicitado'];
+                              }
                             }
                         ?>
                         <div class="col-md-12 input-group m-b nota_interconsulta" <?=$style?>>
@@ -1333,10 +1333,12 @@
                               <label>Grado</label>
                               <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[0]['grado']?>" required>
                           </div>
-                          <div class="col-sm-1 col-md-1">
-                            <label>Agregar +</label>
-                            <a href='#' class="btn btn-success btn-xs " style="width:100%;height:100%;padding:7px;" id="add_otro_residente" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
-                          </div>
+                          <?php if(count($Residentes) == 0){?>
+                            <div class="col-sm-1 col-md-1">
+                              <label>Agregar +</label>
+                              <a href='#' class="btn btn-success btn-xs " style="width:100%;height:100%;padding:7px;" id="add_otro_residente" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
+                            </div>
+                          <?php } ?>
                         </div>
                       </div>
                     <?php }else { $colorLabel='black';}?>
