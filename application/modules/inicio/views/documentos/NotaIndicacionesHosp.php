@@ -9,7 +9,7 @@ if (count($Residentes) == 3) {
   $margenBajo = "60mm";
 }
 ?>
-<page backtop="80mm" backbottom="<?= $margenBajo ?>" backleft="5" backright="5mm">
+<page backtop="82mm" backbottom="<?= $margenBajo ?>" backleft="5" backright="0mm">
   <page_header>
     <img src="<?= base_url() ?>assets/doc/DOC4301282.png" style="position: absolute;width: 805px;margin-top: 0px;margin-left: -10px;">
     <div style="position: absolute;margin-top: 15px">
@@ -44,13 +44,21 @@ if (count($Residentes) == 3) {
         </p>
       </div>
       <div style="position: absolute;margin-left: 437px;margin-top: 185px;width: 300px;text-transform: uppercase;font-size: 11px;">
-        <p style="margin-top: -1px">
+      <p style="margin-top: -1px">
           <b>FOLIO:</b> <?= $info['triage_id'] ?>
-        </p>
-        <p style="margin-top: -10px">
-          <b>HORA CERO:</b> <?= date('d-m-Y', strtotime($info['triage_horacero_f'])) ?> <?= $info['triage_horacero_h'] ?> hrs
-        </p>
-
+      </p>
+      <p style="margin-top: -10px">
+          <b>FECHA DE INGRESO Y HORA CERO:</b> <?= date('d-m-Y', strtotime($info['triage_horacero_f'])) ?> <?= $info['triage_horacero_h'] ?>
+      </p>
+      <p style="margin-top: -7px">
+          <b>CAMA:</b> <?= $infoCama['cama_nombre'] ?> - <?= $infoCama['piso_nombre_corto'] ?>
+      </p>
+      <p style="margin-top: -9px">
+          <b>TIEMPO DE ESTANCIA:</b> <?= $tiempo_estancia->d ?> dias <?= $tiempo_estancia->h ?> hrs <?= $tiempo_estancia->i ?> min.
+      </p>
+      <p style="margin-top: -11px">
+          <b>MÉD.:</b> <?= $medicoTratante['empleado_nombre'] ?> <?= $medicoTratante['empleado_apellidos'] ?>
+      </p>
       </div>
       <div style="font-size: 10px; position: absolute;margin-top: 238px; margin-left: 13px ">
 
@@ -73,12 +81,11 @@ if (count($Residentes) == 3) {
         <?php $sqlEmpleadoSV['empleado_nombre'] ?> <?php $sqlEmpleadoSV['empleado_apellidos'] ?> <?php $SignosVitales['sv_fecha'] ?> <?php $SignosVitales['sv_hora'] ?><br><br><br>
       </div>
 
-
       <div style="margin-left: 280px;margin-top: 980px">
         <barcode type="C128A" value="<?= $info['triage_id'] ?>" style="height: 40px;"></barcode>
       </div>
-      <div style="position: absolute;top: 262px;;width: 500px;;left: 205px;font-size: 12px;text-transform: uppercase;text-align: center;font-weight: bold">
-        <?= $NotaIndicacion['notas_tipo'] ?> SERVICIO <?= mb_strtoupper($ServicioM[0]['especialidad_nombre'], 'UTF-8'); ?>
+      <div style="position: absolute;top: 262px;width: 450px;left: 205px;font-size: 12px;text-transform: uppercase;text-align: center;font-weight: bold">
+        <?= $NotaIndicacion['notas_tipo'] ?> PLAN Y ORDENES MÉDICAS SERVICIO  <?= $Servicio['especialidad_nombre'] ?>
       </div>
     </div>
   </page_header>
@@ -98,17 +105,21 @@ if (count($Residentes) == 3) {
       margin-top: 0px;
     }
 
-    .contenidos {
-      width: 570px;
-      text-align: justify;
-      padding-top: 0px;
-      padding-bottom: 0px;
-      margin-top: 0px;
-      margin-bottom: -10px;
+    .contenido {
+        width: 580px;
+        text-align: justify;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+    .title-style{
+        margin-top: 1px;
+        margin-bottom: 1px;
+        font-size: 11px;
     }
   </style>
   <div style="position:absolute; left: 1px; margin-top: -10px; font-size: 12px;">
-    <p style="font-weight: bold;margin-bottom: 1px">PLAN Y ORDENES MÉDICAS</p>
     <!--<p><?= print_r($nota) ?></p>-->
     <?php if ($plan['dieta'] == '0') {
       $nutricion = 'Ayuno';
@@ -140,7 +151,7 @@ if (count($Residentes) == 3) {
     }
     ?>
     <!-- DIETA -->
-    <p class="contenido"><b>Dieta:</b> <?= $nutricion ?> <?= $plan['dieta_indicaciones'] ?></p>
+    <p class="title-style"><b>Dieta:</b> <?= $nutricion ?> <?= $plan['dieta_indicaciones'] ?></p>
 
     <?php
     if ($plan['toma_signos_vitales'] == '1') {
@@ -152,7 +163,7 @@ if (count($Residentes) == 3) {
     }
     ?>
     <!-- SIGNBOS VITALES -->
-    <p class="contenido"><b>Toma de Signos Vitales:</b> <?= $toma_signos ?></p>
+    <p class="title-style"><b>Toma de Signos Vitales:</b> <?= $toma_signos ?></p>
 
     <?php if ($plan['cuidados_genfermeria'] == '1') { ?>
       <!-- CUIDADOS GENERALES DE ENFERMERIA -->
@@ -169,7 +180,7 @@ if (count($Residentes) == 3) {
     <?php } ?>
     <!-- CUIDADOS ESPECIFICOS DE ENFERMERIA -->
     <?php if ($plan['cuidados_eenfermeria'] != '') { ?>
-      <p style="font-weight: bold;margin-bottom: 1px">Cuidados Especificos de Enfermeria:</p>
+      <p class="title-style"><b>Cuidados Especificos de Enfermeria:</b></p>
       <p class="contenido"><?= $plan['cuidados_eenfermeria'] ?></p>
     <?php } ?>
     <!-- SOLUCIONES PARANTERALES -->
@@ -187,7 +198,7 @@ if (count($Residentes) == 3) {
 
     <!-- PRESCRIPCIÓN -->
     <?php if (!empty($Prescripcion)) { ?>
-      <h5>Prescripción de Medicamentos</h5>
+      <p class="title-style"><b>Prescripción de Medicamentos</b></p>
       <p class="contenido">
         <?php
         $observacion = "";
@@ -215,7 +226,7 @@ if (count($Residentes) == 3) {
           <?php } ?>
           <br><!-- Salto entre prescripciones -->
         <?php } /* Cierrre de ciclo for */ ?>
-        <?= (count($Prescripcion_Onco_Anti) > 0) ? "<h5>Antimicrobiano</h5>" : ""; ?>
+        <?= (count($Prescripcion_Onco_Anti) > 0) ? "<h5>Antimicr  obiano</h5>" : ""; ?>
         <?php
         for ($x = 0; $x < count($Prescripcion_Onco_Anti); $x++) { ?>
           <strong><?= $x + 1 ?>) <?= $Prescripcion_Onco_Anti[$x]['medicamento'] . " " . $Prescripcion_Onco_Anti[$x]['gramaje'] . " " . $Prescripcion_Onco_Anti[$x]['forma_farmaceutica'] ?>.

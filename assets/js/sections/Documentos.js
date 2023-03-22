@@ -44,7 +44,7 @@ $(document).ready(function () {
     $('#nota_interconsulta').val($('#nota_interconsulta').attr('data-value').split(',')).select2();
     //if($('input[name=accion]').val()!=undefined){  
     //$('#nota_interconsulta').val($('#nota_interconsulta').attr('data-value').split(',')).select2(); //divide cada seleccinad
-    if($('#procedimientos').val() == 'edit'){  
+    if(document.getElementsByName("accion")[0].defaultValue == 'edit'){ 
         $('#procedimientos').val($('#procedimientos').attr('data-value').split(',')).select2();
     }
  
@@ -581,7 +581,7 @@ $(document).ready(function () {
     }
    
     $('body').on('click','.observaciones-prescripcion',function(){
-        var prescripcion_id = $(this).attr('data-value');
+        var prescripcion_id = $(this).attr('data-value-anterior');
         if($('#historial_prescripcion_observacion'+prescripcion_id).val() == 0){
             $('#historial_prescripcion_observacion'+prescripcion_id).removeAttr("hidden");
             $('#historial_prescripcion_observacion'+prescripcion_id).val("1");
@@ -602,7 +602,7 @@ $(document).ready(function () {
       }
     });
     $('body').on('click','.editar-prescripcion',function(){
-      var prescripcion_id = $(this).attr('data-value');
+      var prescripcion_id = $(this).attr('data-value-anterior');
       var medicamento = $('#fila_medicamento'+prescripcion_id).text();
 
       if(confirm('¿QUIERES MODIFICAR ESTA PRESCRIPCIÓN? '+medicamento)){
@@ -631,7 +631,7 @@ $(document).ready(function () {
             $('.btn_otro_medicamento').val('1');
             $('.btn_otro_medicamento').text('Ver catalogo');
           }
-
+          $("#via").empty();
           $('#via').append(opcion_via);
           $('.formulario_prescripcion').removeAttr('hidden');
           $('.tiempo_tipo_medicamento').empty();
@@ -647,7 +647,8 @@ $(document).ready(function () {
           //$('#duracion').val();
 
           $('#observacion').val(observacion);
-          $('#btn_modificar_prescripcion').attr('data-value',prescripcion_id);
+          $('#btn_modificar_prescripcion').attr('data-value',$(this).attr('data-value'));
+          $('#btn_modificar_prescripcion').attr('data-value-anterior',$(this).attr('data-value-anterior'));
           $('.btn_agregarPrescripcion').attr('hidden','true');
           $('.btn_modificarPrescripcion').removeAttr('hidden');
 
@@ -722,7 +723,7 @@ $(document).ready(function () {
     $('body').on('click','.desactivar-prescripcion',function(){
         var reaccion = false;
         var motivo = "";
-        var prescripcion_id = $(this).attr('data-value');
+        var prescripcion_id = $(this).attr('data-value-anterior');
         var dias = $('#fila_historial_prescripcion'+prescripcion_id).text();
         var estado = 0;
         var paciente = $('input[name=triage_id]').val();
@@ -770,14 +771,13 @@ $(document).ready(function () {
                         var nota_id = "";
                         var tipo_nota = "";
 
-                        if($('input[name=hf_id]').val() != ''){
+                        if($('input[name=hf_id]').val() != undefined || $('input[name=hf_id]').val() != ""){
                           nota_id = $('input[name=hf_id]').val();
                           tipo_nota = "hojafrontalf";
-                        }else if($('input[name=notas_id]').val() != ''){
+                        }else if($('input[name=notas_id]').val() != undefined || $('input[name=notas_id]').val() != ""){
                           nota_id = $('input[name=notas_id]').val();
                           tipo_nota = "evolucion";
                         }
-
                         $.ajax({
                           url: base_url+"Sections/Documentos/AjaxCambiarEstadoPrescripcion",
                           type: 'GET',
@@ -788,7 +788,8 @@ $(document).ready(function () {
                             paciente: paciente,
                             dias: dias,
                             nota_id: nota_id,
-                            tipo_nota: tipo_nota
+                            tipo_nota: tipo_nota,
+                            tipo_cambio_estado: "desactivarPrescripcionNotaEvolucion"
                           },success: function (data, textStatus, jqXHR) {
                               msj_success_noti(data.mensaje);
                               ActualizarHistorialPrescripcion(paciente,"2");
@@ -1020,6 +1021,9 @@ $(document).ready(function () {
         $('.motivo_interconsulta').removeAttr('required');
       }
     });
+    /*if(document.getElementById("nota_interconsulta").value != ""){
+      document.getElementsByName("check_solicitud_interconsulta")[0].click();
+    }*/
      // Checkbox de Procedimientos 
     $('input[name=check_procedimientos]').click(function(){
       if($(this).val() == 0){
@@ -1042,7 +1046,6 @@ $(document).ready(function () {
                 //msj_loading();
             },success: function (data, textStatus, jqXHR) {
                 if(data.accion == '0') {
-                    console.log(data.accion);
                     bootbox.alert("No hay ningun Diagnóstico, tiene que ingresar al menos uno");
                     e.preventDefault();
                     bootbox.hideAll();
@@ -1176,12 +1179,17 @@ $(document).ready(function () {
       var fecha_inicio = $('#fechaInicio').val();
       var observacion = $('#observacion').val();
       var motivo_actualizar = $('#motivo_actualizar').val();
+      var fecha_fin = $('#fechaFin').val();
       var tiempo = $('#duracion').val();
       var periodo = $('#periodo option:selected').text();
+      var id_notas = document.getElementsByName("notas_id")[0].value;
+      if(observacion.length > 30 && observacion.search(" ") == -1){
+        window.alert("1.- Error de edición, inténtenlo otra vez" + observacion);
+        return 0;
+      }
       if(medicamento_id == '1'){
         observacion = $('#input_otro_medicamento').val() + '-' + observacion;
       }
-
       var datos_viejos = DatosTabplaPrescripcionActivas(prescripcion_id);
       var motivo_datos_viejos =
       datos_viejos['via']+","+
@@ -1193,21 +1201,30 @@ $(document).ready(function () {
       datos_viejos['periodo']+","+
       datos_viejos['dosis']+","+
       motivo_actualizar;
-
       $.ajax({
         url: base_url+"Sections/Documentos/AjaxModificarPrescripcion",
         type: 'GET',
         dataType: 'json',
         data:{
           via : via,
+          fecha_fin:fecha_fin,
           frecuencia : frecuencia,
           aplicacion : aplicacion,
           fecha_inicio : fecha_inicio,
           observacion : observacion,
           dosis : dosis,
-          prescripcion_id : prescripcion_id
+          prescripcion_id : prescripcion_id,
+          tiempo : tiempo,
+          periodo : periodo,
+          id_notas : id_notas
         },
         success: function(data, textStatus, jqXHR){
+          console.log("ActualizarHistorialPrescripcion")
+          console.log(data)
+          if(data != null){
+            window.alert('2.- Error de edición, inténtenlo otra vez ' + data["observacion"]);
+            return 0;
+          }
           msj_success_noti("Modificacion correcta");
           limpiarFormularioPrescripcion();
           RegistrarAccionBitacoraPrescripcion(prescripcion_id,'Actualizar',motivo_datos_viejos);
@@ -1266,23 +1283,22 @@ $(document).ready(function () {
           cont += 1;
           $("#medicoResidente").append(
           '<div class="m-b" id=areaResidentes'+ cont +'>'+
-          '<div class=col-sm-3 >'+
+          '<div class="col-sm-3" >'+
           '<input id="medico'+ cont +'" class="form-control"  type="text" required name="nombre_residente[]" placeholder="Nombre(s)">'+
           '</div>'+
-          '<div class=col-sm-3 >'+
+          '<div class="col-sm-3" >'+
           '<input id="medico'+ cont +'" class=form-control type="text" required name="apellido_residente[]" placeholder="Apellidos">'+
           '</div>'+
-          '<div class=col-sm-3 >'+
+          '<div class="col-sm-3">'+
           '<input id="medico'+ cont +'" class=form-control type="text" required name="cedula_residente[]" placeholder="Cédula Profesional">'+
           '</div>'+
-          '<div class=col-sm-2 >'+
+          '<div class="col-sm-2">'+
           '<input id="grado'+ cont +'" class="form-control"  type="text" required name="grado[]" placeholder="Grado (ej. R3MI)">'+
           '</div>'+
-          '<div class=col-sm-1 >'+
+          '<div class="col-sm-1">'+
           '<a href="#" onclick=quitarResidenteFormulario('+cont+') class="btn btn-danger delete btn-xs" style="width:100%;height:100%;padding:7px;" id="quitar_residente"><span class="glyphicon glyphicon-remove"></span></a>'+
           '</div>'+
           '</div>');
-          console.log(cont);
         }
 
     });
@@ -1293,7 +1309,7 @@ $(document).ready(function () {
       en el momento de ser eliminados*/
 
       if(cont >= 4){
-        alert('La nota medica solo acepta maximo 3 medicos residentes');
+        alert('La nota medica solo acepta maximo 3 medicos resi   dentes');
       }
       else{
         cont += 1;
@@ -1305,17 +1321,16 @@ $(document).ready(function () {
         '<div class="col-sm-4 col-md-3">'+
         '<input id="medico'+ cont +'" class=form-control type="text" required name="apellido_residente[]" placeholder="Apellidos">'+
         '</div>'+
-        '<div class=col-sm-3  col-md-3>'+
+        '<div class="col-sm-3  col-md-3">'+
         '<input id="medico'+ cont +'" class=form-control type="text" required name="cedula_residente[]" placeholder="Cédula Profesional">'+
         '</div>'+
-        '<div class=col-sm-2 col-md-2>'+
+        '<div class="col-sm-2 col-md-2">'+
         '<input id="grado'+ cont +'" class="form-control"  type="text" required name="grado[]" placeholder="Grado (ej. R3MI)">'+
         '</div>'+
-        '<div class=col-sm-1 >'+
+        '<div class="col-sm-1 ">'+
         '<a href="#" onclick=quitarResidenteFormulario('+cont+') class="btn btn-danger delete btn-xs" style="width:100%;height:100%;padding:7px;" id="quitar_residente"><span class="glyphicon glyphicon-remove"></span></a>'+
         '</div>'+
         '</div>');
-        console.log(cont);
       }
 
   });
@@ -1386,7 +1401,6 @@ $(document).ready(function () {
             data:{query:query},
             dataType:"json",
             success:function(data)  {
-              console.log(data);
               result($.map(data, function(item){
               return item;
               })); 
@@ -1398,11 +1412,13 @@ $(document).ready(function () {
     $('.Form-Notas-COC').submit(function (e) {
         e.preventDefault();
         SendAjax($(this).serialize(),'Sections/Documentos/AjaxNotas',function (response) {
-            if(response.accion=='1'){
-                window.opener.location.reload();
-                window.top.close();
-                AbrirDocumentoMultiple(base_url+'Inicio/Documentos/GenerarNotas/'+response.notas_id+'?inputVia='+$('input[name=inputVia]').val(),'NOTAS');
-            }
+          if(response.accion == '1'){
+            window.opener.location.reload();
+            window.top.close();
+            AbrirDocumentoMultiple(base_url+'Inicio/Documentos/GenerarNotas/'+response.notas_id+'?inputVia='+$('input[name=inputVia]').val(),'NOTAS');
+          }else if(response.accion == '2'){
+            alert("Error al capturar las observaciones de las prescripciones, inténtenlo de nuevo");
+          }
         },'','No');
     });
 
@@ -1736,7 +1752,6 @@ $(document).ready(function () {
         //se hace condicion en caso de existir npt y asi tomar los datos del modal
 
         var arrayLongitud = arrayPrescripcion.length;
-        console.log(arrayPrescripcion.length)
         // verifica si el arreglo esta vacio y determinar si el registro es directo o inicia la comparacion
         if(arrayLongitud > 0){
           var interaccionA;
@@ -1750,9 +1765,7 @@ $(document).ready(function () {
             longitudInteracciones = arrayInteracciones[x]['arrayInteraccionAmarilla'].length;
             for (var y = 0; y < longitudInteracciones; y++){
               interaccionA = arrayInteracciones[x]['arrayInteraccionAmarilla'][y];
-              console.log(interaccionA);
               if(arrayInteracciones[x]['arrayInteraccionAmarilla'][y] == idMedicamento ){
-                console.log(arrayInteracciones[x]['arrayInteraccionAmarilla'][y]);
                 alert(arrayPrescripcion[x]['medicamento']+" y "+medicamento+" pueden generar efectos adversos. Favor de modificar la prescripción o notificar al área de Farmacovigilancia");
                 $('#fila'+x).css("background-color","rgb(252, 255, 124)");// Amarillo para efectos grabes, solo requiere observación
 
@@ -2090,7 +2103,6 @@ $(document).ready(function () {
           $("#historial_notificaciones").empty();
           var paneles = "";
           for(var x = 0; x < data.length; x++){
-            console.log(data[x].notificacion_id);
             paneles =
             "<div class='panel-container'>"+
               "<div class='panel-heading' >"+
@@ -2273,7 +2285,6 @@ $(document).ready(function () {
     }
 
     function ActualizarHistorialPrescripcion(folio,estado){
-
       $.ajax({
         url: base_url+"Sections/Documentos/AjaxPrescripciones",
         type:"GET",
@@ -2306,11 +2317,11 @@ $(document).ready(function () {
               accion_cancelar = "class='glyphicon glyphicon-remove desactivar-prescripcion tip pointer'";
 
               accion_editar = "class='fa fa-pencil tip pointer editar-prescripcion'";
-              filas_diasTranscurridos_acciones = "<td id='fila_historial_prescripcion"+data[x].prescripcion_id+"' >"+tiempo_transcurrido+"</td>"+
+              filas_diasTranscurridos_acciones = "<td id='fila_historial_prescripcion"+data[x].prescripcion_anterior_id+"' >"+tiempo_transcurrido+"</td>"+
               "<td>"+
-                "<i "+accion_cancelar+" title='Cancelar Prescripción' data-value='"+data[x].prescripcion_id+"' ></i>"+
-                "<i style='padding-left: 5px;' "+accion_editar+" title='Editar Prescripcion' data-value='"+data[x].prescripcion_id+"' ></i>"+
-                "<i style='padding-left: 5px;' "+accion_observaciones+" title='Observaciones' data-value='"+data[x].prescripcion_id+"' ></i>"+
+                "<i "+accion_cancelar+" title='Cancelar Prescripción' data-value='"+data[x].prescripcion_id+"' data-value-anterior='"+data[x].prescripcion_anterior_id+"' ></i>"+
+                "<i style='padding-left: 5px;' "+accion_editar+" title='Editar Prescripcion' data-value='"+data[x].prescripcion_id+"'  data-value-anterior='"+data[x].prescripcion_anterior_id+"' ></i>"+
+                "<i style='padding-left: 5px;' "+accion_observaciones+" title='Observaciones' data-value='"+data[x].prescripcion_id+"'  data-value-anterior='"+data[x].prescripcion_anterior_id+"' ></i>"+
               "</td>";
               $('#col_dias').text('Días Transcurridos');
               $('#col_fechaFin').text('Acciones');
@@ -2321,7 +2332,7 @@ $(document).ready(function () {
               filas_dias_fechafin = "<td>"+data[x].dias+"</td>"+
               "<td>"+data[x].fecha_fin+"</td>"+
               "<td>"+
-                "<i style='padding-left: 5px;' "+accion_observaciones+" title='Observaciones' data-value='"+data[x].prescripcion_id+"' ></i>"+
+                "<i style='padding-left: 5px;' "+accion_observaciones+" title='Observaciones' data-value='"+data[x].prescripcion_id+"' data-value-anterior='"+data[x].prescripcion_anterior_id+"' ></i>"+
               "</td>";
               $('#col_dias').text('Total días');
               $('#col_fechaFin').text('Fecha Fin');
@@ -2336,29 +2347,31 @@ $(document).ready(function () {
               observacion = observacion.substring((observacion.indexOf("-") + 1), observacion.length);
             }
             var prescripciones = "<tr >"+
-              "<td hidden id='fila_idmedicamento"+data[x].prescripcion_id+"'  >"+data[x].id_medicamento+"</td>"+
-              "<td id='fila_medicamento"+data[x].prescripcion_id+"'  >"+medicamento+"</td>"+
-              //"<td id='fila_categoria_farmacologica"+data[x].prescripcion_id+"'  >"+data[x].categoria_farmacologica.toUpperCase()+"</td>"+
-              "<td id='fila_fecha_prescripcion"+data[x].prescripcion_id+"'  >"+data[x].fecha_prescripcion+"</td>"+
-              "<td id='fila_dosis"+data[x].prescripcion_id+"'  >"+data[x].dosis+"</td>"+
-              "<td id='fila_via"+data[x].prescripcion_id+"'  >"+data[x].via_administracion+"</td>"+
-              "<td id='fila_frecuencia"+data[x].prescripcion_id+"'  >"+data[x].frecuencia+"</td>"+
-              "<td id='fila_aplicacion"+data[x].prescripcion_id+"' style='padding: 5px;' >"+data[x].aplicacion+"</td>"+
-              "<td id='fila_fecha_inicio"+data[x].prescripcion_id+"'  >"+data[x].fecha_inicio+"</td>"+
-              "<td style='padding-right: 0px;' id='fila_tiempo"+data[x].prescripcion_id+"'  >"+data[x].tiempo+"</td>"+
-              "<td style='padding-left: 0px;' id='fila_periodo"+data[x].prescripcion_id+"' style='padding: 5px;' >"+data[x].periodo+"</td>"+
-              "<td id='fila_fecha_"+data[x].prescripcion_id+"'  >"+data[x].fecha_fin+"</td>"+
+              "<td hidden id='fila_idNota"+data[x].prescripcion_anterior_id+"'  >"+data[x].notas_id+"</td>"+
+              "<td hidden id='fila_idmedicamento"+data[x].prescripcion_anterior_id+"'  >"+data[x].id_medicamento+"</td>"+
+              "<td id='fila_medicamento"+data[x].prescripcion_anterior_id+"'  >"+medicamento+"</td>"+
+              //"<td id='fila_categoria_farmacologica"+data[x].prescripcion_anterior_id+"'  >"+data[x].categoria_farmacologica.toUpperCase()+"</td>"+
+              "<td id='fila_fecha_prescripcion"+data[x].prescripcion_anterior_id+"'  >"+data[x].fecha_prescripcion+"</td>"+
+              "<td id='fila_dosis"+data[x].prescripcion_anterior_id+"'  >"+data[x].dosis+"</td>"+
+              "<td id='fila_via"+data[x].prescripcion_anterior_id+"'  >"+data[x].via_administracion+"</td>"+
+              "<td id='fila_frecuencia"+data[x].prescripcion_anterior_id+"'  >"+data[x].frecuencia+"</td>"+
+              "<td id='fila_aplicacion"+data[x].prescripcion_anterior_id+"' style='padding: 5px;' >"+data[x].aplicacion+"</td>"+
+              "<td id='fila_fecha_inicio"+data[x].prescripcion_anterior_id+"'  >"+data[x].fecha_inicio+"</td>"+
+              "<td style='padding-right: 0px;' id='fila_tiempo"+data[x].prescripcion_anterior_id+"'  >"+data[x].tiempo+"</td>"+
+              "<td style='padding-left: 0px;' id='fila_periodo"+data[x].prescripcion_anterior_id+"' style='padding: 5px;' >"+data[x].periodo+"</td>"+
+              "<td id='fila_fecha_"+data[x].prescripcion_anterior_id+"'  >"+data[x].fecha_fin+"</td>"+
               filas_dias_fechafin+
               filas_diasTranscurridos_acciones+
             "</tr>"+
-            "<tr id='historial_prescripcion_observacion"+data[x].prescripcion_id+"' hidden value='0'>"+
+            "<tr id='historial_prescripcion_observacion"+data[x].prescripcion_anterior_id+"' hidden value='0'>"+
               "<th style='background-color:rgb(210, 210, 210);'>Observaciones: </th>"+
-              "<td id='fila_observacion"+data[x].prescripcion_id+"' colspan='12' style='text-align:left; background-color:rgb(235, 235, 235);' >"+
+              "<td id='fila_observacion"+data[x].prescripcion_anterior_id+"' colspan='12' style='text-align:left; background-color:rgb(235, 235, 235);' >"+
                 observacion+
               "</td>"+
             "</tr>";
             $("#table_prescripcion_historial").append(prescripciones);
           }
+          document.getElementById("label_total_activas").innerHTML = data.length;
         },error: function (e) {
             msj_error_serve(e)
             bootbox.hideAll();
@@ -3247,7 +3260,6 @@ $(document).ready(function () {
             $('#via').append(option);
             for(var x = 0; x < data.length; x++){
               option = "<option value="+data[x].via+">"+data[x].via+"</option>";
-              console.log(data[x].via);
               $('#via').append(option);
             }
           },error: function (e) {

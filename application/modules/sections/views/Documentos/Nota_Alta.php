@@ -391,10 +391,12 @@
                             <label>Grado</label>
                             <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[0]['grado']?>" required>
                           </div>
-                          <div class="col-sm-1 col-md-1">
-                            <label>Agregar +</label>
-                            <a href='#' class="btn btn-success btn-xs" onclick=medicoResidente()  style="width:100%;height:100%;padding:7px;" id="add_otro_residente17" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
-                          </div>
+                          <?php if(count($Residentes) == 0){?>
+                            <div class="col-sm-1 col-md-1">
+                              <label>Agregar +</label>
+                              <a href='#' class="btn btn-success btn-xs" onclick=medicoResidente()  style="width:100%;height:100%;padding:7px;" id="add_otro_residente17" data-original-title="Agregar Médico Residente"><span class="glyphicon glyphicon-plus "></span></a>
+                            </div>
+                          <?php }?>
                       
                         </div>
                     </div>
@@ -413,9 +415,9 @@
                                <div class="col-sm-2 col-md-2">
                                 <input class="form-control" id="grado" type="text" name="grado[]" placeholder="Grado (ej. R3MI)" value="<?=$Residentes[$i]['grado']?>" required>
                               </div>
-                              <div class=col-sm-1 >
+                              <!--<div class=col-sm-1 >
                                 <a href="#" onclick=quitarResidenteFormulario(<?=$i ?>) class="btn btn-danger delete btn-xs" style="width:100%;height:100%;padding:7px;" id="quitar_residente"><span class="glyphicon glyphicon-remove"></span></a>
-                              </div>
+                              </div>-->
                             </div>
                         <?php }?>
                         <?php for($i = 1; $i < 4-count($Residentes); $i++){?>

@@ -3164,3 +3164,7 @@ $(document).ready(function () {
           }
       });
      }
+     console.log(document.getElementById("nota_interconsulta").value);
+     if(document.getElementById("nota_interconsulta").value != ""){
+       document.getElementsByName("check_solicitud_interconsulta")[0].click();
+     }

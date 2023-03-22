@@ -1,4 +1,4 @@
-    <form class="guardarNotaIngreso" oninput="x.value=parseInt(escala_eva.value)">
+<form class="guardarNotaIngreso" oninput="x.value=parseInt(escala_eva.value)">
         <!-- Tipo de Nota -->
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12" style="margin-top:1px">
@@ -418,7 +418,7 @@
                             <li>
                                 <a id="acordeon_prescripciones_activas">
                                     Prescripciones activas:
-                                    <label id="label_total_activas"><?= count($Prescripcion) ?></label>
+                                    <label id="label_total_activas"></label>
                                 </a>
                             </li>
                         </ul>
