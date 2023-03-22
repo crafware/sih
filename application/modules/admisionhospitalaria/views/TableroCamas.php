@@ -128,22 +128,6 @@ figure .mapa {
 	border-radius: 10px;
 }
 
-.tooltip {
-	/*display: flex;*/
-	position: absolute;
-	top: 0;
-	left: 0;
-	background: #fff;
-	border-radius: 10px;
-	box-shadow: 5px 5px 50px rgba(0,0,0,.20);
-	width: 31.25em;
-	z-index: 1000;
-	opacity: 0;
-	transition: .3s ease all;
-	transform: translate(-333px,-235px);
-	font-size: auto;
-}
-
 .tooltipF1::after {
 	content: "";
 	display: inline-block;
@@ -201,7 +185,7 @@ figure .mapa {
 		position: static;
 		opacity: 1;
 		width: 100%;
-		transform: translate(0);
+		transform: translate(0);*/
 	}
 
 	.tooltip::after {
@@ -211,6 +195,19 @@ figure .mapa {
 	.modal-footer {
 		margin-top: 40px !important;
 	}
+}
+
+.ttip + .tooltip  {
+	/*left: 132px;*/
+  width: 13.25em !important;
+}
+.ttip + .tooltip > .tooltip-inner {
+  background-color: #73AD21; 
+  color: #FFFFFF; 
+  border: 1px solid green; 
+  padding: 5px;
+  font-size: 14px;
+
 }
 
 </style>
@@ -226,7 +223,8 @@ figure .mapa {
 					        <div class="container col-lg-3 col-md-6 col-sm-6 col-xs-6 tile_stats_count">
 					        	<div class="row"> 
 	                		 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
-	                		 			<span class="count_top"><i class="fa fa-bed"></i>&nbsp;General</span>
+	                		 			<span class="count_top"><i class="fa fa-bed"></i>&nbsp;Camas censables</span>
+														<strong>308</strong>
 	                		 		</div>
 						     	</div>   
 					        	<div class="row">
@@ -234,9 +232,11 @@ figure .mapa {
 					        			<table>
 						        			<tr>
 	    										<td><div class="bed-status blue-700 color-white"><i class="fa fa-bed"></i></div></td>
+													<td><span class="camas-ocupadas-hombres"></span></td>
 	    										<td><div class="bed-status pink-A100 color-white"><i class="fa fa-bed"></div></td>
+													<td><span class="camas-ocupadas-mujeres"></span></td>
 	    										<!-- <td><span><i class="fa fa-male"></i></span></td> -->
-	    										<td><span class="camas-ocupadas"></span></td>
+	    										<td style="padding-left: 15px"><span class="camas-ocupadas"></span></td>
 	  										</tr>
   										</table>
 						        	</div>
@@ -252,7 +252,7 @@ figure .mapa {
   							<div class="container col-lg-3 col-md-6 col-sm-6 col-xs-6 tile_stats_count">
 					        	<div class="row"> 
 	                		 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
-	                		 		<span class="count_top"><i class="fa fa-bed"></i>&nbsp;Disponibles</span> </div>
+	                		 		<span class="count_top"><i class="fa fa-bed"></i>&nbsp;Censables Disponibles</span> </div>
 						     	</div>   
 					        	<div class="row">
 					        		<div class="container">
@@ -297,7 +297,7 @@ figure .mapa {
   							<div class="container col-lg-3 col-md-6 col-sm-6 col-xs-6 tile_stats_count">
 					        	<div class="row"> 
 	                		 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
-	                		 		<span class="count_top"><i class="fa fa-bed"></i>&nbsp;Inhabilitadas</span> </div>
+	                		 		<span class="count_top"><i class="fa fa-bed"></i>&nbsp;Censables Inhabilitadas</span> </div>
 						     	</div>   
 					        	<div class="row">
 					        		<div class="container">
@@ -336,7 +336,7 @@ figure .mapa {
   							<div class="container col-lg-3 col-md-6 col-sm-6 col-xs-6 tile_stats_count">
 					        	<div class="row"> 
 	                		 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
-	                		 		<span class="count_top"><i class="fa fa-bed"></i>&nbsp;Reservadas</span> </div>
+	                		 		<span class="count_top"><i class="fa fa-bed"></i>&nbsp;Censables Reservadas</span> </div>
 						     	</div>   
 					        	
 					        	<div class="row">
@@ -373,10 +373,10 @@ figure .mapa {
 </div>
  <?= modules::run('Sections/Menu/footer'); ?>
  <script>
- var Especialidades = <?= json_encode($Especialidades) ?>;
-		var inputOptions = [{ text: '', value: ''}];
-		for(var i = 0;i < Especialidades.length; i++){
-			var aux = {
+  const Especialidades = <?= json_encode($Especialidades) ?>;
+	const inputOptions = [{ text: '', value: ''}];
+		for(let i = 0;i < Especialidades.length; i++){
+			let aux = {
 				text: 	Especialidades[i]["especialidad_nombre"],
 				value:	Especialidades[i]["especialidad_id"]
 			}

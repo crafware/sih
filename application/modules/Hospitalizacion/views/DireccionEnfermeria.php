@@ -66,6 +66,5 @@ function getServerIp(){
 </script>
 <?= modules::run('Sections/Menu/footer'); ?>
 <script src="<?= base_url('assets/js/DireccionEnfermeria.js?'). md5(microtime())?>" type="text/javascript"></script>
-<!--<script src="<?= base_url('assets/js/Conservacionlimpieza.js?'). md5(microtime())?>" type="text/javascript"></script>-->
 <script src="<?= "http://".getServerIp().':3001/socket.io/socket.io.js'?>" type="text/javascript"></script>
 <link href="<?=  base_url()?>assets/styles/tooltip.css" rel="stylesheet" type="text/css" />

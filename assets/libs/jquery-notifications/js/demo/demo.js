@@ -1,4 +1,4 @@
-/*$(function(){
+$(function(){
   //Messenger().post("Thanks for checking out Messenger!");
 
   var loc = ['bottom', 'right'];
@@ -14,8 +14,7 @@
     for (var i=0; i < loc.length; i++)
       classes += ' messenger-on-' + loc[i];
 
-    //$.globalMessenger({ extraClasses: classes, theme: style });
-
+    $.globalMessenger({ extraClasses: classes, theme: style });
     Messenger.options = { extraClasses: classes, theme: style };
 
     $output.text("Messenger.options = {\n    extraClasses: '" + classes + "',\n    theme: '" + style + "'\n}");
@@ -40,4 +39,3 @@
   });
 
 });
-*/

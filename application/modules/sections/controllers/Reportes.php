@@ -265,7 +265,9 @@ class Reportes extends Config{
                                             inmunodef,
                                             hepatopatia,
                                             fecha_vacuna,
-                                            laboratorio
+                                            laboratorio,
+                                            paciente_imss,
+                                            puesto_empleado
                                         FROM
                                             os_triage T,
                                             paciente_info P,
@@ -337,11 +339,13 @@ class Reportes extends Config{
                 'INMUNODEFICIENCIA', //AR
                 'HEPATOPATIA', //AS
                 'VACUNA',
-                'FECHA VACUNA'
+                'FECHA VACUNA',
+                'PACIENTE IMSS',
+                'PUESTO'
             );
             // Se combinan las celdas A1 hasta D1, para colocar ahí el titulo del reporte
             $objPHPExcel->setActiveSheetIndex(0)
-                ->mergeCells('A1:AT1');
+                ->mergeCells('A1:AV1');
 
             // Se agregan los titulos del reporte
             $objPHPExcel->setActiveSheetIndex(0)
@@ -392,6 +396,8 @@ class Reportes extends Config{
                 ->setCellValue('AR3',  $titulosColumnas[43])
                 ->setCellValue('AS3',  $titulosColumnas[44])
                 ->setCellValue('AT3',  $titulosColumnas[45])
+                ->setCellValue('AU3',  $titulosColumnas[46])
+                ->setCellValue('AV3',  $titulosColumnas[47])
 
 
                 ;
@@ -455,11 +461,13 @@ class Reportes extends Config{
                     ->setCellValue('AQ'.$i,$value['inmunodef'])
                     ->setCellValue('AR'.$i,$value['hepatopatia'])
                     ->setCellValue('AS'.$i,$value['laboratorio'])
-                    ->setCellValue('AT'.$i,$value['fecha_vacuna']);
+                    ->setCellValue('AT'.$i,$value['fecha_vacuna'])
+                    ->setCellValue('AU'.$i,$value['paciente_imss'])
+                    ->setCellValue('AV'.$i,$value['puesto_empleado']);
                  $i++;
              }
              
-            for($i = 'A'; $i <= 'AT'; $i++){
+            for($i = 'A'; $i <= 'AV'; $i++){
                 $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
             }
 
@@ -478,7 +486,7 @@ class Reportes extends Config{
             $objPHPExcel->setActiveSheetIndex(0);
             $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->applyFromArray($styleArray)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             $objPHPExcel->getActiveSheet()
-                        ->getStyle('A1:AT1')
+                        ->getStyle('A1:AV1')
                         ->applyFromArray(
                             array(
                                 'fill' => array(
@@ -494,9 +502,9 @@ class Reportes extends Config{
                 'size'  => 10,
                 'name'  => 'Verdana',
             ));
-            $objPHPExcel->getActiveSheet()->getStyle('A3:AT3')->applyFromArray($styleArrayCols)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            $objPHPExcel->getActiveSheet()->getStyle('A3:AV3')->applyFromArray($styleArrayCols)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             $objPHPExcel->getActiveSheet()
-                        ->getStyle('A3:AT3')
+                        ->getStyle('A3:AV3')
                         ->applyFromArray(
                             array(
                                 'fill' => array(

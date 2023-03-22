@@ -1,5 +1,6 @@
 $(document).ready(function () {
-  let area = $('input[name=area]').val();
+  
+  //let area = $('input[name=area]').val();
   function AjaxCamas() {
     $.ajax({
       url: base_url + "AdmisionHospitalaria/AjaxVisorDireccionEnfermeria",
@@ -16,59 +17,43 @@ $(document).ready(function () {
     })
   }
 
-  /*function SolicitaCambioEstado(cama_id, accion, folio) {
-    //console.log(cama_id,accion,folio);
+  function SolicitaCambioEstado(cama_id, accion, folio, estadoPaciente) {
+    console.log(cama_id, accion, folio, estadoPaciente);
     $.ajax({
-      url: base_url + "Hospitalizacion/SolicitaCambioEstado",
-      type: 'POST',
-      dataType: 'JSON',
-      data: {
-        cama_id: cama_id,
-        accion: accion,
-        triage_id: folio,
-        csrf_token: csrf_token
-      },
-      beforeSend: function (xhr) {
-        msj_loading();
-      },
-      success: function (data, textStatus, jqXHR) {
-        bootbox.hideAll();
-      }, error: function (e) {
-        msj_error_noti('problemas');
-      }
+        url: base_url + "Hospitalizacion/SolicitaCambioEstado",
+        type: 'POST',
+        dataType: 'JSON',
+        data: {
+            cama_id: cama_id,
+            accion: accion,
+            triage_id: folio,
+            estadoPaciente: estadoPaciente,
+            csrf_token: csrf_token
+        },
+        beforeSend: function (xhr) {
+            msj_loading();
+        },
+        success: function (data, textStatus, jqXHR) {
+            //console.log(data);
+            bootbox.hideAll();
+            /*if (data.accion == '6') {
+                $('.cama' + cama_id).removeClass('grey-900').addClass('cyan-400');
+
+            } else if (data.accion == '7') {
+                $('.cama' + cama_id).removeClass('yellow-600').addClass('lime');
+            }*/
+            msj_success_noti('La cama esta Limpia');
+        }, error: function (e) {
+            msj_error_noti('problemas');
+            //msj_error_serve();
+
+        }
     })
   }
 
-  $('body').on('click', '.cama-no', function () {
-    var triage_id = $(this).attr('data-folio');
-    var cama_id = $(this).attr('data-cama');
-    var camaNombre = $(this).attr('data-cama_nombre');
-    if ($(this).hasClass('cyan-400')) {
-      bootbox.confirm({
-        title: '<h5>Vestir Cama</h5>',
-        message: "¿Quiere vestir la cama?",
-        size: 'small',
-        buttons: {
-          confirm: {
-            label: 'Si',
-            className: 'btn-success'
-          },
-          cancel: {
-            label: 'No',
-            className: 'btn-danger'
-          }
-        },
-        callback: function (res) {
-          if (res == true) {
-            triage_id = 0
-            SolicitaCambioEstado(cama_id, 7, triage_id)
-          }
-        }
-      });
-    }
-  });*/
+  AjaxCamas();
   /*=============================================
-    =                 Vestir cama                 =
+    =                Limpieza Cama               =
     =============================================*/
     $('body').on('click', '.confirmar-Limpieza', function () {
       let camaId = $(this).attr('data-cama');
@@ -94,44 +79,15 @@ $(document).ready(function () {
           }
       });
   });
-  function SolicitaCambioEstado(cama_id, accion, folio, estadoPaciente) {
-    console.log(cama_id, accion, folio, estadoPaciente);
-    $.ajax({
-        url: base_url + "Hospitalizacion/SolicitaCambioEstado",
-        type: 'POST',
-        dataType: 'JSON',
-        data: {
-            cama_id: cama_id,
-            accion: accion,
-            triage_id: folio,
-            estadoPaciente: estadoPaciente,
-            csrf_token: csrf_token
-        },
-        beforeSend: function (xhr) {
-            msj_loading();
-        },
-        success: function (data, textStatus, jqXHR) {
-            console.log(data);
-            bootbox.hideAll();
-            /*if (data.accion == '6') {
-                $('.cama' + cama_id).removeClass('grey-900').addClass('cyan-400');
-
-            } else if (data.accion == '7') {
-                $('.cama' + cama_id).removeClass('yellow-600').addClass('lime');
-            }*/
-        }, error: function (e) {
-            msj_error_noti('problemas');
-            //msj_error_serve();
-
-        }
-    })
-}
+  /* ================================================================ *
+                    Cambiar a Disponible                         
+    /* ================================================================ */
   $('body').on('click', '.cyan-400', function () {
       var cama_id = $(this).attr('data-cama');
       //var camaEstado=$(this).attr('data-accion');
       var camaNombre = $(this).attr('data-cama_nombre');
       bootbox.confirm({
-          message: '¿DESEA VESTIR CAMA ' + camaNombre + ' ?',
+          message: '<h4>'+'¿Desea vestir y hacer disponible cama ' + camaNombre + ' ?'+'</h4>',
           size: 'medium',
           buttons: {
               confirm: {
@@ -162,7 +118,7 @@ $(document).ready(function () {
                           if (data.accion == '1') {
                               msj_error_noti('No se encontro cama');
                           } else if (data.accion == '2') {
-                              msj_success_noti('La cama ha cido vestida');
+                              msj_success_noti('La cama esta disponible');
                           }
                       },
                       error: function (e) {
@@ -212,20 +168,31 @@ $(document).ready(function () {
   $('body').on('click','.ReportePiso', function(e){
     e.preventDefault();
     let piso_id = $(this).data("piso");
-    AbrirDocumento('http://localhost/sih/inicio/Documentos/reporteEstadoSaludPiso?piso_id='+piso_id);
+    AbrirDocumento(base_url+'Inicio/Documentos/reporteEstadoSaludPiso?piso_id='+piso_id);
   })
   $('body').on('click','.ReporteEspe', function(e){
     e.preventDefault();
-    let piso_is = $(this).data("piso")
+    let piso_id = $(this).attr('data-pisoname');
     bootbox.prompt({
-      title: 'Selecciona servicio',
-      inputType: 'select',
-      inputOptions: inputOptions,
+        title: '<h5>'+`${piso_id} - Seleccionar especialidad`+'</h5>',
+        inputType: 'select',
+        inputOptions: inputOptions,
+        size: 'small',
+        buttons: {
+                confirm: {
+                    label: 'Aceptar',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-danger'
+                }
+        },
       callback: function (result) {
-          console.log(result);
-          AbrirDocumento('http://localhost/sih/inicio/Documentos/reporteEstadoSaludPiso?especialidad_id='+result);
+        if(result){
+          AbrirDocumento(base_url+'inicio/Documentos/reporteEstadoSaludPiso?especialidad_id='+result);
+        }
       }
     });
-  })
-  AjaxCamas();
+  });
 });

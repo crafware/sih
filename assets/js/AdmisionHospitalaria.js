@@ -21,8 +21,7 @@ $(document).ready(function () {
                 $('.camas-contaminadas').html(data.TotalContaminadas+' Contaminadas');
                 $('.camas-descompuestas').html(data.TotalDescompuestas+' Descompuestas');
                 $('.camas-reservadas').html(data.TotalReservadas+' Reservadas');
-
-                //$('[rel="tooltip"]').tooltip();
+                $('body .ttip').tooltip();
             },error: function (e) {
                 msj_error_serve();
                 bootbox.hideAll();
@@ -83,11 +82,22 @@ $(document).ready(function () {
                                             title: "<center>Confirmar su Matricula</center>",
                                             inputType: 'password',
                                             size: 'small',
+                                            buttons : {
+                                                confirm: {
+                                                           label:     'Aceptar',
+                                                           className: 'btn-success'
+                                                        },
+                                        
+                                                cancel: {
+                                                            label:      'Cancelar',
+                                                            className:  'btn-danger'
+                                                        }
+                                    },
                                             callback: function (result) {
                                                if(result != null && result != ''){
                                                 // result es la matricula
                                                 AsignarCama(triage_id,camaId,result);
-                                               }else msj_error_noti('CONFIRMACIÓN DE MATRICULA REQUERIDA');
+                                               }else msj_error_noti('CONFIRMACIÓN CANCELADA');
                                             }
                                         });                                        
                                     }
@@ -158,7 +168,7 @@ $(document).ready(function () {
 
                 if(data.accion=='1'){
                     bootbox.hideAll();
-                    AjaxCamas();
+                    //AjaxCamas();
                 }if(data.accion=='2'){
                     bootbox.hideAll();
                     msj_error_noti('LA MATRICULA ESCRITA NO EXISTE');
@@ -213,8 +223,6 @@ $(document).ready(function () {
                     },
                     callback:function (res) {
                         if(res==true){
-                            console.log(cama_id);
-                            console.log(triage_id);
                             bootbox.hideAll();
                             $.ajax({ 
                                 url: base_url+"AdmisionHospitalaria/AjaxCambiarCamaOcupada",
@@ -232,7 +240,8 @@ $(document).ready(function () {
                                 },success: function (data, textStatus, jqXHR) {
                                     bootbox.hideAll();
                                     if(data.accion=='1'){
-                                        AjaxCamas()
+                                        //AjaxCamas()
+                                        msj_success_noti('Cambio de cama exitoso')
                                     }
                                 },error: function (e) {
                                    bootbox.hideAll();
@@ -297,7 +306,7 @@ $(document).ready(function () {
 
     function ConfirmarAltaPaciente(cama,folio,accion) {
         if(accion=='0'){
-            msj_error_noti('El Paciente no tiene una Orden de Alta');
+            msj_error_noti('Deasea dar de alta al paciente');
         }else if(accion=='1'){
             msj_success_noti('El paciente tiene una Orden de Pre-alta');
         }else if(accion=='2'){                         
@@ -327,15 +336,16 @@ $(document).ready(function () {
     }
 
     function ModalAltaPaciente(cama_id,folio){
-        console.log(cama_id)
+        console.log(cama_id,folio)
         $.ajax({ 
             url: base_url+"AdmisionHospitalaria/ProcesoDeAlta",
             dataType: 'json',
             type: 'POST',
-            data: {cama_id:cama_id, csrf_token:csrf_token},
+            data: {cama_id:cama_id, folio:folio, csrf_token:csrf_token},
             success: function (data, textStatus, jqXHR) {
                 if(data.accion=='1') {
-                    console.log(data.accion)
+                    //console.log(data.accion)
+                    // Accion 1 si tiene orden de alta
                     let id_43051 = data.infop.id;
 
                     bootbox.confirm({
@@ -389,7 +399,7 @@ $(document).ready(function () {
                                     success: function (data, textStatus, jqXHR) { 
                                         bootbox.hideAll()
                                         if(data.accion == 1){
-                                            location.reload();
+                                            //location.reload();
                                             msj_success_noti('Solicitud realizada');
                                         }
                                     },
@@ -402,7 +412,9 @@ $(document).ready(function () {
                         }
                     });
                 }else if(data.accion=='2'){
-                        //msj_success_noti('El paciente no tiene una Orden de Alta, favor de comentar al Médico tratante');
+                    // No tiene Orden de Prealta y alta    
+                    //msj_success_noti('El paciente no tiene una Orden de Alta, favor de comentar al Médico tratante');
+                        
                         let id_43051 = data.infop.id;
 
                         bootbox.confirm({
@@ -414,8 +426,8 @@ $(document).ready(function () {
                                         '<div class="col-md-12">'+
                                             '<h5 style="line-height: 1.4;margin-top:20px"><b>Paciente: </b>'+data.infop.triage_nombre+' '+data.infop.triage_nombre_ap+' '+data.infop.triage_nombre_am+'</h5>'+
                                             '<h5 style="line-height: 1.4;margin-top:5px"><b>NSS: </b>'+data.infop.pum_nss+' '+data.infop.pum_nss_agregado+'</b></h5>'+
-                                            '<h5 style="line-height: 1.4;margin-top:5px"><b>Servicio de egreso: </b><select id="select_especilaidad" style="width:50%">'+data.option+'</select></h5>'+ 
-                                            '<h5 style="line-height: 1.4;margin-top:5px"><b>Médico de egreso: </b><select id="medicoEgresa" style="width:61%">'+'</select></h5>'+ 
+                                            '<h5 style="line-height: 1.4;margin-top:5px"><b>Servicio de egreso: </b><select id="select_especialidad" style="width:50%">'+data.option+'</select></h5>'+ 
+                                            '<h5 style="line-height: 1.4;margin-top:5px"><b>Médico de egreso: </b><select id="medicoEgreso" style="width:61%">'+'</select></h5>'+ 
                                             '<h5 style="line-height: 1.4;margin-top:5px"><b>Motivo de egreso: </b><select id="motivoEgreso" style="width:50%">'+data.motivoe+'</select></h5>'+
                                             '<h5 style="line-height: 1.4;margin-top:5px"><b>Obsevaciones : </b><input type="text" name="obsEgreso" id="obsEgreso" style="width:65%"></h5>'+                                                           
                                         '</div>'+
@@ -440,11 +452,12 @@ $(document).ready(function () {
                             },
                             callback: function (result) {
                                 if(result){
-                                    let servicioEgreso = $('body #select_especilaidad').val();
-                                    let medicoEgreso = $('body #medicoEgresa').val();
-                                    let motivoEgreso = $('body #motivoEgreso').val();
+                                    let servicioEgreso = $('body #select_especialidad').val();
+                                    let medicoEgreso   = $('body #medicoEgreso').val();
+                                    let motivoEgreso   = $('body #motivoEgreso').val();
                                     let obsEgreso = $('body #obsEgreso').val();
-                        
+                                    console.log(cama_id,folio,id_43051,servicioEgreso,medicoEgreso,motivoEgreso)
+
                                     if(servicioEgreso == 0) {
                                         bootbox.alert({
                                             title:  "<center>¡ Advertencia !</center>",
@@ -452,21 +465,22 @@ $(document).ready(function () {
                                             size:   "medium"
                                         });
                                         return false;
-                                    }else if(medicoEgreso == ''){
+                                    }else if(motivoEgreso == 0) {
                                         bootbox.alert({
                                             title:  "<center>¡ Advertencia !</center>",
-                                            message:"<center><h4>Debe seleccionar el Motivo de egreso</h4></center>",
+                                            message:"<center><h4>Debe seleccionar el Motivo de Egreso</h4></center>",
                                         });
                                         return false;
-                                    }else if(motivoEgreso == 0){
+                                    }else if(medicoEgreso==0) {
+                                        console.log(medicoEgreso)
                                         bootbox.alert({
                                             title:  "<center>¡ Advertencia !</center>",
-                                            message:"<center><h4>Debe seleccionar el Motivo de egreso</h4></center>",
+                                            message:"<center><h4>Debe seleccionr el Médico Tratante</h4></center>",
                                         });
                                         return false;
                                     }else {
 
-                                        console.log(cama_id,folio,id_43051,servicioEgreso,motivoEgreso)
+                                        console.log(folio)
                                         $.ajax({
                                             url: base_url+"AdmisionHospitalaria/ConfirmarAltaCamaAsistenteMedica",
                                             type: 'POST',
@@ -478,10 +492,12 @@ $(document).ready(function () {
                                                 servicio_egreso:servicioEgreso,
                                                 medico_egreso:medicoEgreso,
                                                 motivo_egreso:motivoEgreso,
+                                                comentario:obsEgreso,
                                                 csrf_token: csrf_token
                                             },
                                             beforeSend: function (xhr) {
                                                 //msj_loading();
+                                                console.log()
                                             },
                                             success: function (data, textStatus, jqXHR) { 
                                                 bootbox.hideAll()
@@ -500,8 +516,8 @@ $(document).ready(function () {
                             }
                         });
                         
-                        $("body #select_especilaidad").on('change', function () {
-                            $("#select_especilaidad option:selected").each(function () {
+                        $("body #select_especialidad").on('change', function () {
+                            $("#select_especialidad option:selected").each(function () {
                                 let id_servicio=$(this).val();
                                 
                                 $.ajax({
@@ -514,7 +530,7 @@ $(document).ready(function () {
                                     dataType : 'json',
                                     success : function(data, textStatus, jqXHR) {
                                         //alert(data);
-                                      $("#medicoEgresa").html(data);
+                                      $("#medicoEgreso").html(data);
                                     },
                                     error : function(e) {
                                             alert('No se encontaron médicos en esta solicitud');
@@ -765,7 +781,7 @@ $(document).ready(function () {
                         triage_id:triage_id,
                         csrf_token:csrf_token
                     },'AdmisionHospitalaria/AjaxConfirmarIngreso',function (response) {
-                        AjaxCamas();
+                        //AjaxCamas();
                          msj_success_noti('Ingresando paciente en cama ');
                     },'');
                 }
@@ -896,20 +912,42 @@ $(document).ready(function () {
       $('.pdfIngresosHosp').click(function (e){
         AbrirDocumento(base_url+'inicio/documentos/IngresosAdmisionHospitalaria?fecha_inicio='+$(this).attr('data-fecha_inicio'));
     });
+
+    /* ================================================================ *
+                   Estado de Salud por Piso                            
+    /* ================================================================ */
     $('body').on('click','.ReportePiso', function(e){
         e.preventDefault();
         let piso_id = $(this).data("piso");
-        AbrirDocumento('http://localhost/sih/inicio/Documentos/reporteEstadoSaludPisoAdmisionHospitalaria?piso_id='+piso_id);
+        AbrirDocumento(base_url+'inicio/Documentos/reporteEstadoSaludPisoAdmisionHospitalaria?piso_id='+piso_id);
     })
+    
+    /* ================================================================ *
+                    Esado de salud por Especiaidad                         
+    /* ================================================================ */
+
     $('body').on('click','.ReporteEspe', function(e){
         e.preventDefault();
+        let piso_id = $(this).attr('data-pisoname');
+
         bootbox.prompt({
-            title: 'Selecciona servicio',
+            title: `${piso_id} - Seleccionar especialidad`,
             inputType: 'select',
             inputOptions: inputOptions,
+            buttons: {
+                        confirm: {
+                            label: 'Aceptar',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Cancelar',
+                            className: 'btn-danger'
+                        }
+                     },
             callback: function (result) {
-                console.log(result);
-                AbrirDocumento('http://localhost/sih/inicio/Documentos/reporteEstadoSaludPisoAdmisionHospitalaria?especialidad_id='+result);
+                if(result){
+                AbrirDocumento(base_url+'Inicio/Documentos/reporteEstadoSaludPisoAdmisionHospitalaria?especialidad_id='+result);
+                }
             }
         });
     })

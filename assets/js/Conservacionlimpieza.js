@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    AjaxCamas();
     let area = $('input[name=area]').val();
     $('body').on('click', '.confirmar-Limpieza', function () {
         let camaId = $(this).attr('data-cama');
@@ -32,6 +33,16 @@ $(document).ready(function () {
         bootbox.prompt({
             title: '<center><h4>Agregar nota a la cama ' + camaNombre + '</h4></center>',
             inputType: 'textarea',
+            buttons: {
+                confirm: {
+                    label: 'Aceptar',
+                    className: 'back-imss'
+                },
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-imss-cancel'
+                }
+            },
             callback: function (result) {
                 if (result == null){
                     msj_success_noti("Nota no agregada");
@@ -225,57 +236,5 @@ $(document).ready(function () {
             }
         })
     }
-    /*=============================================
-    =                 Vestir cama                 =
-    =============================================*/
-    /*$('body').on('click', '.cyan-400', function () {
-        var cama_id = $(this).attr('data-cama');
-        //var camaEstado=$(this).attr('data-accion');
-        var camaNombre = $(this).attr('data-cama_nombre');
-        bootbox.confirm({
-            message: '¿DESEA VESTIR CAMA ' + camaNombre + ' ?',
-            size: 'medium',
-            buttons: {
-                confirm: {
-                    label: 'Si',
-                    className: 'back-imss'
-                },
-                cancel: {
-                    label: 'No',
-                    className: 'btn-imss-cancel'
-                }
-            },
-            callback: function (result) {
-                if (result) {
-                    $.ajax({
-                        url: base_url + "Hospitalizacion/AjaxVestirCama",
-                        type: 'POST',
-                        dataType: 'JSON',
-                        data: {
-                            cama_id: cama_id,
-                            csrf_token: csrf_token,
-                        },
-                        beforeSend: function (xhr) {
-                            msj_loading();
-                        },
-                        success: function (data, textStatus, jqXHR) {
-                            console.log(data);
-                            bootbox.hideAll();
-                            if (data.accion == '1') {
-                                msj_error_noti('No se encontro cama');
-                            } else if (data.accion == '2') {
-                                msj_success_noti('La cama ha cido vestida');
-                            }
-                        },
-                        error: function (e) {
-                            bootbox.hideAll();
-                            MsjError();
-                            //console.log(e);
-                        }
-                    });
-                }
-            }
-        })
-    });*/
-    AjaxCamas();
+    
 });

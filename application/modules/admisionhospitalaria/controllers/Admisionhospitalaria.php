@@ -114,7 +114,7 @@ class Admisionhospitalaria extends Config{
     }
 
     public function TableroCamas() {
-        $sql['Especialidades'] = $this->config_mdl->_query('SELECT * FROM um_especialidades WHERE especialidad_hospitalizacion = 1');
+        $sql['Especialidades'] = $this->config_mdl->_query('SELECT * FROM um_especialidades WHERE especialidad_hospitalizacion = 1 ORDER BY especialidad_nombre ASC');
         $this->load->view('TableroCamas',$sql);
     }
    
@@ -167,14 +167,14 @@ class Admisionhospitalaria extends Config{
             $Disponibles = $this->TotalCamasEstatusPisos($value['piso_id'], 'Disponible'); //Esta Vestida
             $Ocupadas = $this->TotalCamasEstatusPisos($value['piso_id'], 'Ocupado');
             $TotalPiso = $this->TotalPorPiso($value['piso_id']);
-            $nombrePiso = '<li><h5 class="text-center link-acciones bold">Piso ' . $value["piso_nombre"]. '</h5></li>';
-            $ReportePiso = '<li><a href="#" class="ReportePiso"  data-piso="' . $value["area_id"] . '"><i class="fa fa-share-square-o icono-accion"></i> Reporte por piso</a></li>';
-            $ReporteEspe = '<li><a href="#" class="ReporteEspe"><i class="fa fa-share-square-o icono-accion"></i> Reporte por especialidad</a></li>';
+            $nombrePiso = '<li><h4 class="text-center link-acciones bold">'.$value["piso_nombre"].'</h4></li>';
+            $ReportePiso = '<li><a href="#" class="ReportePiso"  data-piso="'.$value["area_id"].'"><i class="fa fa-share-square-o icono-accion"></i> Reporte por piso</a></li>';
+            $ReporteEspe = '<li><a href="#" class="ReporteEspe" data-pisoname="'.$value["piso_nombre"].'"><i class="fa fa-share-square-o icono-accion"></i> Reporte por especialidad</a></li>';
             $ReportesPisos = '<div style="float: left;"> 
                                 <ul class="list-inline list-menu">
                                     <li class="dropdown">
                                         <a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fa fa-file-text-o"></i>
+                                            <i class="fa fa-file-text-o icono-accion ttip" data-toggle="tooltip" data-placement="left" title="Ver estado de salud"></i>
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -215px">' .$nombrePiso. ' ' .$ReportePiso. ' ' .$ReporteEspe. '</ul>
                                     </li>
@@ -342,8 +342,8 @@ class Admisionhospitalaria extends Config{
                     }
                 }
                 if ($NotasLenDes > 0) { $OpDes = 1;}else{$OpDes = 0;}
-                $Col .=     '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
-                         <div id = "nota_des_' . $valor['cama_id'] . '" class="notificacion-nota-des" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $OpDes . '"><p>' . "$NotasLenDes" . '</p></div>
+                $Col .=     '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota pointer" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
+                         <div id = "nota_des_' . $valor['cama_id'] . '" class="notificacion-nota-des pointer" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $OpDes . '"><p>' . "$NotasLenDes" . '</p></div>
                     </div>';
             } //cierre foreach ($Camas as $value)
 
@@ -857,7 +857,7 @@ class Admisionhospitalaria extends Config{
                                         <a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">
                                             <i class="fa fa-bed"></i>
                                         </a>
-                                        <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' . $nombreCama . ' ' . $ConfirmarLimpieza . ' ' . $AgregarNota . ' ' . $CambiarEstadoSemaforo . ' </ul>
+                                        <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' . $nombreCama . ' ' . $ConfirmarLimpieza . ' ' . $CambiarEstadoSemaforo . ' </ul>
                                     </li>
                                 </ul>';
                 }
@@ -915,9 +915,7 @@ class Admisionhospitalaria extends Config{
             'TotalReparadas'     => $TotalReparadas,
             'PorcentajeOcupacion' => round(($TotalOcupadas / $TotalDisponibles) * 100, 2) . ' ' . '%'
         ));
-    } //cierre de funcion AjaxvisorCamasLimpiesaEHigiene
-
-
+    }
 
     public function AjaxVisorCamasLimpiesaEHigiene()
     {
@@ -1085,7 +1083,7 @@ class Admisionhospitalaria extends Config{
                     }
                 }
                 if ($NotasLenDes > 0) { $OpDes = 1;}else{$OpDes = 0;}
-                $Col .=     '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
+                $Col .=     '<div id = "nota_' . $valor['cama_id'] . '" class="notificacion-nota pointer" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
                         <div id = "nota_des_' . $valor['cama_id'] . '" class="notificacion-nota-des" ' . 'data-cama-nombre=' . $valor['cama_nombre'] . ' data-cama-id=' . $valor['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $OpDes . '"><p>' . "$NotasLenDes" . '</p></div>
                     </div>';
             } //cierre foreach ($Camas as $value)
@@ -1145,14 +1143,14 @@ class Admisionhospitalaria extends Config{
         foreach ($Pisos as $value) {
             $Disponibles = $this->TotalCamasEstatusPisos($value['piso_id'], 'Disponible'); //Esta Vestida
             $Ocupadas = $this->TotalCamasEstatusPisos($value['piso_id'], 'Ocupado');
-            $nombrePiso = '<li><h5 class="text-center link-acciones bold">Piso ' . $value["piso_nombre"]. '</h5></li>';
+            $nombrePiso = '<li><h4 class="text-center link-acciones bold">'.$value["piso_nombre"].'</h4></li>';
             $ReportePiso = '<li><a href="#" class="ReportePiso"  data-piso="' . $value["area_id"] . '"><i class="fa fa-share-square-o icono-accion"></i> Reporte por piso</a></li>';
-            $ReporteEspe = '<li><a href="#" class="ReporteEspe"><i class="fa fa-share-square-o icono-accion"></i> Reporte por especialidad</a></li>';
+            $ReporteEspe = '<li><a href="#" class="ReporteEspe" data-pisoname="'.$value["piso_nombre"].'"><i class="fa fa-share-square-o icono-accion"></i> Reporte por especialidad</a></li>';
             $ReportesPisos = '<div style="float: left;"> 
                         <ul class="list-inline list-menu">
                             <li class="dropdown">
                                 <a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-file-text-o"></i>
+                                    <i class="fa fa-file-text-o icono-accion ttip" data-toggle="tooltip" data-placement="left" title="Reporte Censo Diario"></i>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -215px">' .$nombrePiso. ' ' .$ReportePiso. ' ' .$ReporteEspe. '</ul>
                             </li>
@@ -1271,7 +1269,7 @@ class Admisionhospitalaria extends Config{
                                         <a data-toggle="dropdown" class="" aria-haspopup="true" aria-expanded="false">
                                             <i class="fa fa-bed"></i>
                                         </a>
-                                        <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' . $nombreCama . ' ' . $ConfirmarLimpieza . ' ' . $AgregarNota . ' ' . $CambiarEstadoSemaforo . ' </ul>
+                                        <ul class="dropdown-menu dropdown-menu-scale pull-left pull-up" style="margin-left: -5px">' . $nombreCama . ' ' . $ConfirmarLimpieza . ' ' . $CambiarEstadoSemaforo . ' </ul>
                                     </li>
                                 </ul>';
                 }
@@ -1699,7 +1697,10 @@ class Admisionhospitalaria extends Config{
             'cama_ingreso_h'  => '',
             'cama_fh_estatus' => date('Y-m-d H:i'),
             'triage_id'       => 0,
-            'cama_genero'     => 'Sin Especificar'
+            'cama_genero'     => 'Sin Especificar',
+            'estado_salud'    => Null,
+            'id_medico_trat'  => Null,
+            'id_servicio_trat'=> Null
         ),array('cama_id' => $this->input->post('cama_id_actual') ));
 
         Modules::run('Areas/LogCamas',array(
@@ -1956,7 +1957,7 @@ class Admisionhospitalaria extends Config{
        
         if(count($medicos)>0) {
             $select_box = '';
-            $select_box .= '<option value="" disabled selected>Seleccionar Médico</option>';
+            $select_box .= '<option value="0" selected>Seleccionar Médico</option>';
             foreach ($medicos as $medico) {
                 $select_box .= '<option value="'.$medico['empleado_id'].'">'.$medico['empleado_apellidos'].' '.$medico['empleado_nombre'].' ('.$medico['empleado_matricula'].')</option>';
                    }   echo json_encode($select_box);    
@@ -2447,10 +2448,11 @@ class Admisionhospitalaria extends Config{
     }
 
     public function ProcesoDeAlta() {
-        $cama = $_POST['cama_id'];
+        $cama = $this->input->post('cama_id');
+        $folio = $this->input->post('folio');
         $especialidad = "";
         $motivoEgreso = "";
-        $infoC = $this->config_mdl->_query("SELECT os_camas.cama_id,triage_id,cama_nombre,cama_genero,piso_nombre_corto FROM os_camas
+        $infoC = $this->config_mdl->_query("SELECT os_camas.cama_id, triage_id, cama_nombre, proceso, cama_genero, piso_nombre_corto FROM os_camas
                                             INNER JOIN os_pisos
                                             INNER JOIN os_pisos_camas
                                             INNER JOIN os_areas
@@ -2478,13 +2480,19 @@ class Admisionhospitalaria extends Config{
                                             WHERE
                                                 os_triage.triage_id = doc_43051.triage_id
                                                 AND paciente_info.triage_id = os_triage.triage_id
-                                                AND os_triage.triage_id =".$infoC['triage_id'])[0];
+                                                AND os_triage.triage_id = ".$folio)[0];
 
-        $sqlDx = $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos, um_cie10 WHERE 
+        /* $sqlDx = $this->config_mdl->_query("SELECT * FROM paciente_diagnosticos, um_cie10 WHERE 
                     paciente_diagnosticos.cie10_id=um_cie10.cie10_id AND 
-                    paciente_diagnosticos.triage_id =".$infoC['triage_id']);
+                    paciente_diagnosticos.triage_id =".$infoC['triage_id']);*/
 
-        $notaEgreso= $this->config_mdl->_query("SELECT especialidad_id,
+        $tiempoEstancia=Modules::run('Config/CalcularTiempoTranscurrido',array(
+            'Tiempo1' =>  $infoP['fecha_ingreso'].' '.$infoP['hora_ingreso'],
+            'Tiempo2' =>  date('Y-m-d H:i')
+            ));
+
+        if($infoC['proceso']==2 || $infoC['proceso']==1) {
+            $notaEgreso= $this->config_mdl->_query("SELECT especialidad_id,
                                                        especialidad_nombre,
                                                        notas_medicotratante,
                                                        motivo_egreso,
@@ -2505,70 +2513,43 @@ class Admisionhospitalaria extends Config{
                                                     AND doc_nota_egreso.docnota_id = um_alta_hospitalaria.id_nota_egreso 
                                                     AND um_especialidades.especialidad_id = doc_notas.empleado_servicio_id
                                                     AND doc_notas.notas_medicotratante = os_empleados.empleado_id
-                                                    AND um_alta_hospitalaria.alta=1 
-                                                    AND doc_notas.triage_id =".$infoC['triage_id'])[0];
-
-         $tiempoEstancia=Modules::run('Config/CalcularTiempoTranscurrido',array(
-                                        'Tiempo1' =>  $infoP['fecha_ingreso'].' '.$infoP['hora_ingreso'],
-                                        'Tiempo2' =>  date('Y-m-d H:i')
-                                      ));
-
-        /* Si tiene orden d Alta */
-        if(!empty($notaEgreso)) {
-            switch ($notaEgreso['motivo_egreso']) {
-                  case '1':
-                            $motivoEgreso = 'Alta médica';                 
-                    break;
-                  case '2':
-                            $motivoEgreso = 'Alta voluntaria';
-                    break;
-                  case '3':
-                            $motivoEgreso = 'Alta por mejoría';
-                    break;
-                  case '4':
-                            $motivoEgreso = 'Alta por máximo beneficio';
-                    break;
-                  case '5':
-                            $motivoEgreso = 'Alta por tranferencia a otro centro hospitalario';
-                    break;
-                  case '6':
-                            $motivoEgreso = 'Alta por defunción';
-                    break;
-                  case '7':
-                            $motivoEgreso = 'Alta por fuga o abandono';
-                    break;
+                                                    AND doc_notas.triage_id =".$folio)[0];
+            if(!empty($notaEgreso)) {
+                switch ($notaEgreso['motivo_egreso']) {
+                      case '1':
+                                $motivoEgreso = 'Alta médica';                 
+                        break;
+                      case '2':
+                                $motivoEgreso = 'Alta voluntaria';
+                        break;
+                      case '3':
+                                $motivoEgreso = 'Alta por mejoría';
+                        break;
+                      case '4':
+                                $motivoEgreso = 'Alta por máximo beneficio';
+                        break;
+                      case '5':
+                                $motivoEgreso = 'Alta por tranferencia a otro centro hospitalario';
+                        break;
+                      case '6':
+                                $motivoEgreso = 'Alta por defunción';
+                        break;
+                      case '7':
+                                $motivoEgreso = 'Alta por fuga o abandono';
+                        break;
                 }
-
-               /*
-                foreach($sqlDx as $value){
-                    switch ($value['tipo_diagnostico']){
-                        case 1: 
-                            $id_dx = $value['cie10_id'];
-                            $id_dx_registrado = $value['diagnostico_id']; 
-                            $dx = $value['cie10_nombre'];
-                            $dx_complemento = $value['complemento'];
-                            break;
-                        case 0:
-                            $id_dx = $value['cie10_id'];
-                            $id_dx_registrado = $value['diagnostico_id']; 
-                            $dx = $value['cie10_nombre'];
-                            $dx_complemento = $value['complemento'];
-                            break;
-                    }
-                }*/
-
-              
-
-                $this->setOutput(array('accion'      => '1',
-                                       'infop'       => $infoP, 
-                                       'infoc'       => $infoC,
-                                       'infon'       => $notaEgreso,
-                                       'motivoe'     => $motivoEgreso,
-                                       'cama'        => $cama,
-                                       'fecha_egreso'=> date('d/m/Y H:i'),
-                                       'testancia'   => $diff->days.' dias' ));
+            }
+    
+            $this->setOutput(array('accion'      => '1',
+                                    'infop'       => $infoP, 
+                                    'infoc'       => $infoC,
+                                    'infon'       => $notaEgreso, 
+                                    'motivoe'     => $motivoEgreso,
+                                    'cama'        => $cama,
+                                    'fecha_egreso'=> date('d/m/Y H:i'),
+                                    'testancia'   => $tiempoEstancia->format('%a dias').' '.$tiempoEstancia->h.' hrs' ));
             
-        }else {
+        }elseif($infoC['proceso'] == 0 ){
 
             //$infoEgreso = 
             $sqlEspecialidad=$this->config_mdl->_get_data_order('um_especialidades',array(
@@ -2577,10 +2558,13 @@ class Admisionhospitalaria extends Config{
             $sqlMotivoEgreso=$this->config_mdl->sqlGetData('um_motivo_egreso');
             
             $especialidad.='<option value="0" disable>Selecciona</option>';
+            
             foreach ($sqlEspecialidad as $value) {           
                 $especialidad.='<option value="'.$value['especialidad_id'].'">'.$value['especialidad_nombre'].'</option>';
             }
+
             $motivoEgreso .= '<option value="0" disable>Selecciona</option>';;
+            
             foreach ($sqlMotivoEgreso as $value) {           
                 $motivoEgreso.='<option value="'.$value['id'].'">'.$value['nombre'].'</option>';
             }
@@ -2588,8 +2572,7 @@ class Admisionhospitalaria extends Config{
             $this->setOutput(array('accion'      => '2',
                                    'infop'       => $infoP, 
                                    'infoc'       => $infoC,
-                                   'option'      => $especialidad,
-                                   'infon'       => $notaEgreso,                                      
+                                   'option'      => $especialidad,                                 
                                    'motivoe'     => $motivoEgreso,
                                    'cama'        => $cama,
                                    'fecha_egreso'=> date('d/m/Y H:i'),
@@ -2600,7 +2583,6 @@ class Admisionhospitalaria extends Config{
     public function ConfirmarAltaCamaAsistenteMedica(){
         $folio = $this->input->post('folio');
         $servicio_egreso = $this->input->post('servicio_egreso');
-        
         $paciente = $this->config_mdl->_query("SELECT id,
                                                       doc_43051.paciente_id,
                                                       triage_nombre,
@@ -2639,59 +2621,60 @@ class Admisionhospitalaria extends Config{
                                                       AND os_pisos.area_id = os_camas.area_id
                                                       AND os_triage.triage_id =".$folio)[0];
 
-        $notaAlta = $this->config_mdl->_query("SELECT fecha_nota,
-                                                      hora_nota,
-                                                      motivo_egreso,
-                                                      fecha_hora_alta,
-                                                      especialidad_id,
-                                                      especialidad_nombre,
-                                                      empleado_servicio_id,
-                                                      notas_medicotratante,
-                                                      motivo_egreso,
-                                                      empleado_apellidos,
-                                                      empleado_nombre,
-                                                      notas_fecha,
-                                                      notas_hora,
-                                                      fecha_alta,
-                                                      prealta,
-                                                      alta
-                                                FROM  doc_notas
-                                                      INNER JOIN doc_nota_egreso
-                                                      INNER JOIN um_alta_hospitalaria
-                                                      INNER JOIN um_especialidades
-                                                      INNER JOIN os_empleados
-                                                WHERE doc_notas.notas_id = doc_nota_egreso.nota_id 
-                                                      AND doc_nota_egreso.docnota_id = um_alta_hospitalaria.id_nota_egreso 
-                                                      AND um_especialidades.especialidad_id = doc_notas.empleado_servicio_id
-                                                      AND notas_medicotratante = os_empleados.empleado_id
-                                                      AND um_alta_hospitalaria.alta = 1 
-                                                      AND doc_notas.triage_id =".$folio)[0];
-        $dx = $this->config_mdl->_query("SELECT * 
-                                         FROM   paciente_diagnosticos, um_cie10 
-                                         WHERE  paciente_diagnosticos.cie10_id = um_cie10.cie10_id 
-                                                AND tipo_diagnostico = 3
-                                                AND paciente_diagnosticos.triage_id =".$folio)[0];
-
+        $dx = $this->config_mdl->_query("SELECT * FROM   paciente_diagnosticos, um_cie10 WHERE  paciente_diagnosticos.cie10_id = um_cie10.cie10_id 
+                                                    AND tipo_diagnostico = 3
+                                                    AND paciente_diagnosticos.triage_id =".$folio)[0];
 
         if(!empty($servicio_egreso)){
-          $salidaServicio = $servicio_egreso;
-          $salidaMedico = $this->input->post('medico_egreso');
-          $motivoalta = $this->input->post('motivo_egreso');
-          $proceso      = 2;
+          $salidaServicio= $servicio_egreso;
+          $salidaMedico  = $this->input->post('medico_egreso');
+          $motivoalta    = $this->input->post('motivo_egreso');
+          $comentario    = $this->input->post('comentario');
+          $proceso       = 2;
         }else {
-          $salidaServicio = $notaAlta['empleado_servicio_id'];
-          $salidaMedico   = $notaAlta['notas_medicotratante'];
-          $motivoAlta     = $notaAlta['motivo_egreso'];
-          $fecha_prealta  = $notaAlta['fecha_nota'];
-          $fecha_h_prealta= $notaAlta['fecha_nota'].' '.$notaAlta['hora_nota'];
-          $fecha_h_alta_medico= $notaAlta['fecha_hora_alta'];
-          $proceso = $paciente['proceso'];
+            $notaAlta = $this->config_mdl->_query("SELECT fecha_nota,
+                                                        hora_nota,
+                                                        motivo_egreso,
+                                                        fecha_hora_alta,
+                                                        especialidad_id,
+                                                        especialidad_nombre,
+                                                        empleado_servicio_id,
+                                                        notas_medicotratante,
+                                                        motivo_egreso,
+                                                        empleado_apellidos,
+                                                        empleado_nombre,
+                                                        notas_fecha,
+                                                        notas_hora,
+                                                        fecha_alta,
+                                                        prealta,
+                                                        alta
+                                                    FROM  doc_notas
+                                                        INNER JOIN doc_nota_egreso
+                                                        INNER JOIN um_alta_hospitalaria
+                                                        INNER JOIN um_especialidades
+                                                        INNER JOIN os_empleados
+                                                    WHERE doc_notas.notas_id = doc_nota_egreso.nota_id 
+                                                        AND doc_nota_egreso.docnota_id = um_alta_hospitalaria.id_nota_egreso 
+                                                        AND um_especialidades.especialidad_id = doc_notas.empleado_servicio_id
+                                                        AND notas_medicotratante = os_empleados.empleado_id
+                                                        AND um_alta_hospitalaria.alta = 1 
+                                                        AND doc_notas.triage_id =".$folio)[0];
+            
+            $salidaServicio      = $notaAlta['empleado_servicio_id'];
+            $salidaMedico        = $notaAlta['notas_medicotratante'];
+            $motivoAlta          = $notaAlta['motivo_egreso'];
+            $fecha_prealta       = $notaAlta['fecha_nota'];
+            $fecha_h_prealta     = $notaAlta['fecha_nota'].' '.$notaAlta['hora_nota'];
+            $fecha_h_alta_medico = $notaAlta['fecha_hora_alta'];
+            $proceso             = $paciente['proceso'];
         }
 
         $this->config_mdl->_update_data('os_camas',array(
+                'triage_id'      => Null,
                 'cama_estado'    => 'Sucia',
-                'cama_fh_estatus'=> date('Y-m-d H:i:s'),
-                'proceso'        => $proceso
+                'cama_fh_estatus'=> date('Y-m-d H:i'),
+                'proceso'        => $proceso,
+                'cama_genero'    => 'Sin Especificar',
             ),array(
                 'cama_id' => $this->input->post('cama_id')
             ));
@@ -2701,7 +2684,6 @@ class Admisionhospitalaria extends Config{
                 'cama_id'=>$this->input->post('cama_id'),
             ));
         
-
         $this->config_mdl->_update_data('doc_43051',array(
                 'fecha_egreso'    => date('Y-m-d'),
                 'hora_egreso'     => date('H:i'),
@@ -2713,6 +2695,7 @@ class Admisionhospitalaria extends Config{
             ));
 
         /* Inserta en os_camas_estados */
+        /* acciones 1=Reservado, 2=Ocupado, 3=Sucia, 4=Contaminada, 5=Descompuesta, 6=Limpia, 7=Disponibe=Vestida */
         $this->config_mdl->_insert('os_camas_estados',array(
             'id_43051'        => $this->input->post('id_43051'),
             'cama_id'         => $this->input->post('cama_id'),
@@ -2751,6 +2734,7 @@ class Admisionhospitalaria extends Config{
                 'nss'                   => $paciente['pum_nss'].' '.$paciente['pum_nss_agregado'],
                 'paciente'              => $paciente['triage_nombre'].' '.$paciente['triage_nombre_ap'].' '.$paciente['triage_nombre_am'],
                 'motivoalta'            => $motivoalta,
+                'comentario'            => $comentario,
                 'fecha_h_asigna_cama'   => $paciente['fecha_asignacion'],
                 'fecha_h_ingreso'       => $paciente['fecha_ingreso'],
                 'fecha_h_alta_hosp'     => date('Y-m-d H:i'),  // fecha y hora en que asistente medica da alta en camas       

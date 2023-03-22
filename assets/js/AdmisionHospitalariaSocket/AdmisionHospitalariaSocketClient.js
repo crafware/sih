@@ -20,7 +20,7 @@ socket.on("getDataRequest", function (data) {
 });
 var dropdownToggleForbidden = ["Limpieza e Higiene", "Conservación"]
 var AreasSemaforo = ["Limpieza e Higiene", "Enfermería Hospitalización", "Conservación"]
-var AreasOctionsLimpiezaEHigiene = ["Limpieza e Higiene", "Enfermería Hospitalización", "Dirección Enfermería "]
+var AreasOctionsLimpiezaEHigiene = ["Limpieza e Higiene", "Enfermería Hospitalización", "Dirección Enfermería"]
 
 socket.on("getDataTooltip", function (data) {
   if (data["dataTooltip"].length > 0) {
@@ -274,7 +274,7 @@ function refreshGraphics(data) {
                 return 0;
               }
             }
-            if ($('input[name=area]').val() === "Dirección Enfermería ") {
+            if ($('input[name=area]').val() === "Dirección Enfermería") {
               delecteOctions(cama_no);
               createOctionsDireccionEnfermeria(cama_no, data);
               createOctionsLimpiezaEHigiene(cama_no, data);
@@ -289,7 +289,7 @@ function refreshGraphics(data) {
               }
               return 0;
             }
-            if (AreasSemaforo.find(element => element.trim() === $('input[name=area]').val()) || $('input[name=area]').val() == 'Dirección Enfermería ') {
+            if (AreasSemaforo.find(element => element.trim() === $('input[name=area]').val()) || $('input[name=area]').val() == 'Dirección Enfermería') {
               var cama_no = bed.getElementsByClassName("cama-no")[0];
               if (AreasOctionsLimpiezaEHigiene.find(element => element.trim() === $('input[name=area]').val())) {
                 delecteOctions(cama_no);
@@ -363,7 +363,7 @@ function updateEstadísticasEnfermeriaHospitalizacion(data) {
         //Admision hospitalaria
         aux = document.getElementById("camasDisponibles");
         if (aux) { aux.innerText = camas_Disponibles ; }
-        if (AreasSemaforo.find(element => element.trim() === $('input[name=area]').val()) || $('input[name=area]').val() == 'Dirección Enfermería ') {
+        if (AreasSemaforo.find(element => element.trim() === $('input[name=area]').val()) || $('input[name=area]').val() == 'Dirección Enfermería') {
           var cama_no = bed.getElementsByClassName("cama-no")[0];
           if (AreasOctionsLimpiezaEHigiene.find(element => element.trim() === $('input[name=area]').val())) {
             delecteOctions(cama_no);
@@ -448,18 +448,20 @@ function refreshGeneralData() {
   var ContaminadasT = ' Contaminadas';
   var DescompuestasT = ' Descompuestas';
   var ReparadasT = ' Reparadas';
-  var camas_totales = findBed("fila")
-  var camas_Sucias = findBed(colorCamaEstado['Sucia'])
-  var camas_Limpias = findBed(colorCamaEstado['Limpia'])
-  var camas_Disponibles = findBed(colorCamaEstado['Disponible'])
-  var camas_Descompuestas = findBed(colorCamaEstado['Descompuesta'])
-  var camas_Reparadas = findBed(colorCamaEstado['Reparada'])
-  var camas_Ocupadas = findBed(colorCamaEstado['HOMBRE']) + findBed(colorCamaEstado['MUJER'])
-  var camas_Reservadas = findBed(colorCamaEstado['Reservada'])
-  var camas_Contaminadas = findBed(colorCamaEstado['Contaminada'])
+  var camas_totales = findBed("fila");
+  var camas_Sucias = findBed(colorCamaEstado['Sucia']);
+  var camas_Limpias = findBed(colorCamaEstado['Limpia']);
+  var camas_Disponibles = findBed(colorCamaEstado['Disponible']);
+  var camas_Descompuestas = findBed(colorCamaEstado['Descompuesta']);
+  var camas_Reparadas = findBed(colorCamaEstado['Reparada']);
+  let camasTotal_Hombre = findBed(colorCamaEstado['HOMBRE']); 
+  let camasTotal_Mujer = findBed(colorCamaEstado['MUJER']);
+  var camas_Ocupadas = camasTotal_Hombre + camasTotal_Mujer;
+  var camas_Reservadas = findBed(colorCamaEstado['Reservada']);
+  var camas_Contaminadas = findBed(colorCamaEstado['Contaminada']);
   var porcentaje_o = (camas_Ocupadas / camas_totales) * 100;
   var aux = ""
-  //Limpieza hugiene
+  //Limpieza e higiene
   aux = document.getElementsByClassName("ocupadas")[0];
   if (aux) { aux.innerText = camas_Ocupadas + OcupadasT; }
   aux = document.getElementsByClassName("disponibles")[0];
@@ -481,6 +483,10 @@ function refreshGeneralData() {
   if (aux) { aux.innerText = porcentaje_o.toFixed(2) + " %"; }
   aux = document.getElementsByClassName("camas-disponibles")[0];
   if (aux) { aux.innerText = camas_Disponibles + DisponiblesT; }
+  aux = document.getElementsByClassName("camas-ocupadas-hombres")[0];
+  if (aux) { aux.innerText = camasTotal_Hombre; }
+  aux = document.getElementsByClassName("camas-ocupadas-mujeres")[0];
+  if (aux) { aux.innerText = camasTotal_Mujer; }
   aux = document.getElementsByClassName("camas-ocupadas")[0];
   if (aux) { aux.innerText = camas_Ocupadas + OcupadasT; }
   aux = document.getElementsByClassName("camas-limpias")[0];
@@ -786,14 +792,14 @@ function activateTooltip() {
     $(".tooltip").css("transform", "translate(-100px,-35px)");
     $(".tooltip").css("width", "17em");
   }
-  if ("Enfermería Hospitalización" == $('input[name=area]').val() || $('input[name=area]').val() == 'Dirección Enfermería ' || $('input[name=area]').val() == 'Limpieza e Higiene') {
+  if ("Enfermería Hospitalización" == $('input[name=area]').val() || $('input[name=area]').val() == 'Dirección Enfermería' || $('input[name=area]').val() == 'Limpieza e Higiene') {
     $('body').on('click', '.notificacion-nota', function () {
       if ((!($(this).attr("data-Notas-Len") != "0" && ($(this).attr("data-cama-status") == "Contaminada" || $(this).attr("data-cama-status") == "Sucia")))) {
         getDataNotesTooltip($(this).attr("data-cama-id"), $(this).attr("data-cama-nombre"), 0);
       }
     });
   }
-  if ("Enfermería Hospitalización" == $('input[name=area]').val() || $('input[name=area]').val() == 'Dirección Enfermería ' || $('input[name=area]').val() == 'Limpieza e Higiene' || $('input[name=area]').val() == 'Conservación') {
+  if ("Enfermería Hospitalización" == $('input[name=area]').val() || $('input[name=area]').val() == 'Dirección Enfermería' || $('input[name=area]').val() == 'Limpieza e Higiene' || $('input[name=area]').val() == 'Conservación') {
     $('body').on('click', '.notificacion-nota-des', function () {
       if (!($(this).attr("data-Notas-Len") != "0" && ($(this).attr("data-cama-status") == "'Descompuesta'"))) {
         getDataNotesTooltip($(this).attr("data-cama-id"), $(this).attr("data-cama-nombre"), 1);

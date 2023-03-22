@@ -6,13 +6,13 @@
         <meta http-equiv="Cache-Control" content="no-store" />
         <meta http-equiv="Cache-Control" content="no-cache" />
         <meta http-equiv="Pragma" content="no-cache" />
-        <meta http-equiv="expires" content="Fri, 18 Jul 2014 1:00:00 GMT" />
+        <meta http-equiv="expires" content="Fri, 18 Jul 2040 1:00:00 GMT" />
         <meta name="description" content="<?=$this->UM_CLASIFICACION?> | <?=$this->UM_NOMBRE?>" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="stylesheet" href="<?=  base_url()?>assets/libs/assets/animate.css/animate.css" type="text/css" />
         <link rel="stylesheet" href="<?=  base_url()?>assets/libs/assets/font-awesome/css/font-awesome.css" type="text/css" />
         <link rel="stylesheet" href="<?=  base_url()?>assets/libs/jquery/waves/dist/waves.css" type="text/css" />
-        <link rel="stylesheet" href="<?=  base_url()?>assets/styles/material-design-icons.css" type="text/css" />
+        <link rel="stylesheet" href="<?=  base_url()?>assets/styles/material-design-icons.css" type="text/css" /> 
         <link href="<?=  base_url()?>assets/libs/bootstrap-select2/select2.css" rel="stylesheet" type="text/css" media="screen"/>
         <link href="<?=  base_url()?>assets/img/imss.png" rel="icon" type="image/png">
         <link href="<?=  base_url()?>assets/libs/jquery/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -97,12 +97,12 @@
         <script src="<?=  base_url()?>assets/libs/bootstrap-datepicker/js/locales/bootstrap-datepicker.es.js"></script>
         <script src="<?=  base_url()?>assets/libs/footable/footable.all.min.js"></script>
         <script src="<?=  base_url()?>assets/libs/jquery-validation/js/jquery.validate.min.js"></script>
-        <script src="<?=  base_url()?>assets/libs/bootstrap-wysihtml5/wysihtml5-0.3.0.js" type="text/javascript"></script>
-        <script src="<?=  base_url()?>assets/libs/bootstrap-wysihtml5/bootstrap-wysihtml5.js" type="text/javascript"></script>
-        <script src="<?=  base_url()?>assets/js/bootbox.min.js"></script>
+        <!-- <script src="<?=  base_url()?>assets/libs/bootstrap-wysihtml5/wysihtml5-0.3.0.js" type="text/javascript"></script>
+        <script src="<?=  base_url()?>assets/libs/bootstrap-wysihtml5/bootstrap-wysihtml5.js" type="text/javascript"></script> -->
+        <!-- <script src="<?=  base_url()?>assets/js/bootbox.min.js"></script> -->
         <script src="<?=  base_url()?>assets/libs/md5.js"></script>
         <script src="<?=  base_url()?>assets/js/jquery.cookie.js"></script>
-        <script src="<?=  base_url()?>assets/js/Mensajes.js?<?= md5(microtime())?>"></script>
+        <!-- <script src="<?=  base_url()?>assets/js/Mensajes.js?<?= md5(microtime())?>"></script> -->
         <script src="<?=  base_url()?>assets/js/sections/login.js?<?= md5(microtime())?>"></script>
     </body>
 </html>

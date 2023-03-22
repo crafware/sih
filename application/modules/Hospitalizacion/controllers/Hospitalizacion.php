@@ -295,7 +295,7 @@ class Hospitalizacion extends Config{
                                         }
                                     }
                                     if ($NotasLenDes > 0) { $OpDes = 1;}else{$OpDes = 0;}
-                                    $col .=     '<div id = "nota_' . $value['cama_id'] . '" class="notificacion-nota" ' . 'data-cama-nombre=' . $value['cama_nombre'] . ' data-cama-id=' . $value['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
+                                    $col .=     '<div id = "nota_' . $value['cama_id'] . '" class="notificacion-nota pointer" ' . 'data-cama-nombre=' . $value['cama_nombre'] . ' data-cama-id=' . $value['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $Op . '"><p>' . "$NotasLen" . '</p></div>
                                     <div id = "nota_des_' . $value['cama_id'] . '" class="notificacion-nota-des" ' . 'data-cama-nombre=' . $value['cama_nombre'] . ' data-cama-id=' . $value['cama_id'] . ' data-cama-status=' . $CamaStatus . ' data-Notas-Len=' . $NotasLen . ' style="opacity:' . $OpDes . '"><p>' . "$NotasLenDes" . '</p></div>       
                                     </div>';
                                 }
@@ -633,7 +633,16 @@ class Hospitalizacion extends Config{
             ));
         }else{
             $this->config_mdl->_update_data('os_camas', array(
-                'cama_estado'     => 'Disponible'), array(
+                'triage_id'       => Null,
+                'cama_estado'     => 'Disponible',
+                'proceso'         => 0,
+                'cama_genero'     => 'Sin Especificar',
+                'cama_ingreso_f'  => Null,
+                'cama_ingreso_h'  => Null,
+                'cama_fh_estatus' => Null,
+                'estado_salud'    => Null,
+                'id_servicio_trat'=> Null,
+                'id_medico_trat'  => Null), array(
                 'cama_id'         => $cama_id));
             $this->setOutput(array(
                 "accion"    => 2,

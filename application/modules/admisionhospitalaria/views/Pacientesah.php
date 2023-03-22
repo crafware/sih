@@ -153,7 +153,7 @@ $(document).ready(function($) {
                             "render": function(data, type, row) {
                                 return "<span style='color:#006699;text-transform: uppercase'><i class='fa fa-h-square'></i> &nbsp;"+data+"</span><br>"+
                                 "<span style='color:#008F39;'><i class='fa fa-user-md'></i> &nbsp;"+row.medico+"</span><br>"+
-                                "<span style='color:#FF8000;'><i class='fa fa-clock-o'></i> &nbsp;Ingreso "+row.tipo_ingreso+" el "+row.fecha_asignacion+" hrs.</span>";
+                                "<span style='color:#FF8000;'><i class='fa fa-clock-o'></i> &nbsp;Ingreso "+row.tipo_ingreso+", hora "+row.hora_ingreso+" hrs.</span>";
                                              
                                 }
                             },
